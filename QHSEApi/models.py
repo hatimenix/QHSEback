@@ -20,6 +20,8 @@ class Site(models.Model):
     sigle = models.CharField(max_length=255)
     responsable_site = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     groupe_retso = models.CharField(max_length=255)
+    def __str__(self):
+        return str({'site_nom':self.site_nom})
 
 class Services(models.Model):
     service_nom = models.CharField(max_length=255)
@@ -96,6 +98,7 @@ class ArretTravail(models.Model):
     
 #*Table Processus :
 class Processus(models.Model):
+    processus_nom=models.CharField(max_length=255,null=True, default=None)
     intitule = models.CharField(max_length=255)
     typologie = models.CharField(max_length=255)
     sigle = models.CharField(max_length=50)
@@ -108,6 +111,8 @@ class Processus(models.Model):
     ressources_tech_org = models.TextField()
     objectifs_ind = models.TextField()
     outils_surveil = models.TextField()
+    def __str__(self):
+        return str({'processus_nom':self.processus_nom})
     
 #*Backend Actions :
 class Actions(models.Model):
@@ -154,4 +159,31 @@ class MesureEfficacite(models.Model):
     mesure_eff = models.TextField()
     cout = models.FloatField()
     action_associee = models.OneToOneField(Actions, on_delete=models.CASCADE)
-    
+
+class NC(models.Model):
+    intitule = models.CharField(max_length=255)
+    nature= models.CharField(max_length=255)
+    site=models.ForeignKey(Site, on_delete=models.CASCADE)
+    processus=models.ForeignKey(Processus, on_delete=models.CASCADE)
+    domaine = models.CharField(max_length=255)
+    date_nc=models.DateField()
+    date_prise_en_compte = models.DateField()
+    description_detailee= models.TextField()
+    annee=models.PositiveIntegerField()
+    mois=models.CharField(max_length=255)
+    detail_cause=models.CharField(max_length=255)
+    delai_prevu=models.DateField()
+    type_cause=models.CharField(max_length=255)
+    cout=models.FloatField(max_length=100)
+    progress=models.FloatField(max_length=100)
+    etat=models.BooleanField()
+    info_complementaires=models.TextField()
+    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None)
+    frequence=models.BooleanField()
+    gravite=models.BooleanField()
+    action_immediate=models.BooleanField()
+    nc_cloture=models.BooleanField()
+    responsable_traitement = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
+
+
+

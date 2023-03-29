@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC
 
 class SiteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,4 +69,9 @@ class ProcessusSerializer(serializers.ModelSerializer):
 class TacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = Taches
+        fields = '__all__'
+
+class NCSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NC
         fields = '__all__'

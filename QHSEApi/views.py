@@ -15,6 +15,7 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
+    NC
 )
 from .serializers import (
     DangerSerializer,
@@ -31,6 +32,7 @@ from .serializers import (
     TacheSerializer,
     MesureEfficaciteSerializer,
     ProcessusSerializer,
+    NCSerializer
 )
 
 
@@ -103,5 +105,8 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     queryset = Processus.objects.all()
     serializer_class = ProcessusSerializer
 
+class NCViewSet(viewsets.ModelViewSet):
+    queryset = NC.objects.all()
+    serializer_class = NCSerializer
 
 
