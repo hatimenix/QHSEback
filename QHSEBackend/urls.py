@@ -17,8 +17,8 @@ router.register(r'tache', views.TachesViewSet, basename="tache")
 router.register(r'mesure_efficacite', views.MesureEfficaciteViewSet, basename="mesure_efficacite")
 router.register(r'processus', views.ProcessusViewSet, basename="processus")
 #les routes pour commande et fiche 
-router.register(r'commande', views.commandeApi, basename="commande")
-router.register(r'fiche', views.FicheApi, basename="fiche")
+router.register(r'commande', views.CommandeViewSet, basename="commande")
+router.register(r'fiche', views.FicheViewSet, basename="fiche")
 
 
 urlpatterns = [

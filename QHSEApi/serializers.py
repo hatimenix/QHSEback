@@ -75,10 +75,10 @@ class TacheSerializer(serializers.ModelSerializer):
 class FicheTechniqueSerializer(serializers.ModelSerializer):
     class Meta:
         model = FicheTechnique
-        fields = ('id_fiche', 'url_fiche', 'nom_fiche', 'type_plat')
+        fields = '__all__'
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commande
-        fields = ('id_commande', 'date_commande', 'type_commande', 'etat_commande', 'quantite', 'specificite_regime', 'specificite_texture')
+        fields = '__all__'

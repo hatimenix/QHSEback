@@ -165,9 +165,8 @@ class Commande(models.Model):
     quantite = models.IntegerField()
     specificite_regime = models.CharField(max_length=50)
     specificite_texture = models.CharField(max_length=50)
-    type_auth = models.CharField(max_length=50)
-    def __str__(self):
-        return f"Commande {self.id_commande} du {self.date_commande}"
+    
+   
 
 #modèle de la classe Fiche Technique BOCHRA
 class FicheTechnique(models.Model):
