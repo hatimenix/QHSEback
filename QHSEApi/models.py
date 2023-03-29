@@ -172,5 +172,6 @@ class Commande(models.Model):
 class FicheTechnique(models.Model):
     id_fiche = models.AutoField(primary_key=True)
     url_fiche = models.CharField(max_length=255)
+    fichier = models.FileField(upload_to='uploads/', null= True, default=None)
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
