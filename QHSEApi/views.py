@@ -1,8 +1,13 @@
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from .models import (
+    Commande,
     Danger,
     EvaluationDanger,
+    FicheTechnique,
     Site,
     Services,
     Utilisateur,
@@ -17,8 +22,10 @@ from .models import (
     Processus,
 )
 from .serializers import (
+    CommandeSerializer,
     DangerSerializer,
     EvaluationDangerSerializer,
+    FicheTechniqueSerializer,
     SiteSerializer,
     ServiceSerializer,
     UtilisateurSerializer,
@@ -104,4 +111,14 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     serializer_class = ProcessusSerializer
 
 
+# CRUD pour les commandes BOCHRA
 
+class CommandeViewSet(viewsets.ModelViewSet):
+    queryset = Commande.objects.all()
+    serializer_class = CommandeSerializer
+
+
+# CRUD pour les fiches techniques BOCHRA
+class FicheViewSet(viewsets.ModelViewSet):
+    queryset = FicheTechnique.objects.all()
+    serializer_class = FicheTechniqueSerializer
