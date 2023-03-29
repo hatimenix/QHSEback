@@ -105,6 +105,7 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     queryset = Processus.objects.all()
     serializer_class = ProcessusSerializer
 
+#Create,update,retrieve and delete table non-conformité :
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer

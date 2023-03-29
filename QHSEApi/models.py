@@ -14,6 +14,8 @@ class Utilisateur(models.Model):
     fonction = models.CharField(max_length=255, null=True, blank=True)
     adresse_sip = models.CharField(max_length=255, null=True, blank=True)
     othermail = models.EmailField(null=True, blank=True)
+    def __str__(self):
+        return str(self.nom)
 
 class Site(models.Model):
     site_nom = models.CharField(max_length=255)
@@ -21,7 +23,7 @@ class Site(models.Model):
     responsable_site = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     groupe_retso = models.CharField(max_length=255)
     def __str__(self):
-        return str({'site_nom':self.site_nom})
+        return str(self.site_nom)
 
 class Services(models.Model):
     service_nom = models.CharField(max_length=255)
@@ -112,7 +114,7 @@ class Processus(models.Model):
     objectifs_ind = models.TextField()
     outils_surveil = models.TextField()
     def __str__(self):
-        return str({'processus_nom':self.processus_nom})
+        return str(self.processus_nom)
     
 #*Backend Actions :
 class Actions(models.Model):
@@ -160,6 +162,7 @@ class MesureEfficacite(models.Model):
     cout = models.FloatField()
     action_associee = models.OneToOneField(Actions, on_delete=models.CASCADE)
 
+#Table des non-conformités :
 class NC(models.Model):
     intitule = models.CharField(max_length=255)
     nature= models.CharField(max_length=255)

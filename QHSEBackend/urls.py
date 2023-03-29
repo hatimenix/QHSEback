@@ -24,4 +24,5 @@ router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+    #path files :
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
