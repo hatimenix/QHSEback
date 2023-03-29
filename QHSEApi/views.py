@@ -15,6 +15,7 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
+    Famille,
 )
 from .serializers import (
     DangerSerializer,
@@ -31,6 +32,7 @@ from .serializers import (
     TacheSerializer,
     MesureEfficaciteSerializer,
     ProcessusSerializer,
+    FamilleSerializer,
 )
 
 
@@ -103,5 +105,7 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     queryset = Processus.objects.all()
     serializer_class = ProcessusSerializer
 
-
+class FamilleViewSet(viewsets.ModelViewSet):
+    queryset = Famille.objects.all()
+    serializer_class = FamilleSerializer
 
