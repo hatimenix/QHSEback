@@ -154,4 +154,24 @@ class MesureEfficacite(models.Model):
     mesure_eff = models.TextField()
     cout = models.FloatField()
     action_associee = models.OneToOneField(Actions, on_delete=models.CASCADE)
-    
+
+ #modèle de la classe commande BOCHRA 
+
+class Commande(models.Model):
+    id_commande = models.AutoField(primary_key=True)
+    date_commande = models.CharField(max_length=50)
+    type_commande = models.CharField(max_length=50)
+    etat_commande = models.CharField(max_length=50)
+    quantite = models.IntegerField()
+    specificite_regime = models.CharField(max_length=50)
+    specificite_texture = models.CharField(max_length=50)
+    type_auth = models.CharField(max_length=50)
+    def __str__(self):
+        return f"Commande {self.id_commande} du {self.date_commande}"
+
+#modèle de la classe Fiche Technique BOCHRA
+class FicheTechnique(models.Model):
+    id_fiche = models.AutoField(primary_key=True)
+    url_fiche = models.CharField(max_length=255)
+    nom_fiche = models.CharField(max_length=255)
+    type_plat = models.CharField(max_length=50)
