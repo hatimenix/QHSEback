@@ -1,5 +1,7 @@
 from rest_framework import serializers
+from .models import Site, Services, Danger, Famille, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
 from .models import Commande, FicheTechnique, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+
 
 class SiteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,6 +73,11 @@ class TacheSerializer(serializers.ModelSerializer):
         model = Taches
         fields = '__all__'
 
+
+class FamilleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Famille
+
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,4 +88,5 @@ class FicheTechniqueSerializer(serializers.ModelSerializer):
 class CommandeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commande
+
         fields = '__all__'

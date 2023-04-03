@@ -20,6 +20,7 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
+    Famille,
 )
 from .serializers import (
     CommandeSerializer,
@@ -38,6 +39,7 @@ from .serializers import (
     TacheSerializer,
     MesureEfficaciteSerializer,
     ProcessusSerializer,
+    FamilleSerializer,
 )
 
 
@@ -111,7 +113,12 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     serializer_class = ProcessusSerializer
 
 
+class FamilleViewSet(viewsets.ModelViewSet):
+    queryset = Famille.objects.all()
+    serializer_class = FamilleSerializer
+
 # CRUD pour les commandes BOCHRA
+
 
 class CommandeViewSet(viewsets.ModelViewSet):
     queryset = Commande.objects.all()
