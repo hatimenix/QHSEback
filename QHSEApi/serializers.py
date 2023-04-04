@@ -12,6 +12,9 @@ class ServiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DangerSerializer(serializers.ModelSerializer):
+    famille_name = serializers.CharField(source='famille.famille_nom', default=None)
+    Site_name = serializers.CharField(source='site.site_nom', default=None)
+    service_name = serializers.CharField(source='service.service_nom', default=None)
     class Meta:
         model = Danger
         fields = '__all__'
@@ -32,9 +35,18 @@ class ChefServiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class EvenementSerializer(serializers.ModelSerializer):
+    danger_name = serializers.SerializerMethodField()
+    Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
+    service_name = serializers.CharField(source='service.service_nom', read_only=True, default=None)
     class Meta:
         model = Evenements
         fields = '__all__'
+    def get_danger_name(self, obj):
+        dangers = obj.dangers.all()
+        if dangers:
+            return ', '.join(d.description for d in dangers)
+        else:
+            return None
 
 class AnalyseEvenementSerializer(serializers.ModelSerializer):
     class Meta:

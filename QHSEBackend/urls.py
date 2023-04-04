@@ -17,6 +17,7 @@ router.register(r'tache', views.TachesViewSet, basename="tache")
 router.register(r'mesure_efficacite', views.MesureEfficaciteViewSet, basename="mesure_efficacite")
 router.register(r'processus', views.ProcessusViewSet, basename="processus")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
+router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

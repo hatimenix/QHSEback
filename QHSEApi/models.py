@@ -34,7 +34,7 @@ class Danger(models.Model):
     description = models.TextField()
     consequences = models.TextField()
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
-    service = models.ForeignKey(Services ,blank=True ,on_delete=models.CASCADE)
+    service = models.ForeignKey(Services, on_delete=models.CASCADE)
     famille = models.ForeignKey(Famille, on_delete=models.CASCADE)
     
 class EvaluationDanger(models.Model):
