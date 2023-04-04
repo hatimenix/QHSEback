@@ -1,0 +1,9 @@
+Django App commands :
+
+django-admin startproject QHSEBackend
+python manage.py startapp QHSEApi
+
+React App Commands : 
+
+npm install -g create-react-app
+create-react-app my-app

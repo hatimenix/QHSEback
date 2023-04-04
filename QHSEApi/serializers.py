@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Commande, FicheTechnique, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import NC, Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur, Site, Services, Danger, EvaluationDanger, Traitement, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
 
 class SiteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,6 +14,12 @@ class ServiceSerializer(serializers.ModelSerializer):
 class DangerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Danger
+        fields = '__all__'
+
+#FamilleSerializer
+class FamilleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Famille
         fields = '__all__'
 
 class EvaluationDangerSerializer(serializers.ModelSerializer):
@@ -81,4 +87,40 @@ class FicheTechniqueSerializer(serializers.ModelSerializer):
 class CommandeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commande
+        fields = '__all__'
+
+#Achraf's serialisers 
+
+#RGPD MODULE
+  # SOUS MODULE REGISTRE DE TRAITEMENT
+
+#Fournisseur serializers
+class FournisseurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fournisseur
+        fields = '__all__'
+
+#Traitement serializers
+class TraitementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Traitement
+        fields = '__all__'
+
+#Evaluation serializers
+class EvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evaluation
+        fields = '__all__'
+
+#Document utiles  serializers
+class DocumentUtilitiesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DocumentUtilities
+        fields = '__all__'
+
+#ilyas
+#NC
+class NCSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NC
         fields = '__all__'

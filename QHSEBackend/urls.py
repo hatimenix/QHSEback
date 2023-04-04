@@ -1,11 +1,15 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'site', views.SiteViewSet, basename="site")
 router.register(r'service', views.ServiceViewSet, basename="service")
+router.register(r'chefservice', views.ChefServiceViewSet, basename="chefservice")
+router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur")
 router.register(r'evaluation', views.EvaluationDangerViewSet, basename="evaluation")
 router.register(r'danger', views.DangerViewSet, basename="danger")
 router.register(r'evenement', views.EvenementViewSet, basename="evenement")
@@ -16,12 +20,18 @@ router.register(r'realisation', views.RealisationViewSet, basename="realisation"
 router.register(r'tache', views.TachesViewSet, basename="tache")
 router.register(r'mesure_efficacite', views.MesureEfficaciteViewSet, basename="mesure_efficacite")
 router.register(r'processus', views.ProcessusViewSet, basename="processus")
-#les routes pour commande et fiche 
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fiche', views.FicheViewSet, basename="fiche")
+router.register(r'fournisseurs',views.FournisseurViewSet)
+router.register(r'traitements', views.TraitementViewSet)
+router.register(r'evaluations',views.EvaluationViewSet)
+router.register(r'Documentsutile',views.DocumentutilesViewSet)
+router.register(r'nc', views.NCViewSet, basename="nc")
+router.register(r'famille', views.FamilleViewSet, basename="famille")
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-]
+
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

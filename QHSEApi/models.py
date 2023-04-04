@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 #*Zakaria
 #*Backend document unique 
@@ -175,3 +176,141 @@ class FicheTechnique(models.Model):
     fichier = models.FileField(upload_to='uploads/', null= True, default=None)
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
+
+
+# Achraf
+# 
+# module RGPD  
+
+# sous module Registre du  traitemant 
+
+#Fournisseur model
+class Fournisseur(models.Model):
+    # Existing fields
+    id = models.AutoField(primary_key=True)
+    nom = models.CharField(max_length=255,blank=True, null=True)
+    numerodesiret = models.CharField(max_length=255,blank=True, null=True)
+    type_de_prestation = models.CharField(max_length=255,blank=True, null=True)
+    numero_de_recepisse_de_declaration_prefectorale = models.CharField(max_length=255,blank=True, null=True)
+    pageweb = models.CharField(max_length=255,blank=True, null=True)
+    telephone = models.CharField(max_length=255,blank=True, null=True)
+    numerodetelecopie = models.CharField(max_length=255,blank=True, null=True)
+    adresse = models.CharField(max_length=255,blank=True, null=True)
+    codepostal = models.CharField(max_length=255,blank=True, null=True)
+    ville = models.CharField(max_length=255,blank=True, null=True)
+    pays = models.CharField(max_length=255,blank=True, null=True)
+    nometprenom = models.CharField(max_length=255,blank=True, null=True)
+    adressedecourier = models.CharField(max_length=255,blank=True, null=True)
+    fonction = models.CharField(max_length=255,blank=True, null=True)
+    numerodetelephone = models.CharField(max_length=255,blank=True, null=True)
+    telephonepersonnel = models.CharField(max_length=255,blank=True, null=True)
+    
+    def __str__(self):
+        return f'Fournisseur {self.id} ({self.nom})'
+    
+#Traitement model 
+class Traitement(models.Model):
+    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
+    REFtraitement = models.CharField(max_length=255,blank=True, null=True)
+    nomtraitement = models.CharField(max_length=255,blank=True, null=True)
+    datedecreation = models.DateTimeField(auto_now_add=True)
+    datedemiseajour = models.DateTimeField(auto_now=True)
+    donneesensible = models.BooleanField()
+    personneconcernee = models.CharField(max_length=255,blank=True, null=True)
+    precision = models.CharField(max_length=255,blank=True, null=True)
+    typeregistre = models.CharField(max_length=255,blank=True, null=True)
+    finaliteprincipale = models.TextField(blank=True, null=True)
+    sous_finalite1 = models.TextField(blank=True, null=True)
+    sous_finalite2 = models.TextField(blank=True, null=True)
+    sous_finalite3 = models.TextField(blank=True, null=True)
+    sous_finalite4 = models.TextField(blank=True, null=True)
+    categorie = models.CharField(max_length=255,blank=True, null=True)
+    description = models.CharField(max_length=255,blank=True, null=True)
+    dureedeconcesrvation = models.CharField(max_length=255,blank=True, null=True)
+    mtypedemesuredesecurite = models.CharField(max_length=255,blank=True, null=True)
+    precisiondumesuredesecurite = models.CharField(max_length=255,blank=True, null=True)
+    typedestinataire = models.CharField(max_length=255,blank=True, null=True)
+    precisions = models.CharField(max_length=255,blank=True, null=True)
+    donneeconcernee = models.CharField(max_length=255,blank=True, null=True)
+    destinataire = models.CharField(max_length=255,blank=True, null=True)
+    pays = models.CharField(max_length=255,blank=True, null=True)
+    typedegarantie = models.CharField(max_length=255,blank=True, null=True)
+    lienversladocumentation = models.CharField(max_length=255,blank=True, null=True)
+    lesdonneesconcernee = models.CharField(max_length=255,blank=True, null=True)
+    prenomnomresptraitement = models.CharField(max_length=255,blank=True, null=True)
+    emailresptraitement = models.CharField(max_length=255,blank=True, null=True)
+    telephonereesptraitement = models.CharField(max_length=255,blank=True, null=True)
+    prenommomDPO = models.CharField(max_length=255,blank=True, null=True)
+    EmailDPO = models.CharField(max_length=255,blank=True, null=True)
+    telephoneDPO = models.CharField(max_length=255,blank=True, null=True)
+    prenomnomrepresentant = models.CharField(max_length=255,blank=True, null=True)
+    emailrepresentant = models.CharField(max_length=255,blank=True, null=True)
+    telephonerepresentant = models.CharField(max_length=255,blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.id:  # only set REFtraitement if it's a new object
+            year = timezone.now().year
+            self.REFtraitement = f'{year}-{self.id}'
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f'Traitement {self.id} ({self.nomtraitement})'
+    
+
+#Evaluation model
+class Evaluation(models.Model):
+    # New fields
+    delai = models.IntegerField(blank=True, null=True)
+    prix = models.DecimalField(max_digits=10, decimal_places=2,blank=True, null=True)
+    qualite = models.IntegerField(blank=True, null=True)
+    reactive = models.IntegerField(blank=True, null=True)
+    realationnel = models.IntegerField(blank=True, null=True)
+    
+    # ForeignKey to Fournisseur
+    traitement = models.ForeignKey(Traitement, on_delete=models.CASCADE)
+    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return f'Evaluation {self.id}'    
+    
+
+#sous module document utiles
+    
+#Document utiles Model
+class DocumentUtilities(models.Model):
+    id = models.AutoField(primary_key=True)
+    nom = models.CharField(max_length=255, blank=True)
+    modified_by = models.CharField(max_length=255, blank=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    typologie = models.CharField(max_length=255, blank=True)
+    document = models.FileField(upload_to='documents/', blank=True, null=True)
+
+
+#ilyas
+#Table des non-conformités :
+class NC(models.Model):
+    intitule = models.CharField(max_length=255)
+    nature= models.CharField(max_length=255)
+    site=models.ForeignKey(Site, on_delete=models.CASCADE)
+    processus=models.ForeignKey(Processus, on_delete=models.CASCADE)
+    domaine = models.CharField(max_length=255)
+    date_nc=models.DateField()
+    date_prise_en_compte = models.DateField()
+    description_detailee= models.TextField()
+    annee=models.PositiveIntegerField()
+    mois=models.CharField(max_length=255)
+    detail_cause=models.CharField(max_length=255)
+    delai_prevu=models.DateField()
+    type_cause=models.CharField(max_length=255)
+    cout=models.FloatField(max_length=100)
+    progress=models.FloatField(max_length=100)
+    etat=models.BooleanField()
+    info_complementaires=models.TextField()
+    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None)
+    frequence=models.BooleanField()
+    gravite=models.BooleanField()
+    action_immediate=models.BooleanField()
+    nc_cloture=models.BooleanField()
+    responsable_traitement = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
+

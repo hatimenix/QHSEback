@@ -4,12 +4,18 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from .models import (
+    NC,
     Commande,
     Danger,
+    DocumentUtilities,
+    Evaluation,
     EvaluationDanger,
+    Famille,
     FicheTechnique,
+    Fournisseur,
     Site,
     Services,
+    Traitement,
     Utilisateur,
     ChefServices,
     Evenements,
@@ -24,10 +30,16 @@ from .models import (
 from .serializers import (
     CommandeSerializer,
     DangerSerializer,
+    DocumentUtilitiesSerializer,
     EvaluationDangerSerializer,
+    EvaluationSerializer,
+    FamilleSerializer,
     FicheTechniqueSerializer,
+    FournisseurSerializer,
+    NCSerializer,
     SiteSerializer,
     ServiceSerializer,
+    TraitementSerializer,
     UtilisateurSerializer,
     ChefServiceSerializer,
     EvenementSerializer,
@@ -44,6 +56,11 @@ from .serializers import (
 class DangerViewSet(viewsets.ModelViewSet):
     queryset = Danger.objects.all()
     serializer_class = DangerSerializer
+
+#FamilleViewSet
+class FamilleViewSet(viewsets.ModelViewSet):
+    queryset = Famille.objects.all()
+    serializer_class = FamilleSerializer
 
 
 class EvaluationDangerViewSet(viewsets.ModelViewSet):
@@ -122,3 +139,33 @@ class CommandeViewSet(viewsets.ModelViewSet):
 class FicheViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
     serializer_class = FicheTechniqueSerializer
+
+#Achraf's views set 
+
+#RGPD MODULE
+  #REGISTRE DE TRAITEMENT
+#Fournisseur view Set Crud
+class FournisseurViewSet(viewsets.ModelViewSet):
+    queryset = Fournisseur.objects.all()
+    serializer_class = FournisseurSerializer
+
+#Traitement view set Crud
+class TraitementViewSet(viewsets.ModelViewSet):
+    queryset = Traitement.objects.all()
+    serializer_class = TraitementSerializer
+    
+#Traitement view set Crud
+class EvaluationViewSet(viewsets.ModelViewSet):
+    queryset = Evaluation.objects.all()
+    serializer_class = EvaluationSerializer
+
+#Docuements utiles
+
+class DocumentutilesViewSet(viewsets.ModelViewSet):
+    queryset = DocumentUtilities.objects.all()
+    serializer_class = DocumentUtilitiesSerializer
+
+#Create,update,retrieve and delete table non-conformité :
+class NCViewSet(viewsets.ModelViewSet):
+    queryset = NC.objects.all()
+    serializer_class = NCSerializer
