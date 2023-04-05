@@ -43,7 +43,13 @@ class EvaluationDanger(models.Model):
     severite = models.IntegerField()
     frequences_exposition = models.IntegerField()
     mesure_prevention = models.TextField()
+    ipr = models.FloatField()
+    indice_risque = models.IntegerField()
     danger = models.ForeignKey(Danger, on_delete=models.CASCADE)
+    
+    def clean(self):
+        if self.indice_risque not in [1, 2, 3]:
+            raise ValidationError("L'indice de risque doit être 1, 2 ou 3.")
     
 #*Table relation entre Service et Utilisateur 
 class ChefServices(Utilisateur):
@@ -69,6 +75,7 @@ class Evenements(models.Model):
     siege_de_lesions_1 = models.CharField(max_length=255, blank=True)
     siege_de_lesions_2 = models.CharField(max_length=255, blank=True)
     nature_lesions = models.CharField(max_length=255)
+    arret_travail = models.BooleanField()
     dangers = models.ManyToManyField(Danger)
     
 class AnalyseEvenement(models.Model):
@@ -82,7 +89,6 @@ class AnalyseEvenement(models.Model):
     evenement = models.OneToOneField(Evenements, on_delete=models.CASCADE)
 
 class ArretTravail(models.Model):
-    arret = models.BooleanField()
     CMI_volet_recup = models.CharField(max_length=50)
     date_debut_arret = models.DateField()
     date_fin_arret = models.DateField()
@@ -112,19 +118,19 @@ class Processus(models.Model):
 #*Backend Actions :
 class Actions(models.Model):
     intitule = models.CharField(max_length=100)
-    type_action = models.CharField(max_length=50)
+    type_action = models.CharField(max_length=100)
     origine_action = models.CharField(max_length=50)
-    reference = models.CharField(max_length=50, blank=True)
-    domaine = models.CharField(max_length=50)
+    reference = models.CharField(max_length=100, blank=True)
+    domaine = models.CharField(max_length=100)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
-    analyse_cause = models.ForeignKey(AnalyseEvenement, on_delete=models.CASCADE)
+    analyse_cause = models.CharField(max_length=255)
     plan_action = models.TextField()
     delai_mise_en_oeuvre = models.DateField()
-    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    assigne_a = models.CharField(max_length=100)
     priorite = models.IntegerField()
     delai_mesure_eff = models.DateField()
-    type_critere_eff = models.CharField(max_length=50)
+    type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
     danger = models.ManyToManyField(Danger)
     evenement = models.ManyToManyField(Evenements)
@@ -140,10 +146,10 @@ class Taches(models.Model):
     date_debut = models.DateField()
     echeance = models.DateField()
     description = models.TextField()
-    priorite = models.CharField(max_length=50)
-    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    priorite = models.CharField(max_length=100)
+    assigne_a = models.CharField(max_length=100)
     date_realisation = models.DateField()
-    état = models.CharField(max_length=50)
+    état = models.CharField(max_length=100)
     commentaire = models.TextField()
     piece_jointe = models.CharField(max_length=500, null=True, blank=True)
     realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
