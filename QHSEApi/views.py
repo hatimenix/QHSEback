@@ -1,3 +1,6 @@
+import re
+import requests
+
 from argparse import _ActionsContainer
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -133,8 +136,11 @@ class CommandeViewSet(viewsets.ModelViewSet):
 class FicheTechniqueView(APIView):
     def get(self, request, pk):
         fiche = get_object_or_404(FicheTechnique, pk=pk)
+        filename = fiche.fichier.name.split('/')[-1]
         file_url = request.build_absolute_uri(fiche.fichier.url)
-        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url})
+        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url, 'filename': filename})
+
+
 
 class FicheViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
@@ -146,6 +152,10 @@ class FicheViewSet(viewsets.ModelViewSet):
         response = view(request=request, pk=pk)
         nom_fiche = response.data['nom_fiche']
         file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
         response = FileResponse(requests.get(file_url, stream=True).raw)
-        response['Content-Disposition'] = f'attachment; filename="{nom_fiche}"'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
         return response

@@ -22,7 +22,7 @@ router.register(r'processus', views.ProcessusViewSet, basename="processus")
 #les routes pour commande et fiche 
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fiche', views.FicheViewSet, basename="fiche")
-
+router.register(r'user', views.UtilisateurViewSet, basename="user")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

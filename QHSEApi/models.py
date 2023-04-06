@@ -11,7 +11,7 @@ class Utilisateur(models.Model):
     courrier = models.EmailField()
     numero_tel = models.CharField(max_length=255, null=True, blank=True)
     presente_vous = models.TextField(null=True, blank=True)
-    image = models.CharField(max_length=500, null=True, blank=True)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     fonction = models.CharField(max_length=255, null=True, blank=True)
     adresse_sip = models.CharField(max_length=255, null=True, blank=True)
     othermail = models.EmailField(null=True, blank=True)
@@ -109,6 +109,9 @@ class Processus(models.Model):
     ressources_tech_org = models.TextField()
     objectifs_ind = models.TextField()
     outils_surveil = models.TextField()
+    
+
+    
     
 #*Backend Actions :
 class Actions(models.Model):

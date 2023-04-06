@@ -62,6 +62,8 @@ class MesureEfficaciteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProcessusSerializer(serializers.ModelSerializer):
+    pilote_name = serializers.CharField(source='pilote.nom', default=None)
+                                        
     class Meta:
         model = Processus
         fields = '__all__'
