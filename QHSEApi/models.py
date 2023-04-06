@@ -76,7 +76,7 @@ class Evenements(models.Model):
     siege_de_lesions_2 = models.CharField(max_length=255, blank=True)
     nature_lesions = models.CharField(max_length=255)
     arret_travail = models.BooleanField()
-    dangers = models.ManyToManyField(Danger)
+    dangers = models.ManyToManyField(Danger, null=True)
     
 class AnalyseEvenement(models.Model):
     cause = models.TextField()
@@ -85,7 +85,7 @@ class AnalyseEvenement(models.Model):
     severite = models.IntegerField()
     niveau_risque = models.IntegerField()
     arbe_cause = models.TextField()
-    danger_lie = models.ForeignKey(Danger, on_delete=models.CASCADE)
+    danger_lie = models.ManyToManyField(Danger, null=True)
     evenement = models.OneToOneField(Evenements, on_delete=models.CASCADE)
 
 class ArretTravail(models.Model):
@@ -123,7 +123,7 @@ class Actions(models.Model):
     reference = models.CharField(max_length=100, blank=True)
     domaine = models.CharField(max_length=100)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
-    processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
+    processus = models.ForeignKey(Processus, on_delete=models.CASCADE, blank=True)
     analyse_cause = models.CharField(max_length=255)
     plan_action = models.TextField()
     delai_mise_en_oeuvre = models.DateField()
@@ -132,8 +132,13 @@ class Actions(models.Model):
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
-    danger = models.ManyToManyField(Danger)
-    evenement = models.ManyToManyField(Evenements)
+    annee = models.DateField()
+    danger = models.ManyToManyField(Danger, null=True)
+    evenement = models.ManyToManyField(Evenements, null=True)
+    
+    @property
+    def annee(self):
+        return self.date.year
     
 class Realisation(models.Model):
     action_realisee = models.ForeignKey(Actions, on_delete=models.CASCADE)
@@ -150,7 +155,7 @@ class Taches(models.Model):
     assigne_a = models.CharField(max_length=100)
     date_realisation = models.DateField()
     état = models.CharField(max_length=100)
-    commentaire = models.TextField()
+    commentaire = models.TextField(blank=True)
     piece_jointe = models.CharField(max_length=500, null=True, blank=True)
     realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
     

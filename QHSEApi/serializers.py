@@ -49,9 +49,16 @@ class EvenementSerializer(serializers.ModelSerializer):
             return None
 
 class AnalyseEvenementSerializer(serializers.ModelSerializer):
+    danger_name = serializers.SerializerMethodField()
     class Meta:
         model = AnalyseEvenement
         fields = '__all__'
+    def get_danger_name(self, obj):
+        danger_lie = obj.danger_lie.all()
+        if danger_lie:
+            return ', '.join(d.description for d in danger_lie)
+        else:
+            return None
 
 class ArretTravailSerializer(serializers.ModelSerializer):
     class Meta:
