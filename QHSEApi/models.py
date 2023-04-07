@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import FileExtensionValidator
 
 #*Zakaria
 #*Backend document unique 
@@ -35,7 +36,7 @@ class Danger(models.Model):
     description = models.TextField()
     consequences = models.TextField()
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
-    service = models.ForeignKey(Services ,blank=True ,on_delete=models.CASCADE)
+    service = models.ForeignKey(Services, on_delete=models.CASCADE)
     famille = models.ForeignKey(Famille, on_delete=models.CASCADE)
     
 class EvaluationDanger(models.Model):
@@ -170,10 +171,10 @@ class Commande(models.Model):
    
 
 #modèle de la classe Fiche Technique BOCHRA
+
 class FicheTechnique(models.Model):
     id_fiche = models.AutoField(primary_key=True)
-    url_fiche = models.CharField(max_length=255)
-    fichier = models.FileField(upload_to='uploads/', null= True, default=None)
+    fichier = models.FileField(upload_to='uploads/', null=True, default=None, validators=[FileExtensionValidator(['pdf', 'docx'])])
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
 

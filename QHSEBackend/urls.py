@@ -1,9 +1,11 @@
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
 from django.conf.urls.static import static
+
 
 router = DefaultRouter()
 router.register(r'site', views.SiteViewSet, basename="site")
@@ -20,6 +22,9 @@ router.register(r'realisation', views.RealisationViewSet, basename="realisation"
 router.register(r'tache', views.TachesViewSet, basename="tache")
 router.register(r'mesure_efficacite', views.MesureEfficaciteViewSet, basename="mesure_efficacite")
 router.register(r'processus', views.ProcessusViewSet, basename="processus")
+router.register(r'famille', views.FamilleViewSet, basename="famille")
+router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur")
+#les routes pour commande et fiche 
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fiche', views.FicheViewSet, basename="fiche")
 router.register(r'fournisseurs',views.FournisseurViewSet)

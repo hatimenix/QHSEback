@@ -1,8 +1,17 @@
-from django.http import JsonResponse
-from django.shortcuts import render
+from argparse import _ActionsContainer
+from django.http import FileResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import viewsets
+from rest_framework import viewsets
+import requests
+
 from .models import (
     NC,
     Commande,
@@ -26,6 +35,7 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
+    Famille,
 )
 from .serializers import (
     CommandeSerializer,
@@ -50,6 +60,7 @@ from .serializers import (
     TacheSerializer,
     MesureEfficaciteSerializer,
     ProcessusSerializer,
+    FamilleSerializer,
 )
 
 
@@ -128,7 +139,12 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     serializer_class = ProcessusSerializer
 
 
+class FamilleViewSet(viewsets.ModelViewSet):
+    queryset = Famille.objects.all()
+    serializer_class = FamilleSerializer
+
 # CRUD pour les commandes BOCHRA
+
 
 class CommandeViewSet(viewsets.ModelViewSet):
     queryset = Commande.objects.all()
@@ -136,6 +152,14 @@ class CommandeViewSet(viewsets.ModelViewSet):
 
 
 # CRUD pour les fiches techniques BOCHRA
+
+
+class FicheTechniqueView(APIView):
+    def get(self, request, pk):
+        fiche = get_object_or_404(FicheTechnique, pk=pk)
+        file_url = request.build_absolute_uri(fiche.fichier.url)
+        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url})
+
 class FicheViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
     serializer_class = FicheTechniqueSerializer
@@ -169,3 +193,17 @@ class DocumentutilesViewSet(viewsets.ModelViewSet):
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = NC.as_view()
+        response = view(request=request, pk=pk)
+        piece_jointe = response.data['piece jointe']
+        file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+        response = (requests.get(file_url, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response

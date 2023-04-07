@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import NC, Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur, Site, Services, Danger, EvaluationDanger, Traitement, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import Site, Services, Danger, Famille, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import Commande, FicheTechnique, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+
 
 class SiteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,6 +15,9 @@ class ServiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DangerSerializer(serializers.ModelSerializer):
+    famille_name = serializers.CharField(source='famille.famille_nom', default=None)
+    Site_name = serializers.CharField(source='site.site_nom', default=None)
+    service_name = serializers.CharField(source='service.service_nom', default=None)
     class Meta:
         model = Danger
         fields = '__all__'
@@ -38,9 +44,18 @@ class ChefServiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class EvenementSerializer(serializers.ModelSerializer):
+    danger_name = serializers.SerializerMethodField()
+    Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
+    service_name = serializers.CharField(source='service.service_nom', read_only=True, default=None)
     class Meta:
         model = Evenements
         fields = '__all__'
+    def get_danger_name(self, obj):
+        dangers = obj.dangers.all()
+        if dangers:
+            return ', '.join(d.description for d in dangers)
+        else:
+            return None
 
 class AnalyseEvenementSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,6 +91,11 @@ class TacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = Taches
         fields = '__all__'
+
+
+class FamilleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Famille
 
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
@@ -122,5 +142,10 @@ class DocumentUtilitiesSerializer(serializers.ModelSerializer):
 #NC
 class NCSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NC
-        fields = '__all__'
+
+        processus_name = serializers.ReadOnlyField(source='processus.processus_nom',default=None)
+        site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+        responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom',default=None)
+
+    model = NC
+    fields = '__all__'
