@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 #*Zakaria
 #*Backend document unique 
@@ -166,22 +167,22 @@ class MesureEfficacite(models.Model):
 class NC(models.Model):
     intitule = models.CharField(max_length=255)
     nature= models.CharField(max_length=255)
-    site=models.ForeignKey(Site, on_delete=models.CASCADE)
-    processus=models.ForeignKey(Processus, on_delete=models.CASCADE)
+    site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
     domaine = models.CharField(max_length=255)
     date_nc=models.DateField()
-    date_prise_en_compte = models.DateField()
-    description_detailee= models.TextField()
-    annee=models.PositiveIntegerField()
+    date_prise_en_compte = models.DateField(null=True, default=None)
+    description_detailee= models.TextField(null=True, default=None)
+    annee=models.CharField(max_length=255)
     mois=models.CharField(max_length=255)
     detail_cause=models.CharField(max_length=255)
     delai_prevu=models.DateField()
     type_cause=models.CharField(max_length=255)
-    cout=models.FloatField(max_length=100)
-    progress=models.FloatField(max_length=100)
+    cout=models.CharField(max_length=255)
+    progress=models.CharField(max_length=255)
     etat=models.BooleanField()
     info_complementaires=models.TextField()
-    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None)
+    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None,validators=[FileExtensionValidator(['pdf', 'docx'])])
     frequence=models.BooleanField()
     gravite=models.BooleanField()
     action_immediate=models.BooleanField()

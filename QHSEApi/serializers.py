@@ -72,6 +72,13 @@ class TacheSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NCSerializer(serializers.ModelSerializer):
+
+    processus_name = serializers.ReadOnlyField(source='processus.processus_nom',default=None)
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+    responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom',default=None)
+
+
+
     class Meta:
         model = NC
         fields = '__all__'

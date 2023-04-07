@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from rest_framework.decorators import action
 from rest_framework import viewsets
+import requests
 from .models import (
     Danger,
     EvaluationDanger,
@@ -109,5 +111,20 @@ class ProcessusViewSet(viewsets.ModelViewSet):
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = NC.as_view()
+        response = view(request=request, pk=pk)
+        piece_jointe = response.data['piece jointe']
+        file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+        response = (requests.get(file_url, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
+    
 
 

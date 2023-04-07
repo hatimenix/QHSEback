@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'QHSEApi',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    "http://127.0.0.1:8000"
+]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
