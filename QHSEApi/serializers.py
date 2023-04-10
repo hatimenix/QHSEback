@@ -71,8 +71,19 @@ class TacheSerializer(serializers.ModelSerializer):
         model = Taches
         fields = '__all__'
 
-class NCSerializer(serializers.ModelSerializer):
+class CustomBooleanField(serializers.BooleanField):
+    def to_representation(self, value):
+        if value:
+            return 'Oui'
+        return 'non'
 
+class NCSerializer(serializers.ModelSerializer):
+    
+    frequence = CustomBooleanField()
+    gravite = CustomBooleanField()
+    action_immediate = CustomBooleanField()
+    nc_cloture = CustomBooleanField()
+    
     processus_name = serializers.ReadOnlyField(source='processus.processus_nom',default=None)
     site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
     responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom',default=None)

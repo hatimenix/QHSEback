@@ -1,6 +1,4 @@
 from django.db import models
-from django.core.validators import FileExtensionValidator
-
 #*Zakaria
 #*Backend document unique 
 
@@ -182,11 +180,11 @@ class NC(models.Model):
     progress=models.CharField(max_length=255)
     etat=models.BooleanField()
     info_complementaires=models.TextField()
-    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None,validators=[FileExtensionValidator(['pdf', 'docx'])])
-    frequence=models.BooleanField()
-    gravite=models.BooleanField()
-    action_immediate=models.BooleanField()
-    nc_cloture=models.BooleanField()
+    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None)
+    frequence=models.BooleanField(null=True)
+    gravite=models.BooleanField(null=True)
+    action_immediate=models.BooleanField(null=True)
+    nc_cloture=models.BooleanField(null=True)
     responsable_traitement = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
 
 
