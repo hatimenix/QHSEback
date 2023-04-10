@@ -15,15 +15,50 @@ class Utilisateur(models.Model):
     fonction = models.CharField(max_length=255, null=True, blank=True)
     adresse_sip = models.CharField(max_length=255, null=True, blank=True)
     othermail = models.EmailField(null=True, blank=True)
+    
+#*Table Processus :
+class Processus(models.Model):
+    intitule = models.CharField(max_length=255)
+    typologie = models.CharField(max_length=255)
+    sigle = models.CharField(max_length=50)
+    finalite = models.TextField()
+    pilote = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    acteurs = models.TextField()
+    donnee_entree = models.TextField()
+    activites = models.TextField()
+    donnee_sortie = models.TextField()
+    ressources_tech_org = models.TextField()
+    objectifs_ind = models.TextField()
+    outils_surveil = models.TextField()
+
+#modèles de gestion des documentation  Bochra 
+class Document(models.Model):
+    nom = models.CharField(max_length=255)
+    codification = models.CharField(max_length=255)
+    version = models.IntegerField()
+    date_approbation = models.DateField()
+    date_previsionnelle = models.DateField()
+    nv_version = models.BooleanField()
+    type_docs = models.CharField(max_length=255)
+    url_document = models.FileField(upload_to='documents/')
+    icon = models.CharField(max_length=255)
+    processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
+
 
 class Site(models.Model):
     site_nom = models.CharField(max_length=255)
     sigle = models.CharField(max_length=255)
     responsable_site = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     groupe_retso = models.CharField(max_length=255)
+    documents = models.ManyToManyField(Document)
 
 class Services(models.Model):
     service_nom = models.CharField(max_length=255)
+
+class Secteurs(models.Model):
+    secteur_nom = models.CharField(max_length=255)
+    documents = models.ManyToManyField(Document)
+    
 
 #*Backend Danger :
 class Famille(models.Model):
@@ -95,20 +130,7 @@ class ArretTravail(models.Model):
     duree_total_arret = models.IntegerField()
     evenement = models.OneToOneField(Evenements, on_delete=models.CASCADE)
     
-#*Table Processus :
-class Processus(models.Model):
-    intitule = models.CharField(max_length=255)
-    typologie = models.CharField(max_length=255)
-    sigle = models.CharField(max_length=50)
-    finalite = models.TextField()
-    pilote = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
-    acteurs = models.TextField()
-    donnee_entree = models.TextField()
-    activites = models.TextField()
-    donnee_sortie = models.TextField()
-    ressources_tech_org = models.TextField()
-    objectifs_ind = models.TextField()
-    outils_surveil = models.TextField()
+
     
 
     
@@ -179,6 +201,8 @@ class FicheTechnique(models.Model):
     fichier = models.FileField(upload_to='uploads/', null=True, default=None, validators=[FileExtensionValidator(['pdf', 'docx'])])
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
+
+
 
 
 

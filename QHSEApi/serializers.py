@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import Commande, FicheTechnique, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import Commande, Document, FicheTechnique, Secteurs, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
 
 class SiteSerializer(serializers.ModelSerializer):
+    responsable_name = serializers.CharField(source='responsable_site.nom', default=None)
     class Meta:
         model = Site
         fields = '__all__'
@@ -9,6 +10,11 @@ class SiteSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Services
+        fields = '__all__'
+
+class SecteursSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Secteurs
         fields = '__all__'
 
 class DangerSerializer(serializers.ModelSerializer):
@@ -83,4 +89,11 @@ class FicheTechniqueSerializer(serializers.ModelSerializer):
 class CommandeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commande
+        fields = '__all__'
+        
+#Serializers Documentation 
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
         fields = '__all__'

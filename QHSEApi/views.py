@@ -18,8 +18,11 @@ from rest_framework import viewsets
 from .models import (
     Commande,
     Danger,
+    Document,
+    
     EvaluationDanger,
     FicheTechnique,
+    Secteurs,
     Site,
     Services,
     Utilisateur,
@@ -36,8 +39,11 @@ from .models import (
 from .serializers import (
     CommandeSerializer,
     DangerSerializer,
+    DocumentSerializer,
     EvaluationDangerSerializer,
     FicheTechniqueSerializer,
+    
+    SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
     UtilisateurSerializer,
@@ -72,6 +78,9 @@ class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()
     serializer_class = ServiceSerializer
 
+class SecteurViewSet(viewsets.ModelViewSet):
+    queryset = Secteurs.objects.all()
+    serializer_class = SecteursSerializer
 
 class UtilisateurViewSet(viewsets.ModelViewSet):
     queryset = Utilisateur.objects.all()
@@ -159,3 +168,12 @@ class FicheViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         return response
+
+#Document Views Bochra
+class DocumentViewSet(viewsets.ModelViewSet):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    
+
+    
+  

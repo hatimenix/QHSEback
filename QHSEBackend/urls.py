@@ -23,6 +23,9 @@ router.register(r'processus', views.ProcessusViewSet, basename="processus")
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fiche', views.FicheViewSet, basename="fiche")
 router.register(r'user', views.UtilisateurViewSet, basename="user")
+router.register(r'secteur', views.SecteurViewSet,basename="secteur")
+router.register(r'document', views.DocumentViewSet,basename="document")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
