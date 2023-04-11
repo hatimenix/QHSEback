@@ -174,6 +174,20 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = DocumentViewSet.as_view()
+        response = view(request=request, pk=pk)
+        nom = response.data['nom']
+        url_document = response.data['url_document']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+        response = FileResponse(requests.get(url_document, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
+    
 
     
   
