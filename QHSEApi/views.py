@@ -1,3 +1,6 @@
+import re
+import requests
+
 from argparse import _ActionsContainer
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -18,10 +21,13 @@ from .models import (
     Danger,
     DocumentUtilities,
     Evaluation,
+    Document,
+    
     EvaluationDanger,
     Famille,
     FicheTechnique,
     Fournisseur,
+    Secteurs,
     Site,
     Services,
     Traitement,
@@ -41,12 +47,15 @@ from .serializers import (
     CommandeSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
+    DocumentSerializer,
     EvaluationDangerSerializer,
     EvaluationSerializer,
     FamilleSerializer,
     FicheTechniqueSerializer,
     FournisseurSerializer,
     NCSerializer,
+    
+    SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
     TraitementSerializer,
@@ -88,6 +97,9 @@ class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()
     serializer_class = ServiceSerializer
 
+class SecteurViewSet(viewsets.ModelViewSet):
+    queryset = Secteurs.objects.all()
+    serializer_class = SecteursSerializer
 
 class UtilisateurViewSet(viewsets.ModelViewSet):
     queryset = Utilisateur.objects.all()
@@ -157,8 +169,11 @@ class CommandeViewSet(viewsets.ModelViewSet):
 class FicheTechniqueView(APIView):
     def get(self, request, pk):
         fiche = get_object_or_404(FicheTechnique, pk=pk)
+        filename = fiche.fichier.name.split('/')[-1]
         file_url = request.build_absolute_uri(fiche.fichier.url)
-        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url})
+        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url, 'filename': filename})
+
+
 
 class FicheViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
@@ -203,7 +218,16 @@ class NCViewSet(viewsets.ModelViewSet):
         filename = response.data['filename']
 
         # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
-        response = (requests.get(file_url, stream=True).raw)
+        response = FileResponse(requests.get(file_url, stream=True).raw)
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         return response
+
+#Document Views Bochra
+class DocumentViewSet(viewsets.ModelViewSet):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    
+
+    
+  

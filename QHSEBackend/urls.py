@@ -33,6 +33,9 @@ router.register(r'evaluations',views.EvaluationViewSet)
 router.register(r'Documentsutile',views.DocumentutilesViewSet)
 router.register(r'nc', views.NCViewSet, basename="nc")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
+router.register(r'user', views.UtilisateurViewSet, basename="user")
+router.register(r'secteur', views.SecteurViewSet,basename="secteur")
+router.register(r'document', views.DocumentViewSet,basename="document")
 
 
 urlpatterns = [
