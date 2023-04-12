@@ -149,9 +149,6 @@ class EquipementSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class FamilleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Famille
 
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):

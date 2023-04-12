@@ -24,26 +24,6 @@ class Utilisateur(models.Model):
         return str(self.nom)
 
     
-#*Table Processus :
-class Processus(models.Model):
-    intitule = models.CharField(max_length=255)
-    typologie = models.CharField(max_length=255)
-    sigle = models.CharField(max_length=50)
-    finalite = models.TextField()
-    pilote = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
-    acteurs = models.TextField()
-    donnee_entree = models.TextField()
-    activites = models.TextField()
-    donnee_sortie = models.TextField()
-    ressources_tech_org = models.TextField()
-    objectifs_ind = models.TextField()
-    outils_surveil = models.TextField()
-
-    def __str__(self):
-        return str(self.intitule)
-
-
-
 
 class Site(models.Model):
     site_nom = models.CharField(max_length=255)
