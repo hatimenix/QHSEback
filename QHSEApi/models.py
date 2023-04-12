@@ -1,5 +1,9 @@
 from django.db import models
 
+from django.core.validators import FileExtensionValidator
+import os
+
+
 #*Zakaria
 #*Backend document unique 
 
@@ -76,7 +80,7 @@ class Evenements(models.Model):
     siege_de_lesions_2 = models.CharField(max_length=255, blank=True)
     nature_lesions = models.CharField(max_length=255)
     arret_travail = models.BooleanField()
-    dangers = models.ManyToManyField(Danger, null=True)
+    dangers = models.ManyToManyField(Danger, null=True, blank=True)
     
 class AnalyseEvenement(models.Model):
     cause = models.TextField()
@@ -84,9 +88,21 @@ class AnalyseEvenement(models.Model):
     frequences = models.IntegerField()
     severite = models.IntegerField()
     niveau_risque = models.IntegerField()
-    arbe_cause = models.TextField()
-    danger_lie = models.ManyToManyField(Danger, null=True)
+    arbe_cause = models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
+    danger_lie = models.ManyToManyField(Danger, null=True, blank=True)
     evenement = models.OneToOneField(Evenements, on_delete=models.CASCADE)
+    
+    def save(self, *args, **kwargs):
+        if self.id:
+            old_instance = AnalyseEvenement.objects.get(id=self.id)
+            if self.arbe_cause != old_instance.arbe_cause:
+                if old_instance.arbe_cause:
+                    os.remove(old_instance.arbe_cause.path)
+        super().save(*args, **kwargs)
 
 class ArretTravail(models.Model):
     CMI_volet_recup = models.CharField(max_length=50)
@@ -132,21 +148,31 @@ class Actions(models.Model):
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
-    annee = models.DateField()
-    danger = models.ManyToManyField(Danger, null=True)
-    evenement = models.ManyToManyField(Evenements, null=True)
+    etat = models.CharField(max_length=150)
+    annee = models.DateField(auto_now=True)
+    danger = models.ManyToManyField(Danger, null=True, blank=True)
+    evenement = models.ManyToManyField(Evenements, null=True, blank=True)
+    piece_jointe = models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     
-    @property
-    def annee(self):
-        return self.date.year
+    def save(self, *args, **kwargs):
+        if self.id:
+            old_instance = Actions.objects.get(id=self.id)
+            if self.piece_jointe != old_instance.piece_jointe:
+                if old_instance.piece_jointe:
+                    os.remove(old_instance.piece_jointe.path)
+        super().save(*args, **kwargs)
     
 class Realisation(models.Model):
-    action_realisee = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    action_associe = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    action_realise = models.CharField(max_length=255)
     date_realisation = models.DateField()
     etat = models.CharField(max_length=50)
     
 class Taches(models.Model):
-    source = models.CharField(max_length=50)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
     echeance = models.DateField()
@@ -156,12 +182,24 @@ class Taches(models.Model):
     date_realisation = models.DateField()
     état = models.CharField(max_length=100)
     commentaire = models.TextField(blank=True)
-    piece_jointe = models.CharField(max_length=500, null=True, blank=True)
     realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
+    piece_jointe = models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
+    
+    def save(self, *args, **kwargs):
+        if self.id:
+            old_instance = Taches.objects.get(id=self.id)
+            if self.piece_jointe != old_instance.piece_jointe:
+                if old_instance.piece_jointe:
+                    os.remove(old_instance.piece_jointe.path)
+        super().save(*args, **kwargs)
     
 class MesureEfficacite(models.Model):
     date_cloture = models.DateField()
-    resultat_mesure_eff = models.TextField()
+    resultat_mesure_eff = models.CharField(max_length=100)
     mesure_eff = models.TextField()
     cout = models.FloatField()
     action_associee = models.OneToOneField(Actions, on_delete=models.CASCADE)
