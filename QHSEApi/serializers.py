@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .models import NC, Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur, Site, Services, Danger, EvaluationDanger, Traitement, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
-from .models import Site, Services, Danger, Famille, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
-from .models import Commande, FicheTechnique, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
-from .models import Commande, Document, FicheTechnique, Secteurs, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+
+from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement
+from .models import Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur, Site, Services, Danger, EvaluationDanger, Traitement, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import   FicheTechnique, Secteurs, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -101,6 +102,28 @@ class TacheSerializer(serializers.ModelSerializer):
         model = Taches
         fields = '__all__'
 
+class CustomBooleanField(serializers.BooleanField):
+    def to_representation(self, value):
+        if value:
+            return 'Oui'
+        return 'non'
+
+
+class SecteursSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Secteurs
+        fields = '__all__'
+
+class EquipementSerializer(serializers.ModelSerializer):
+
+    secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom',default=None)
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+
+
+    class Meta:
+        model = Equipement
+        fields = '__all__'
+
 
 class FamilleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -147,21 +170,34 @@ class DocumentUtilitiesSerializer(serializers.ModelSerializer):
         model = DocumentUtilities
         fields = '__all__'
 
+
 #ilyas
-#NC
+class CustomBooleanField(serializers.BooleanField):
+    def to_representation(self, value):
+        if value:
+            return 'Oui'
+        return 'non'
+    
+class CustomBooleanField1(serializers.BooleanField):
+    def to_representation(self, value):
+        if value:
+            return 'Actif'
+        return 'Inactif'
+    
 class NCSerializer(serializers.ModelSerializer):
+    frequence = CustomBooleanField()
+    gravite = CustomBooleanField()
+    action_immediate = CustomBooleanField()
+    nc_cloture = CustomBooleanField()
+    etat=CustomBooleanField1
+
+    processus_name = serializers.ReadOnlyField(source='processus.intitule')
+    site_name = serializers.ReadOnlyField(source='site.site_nom')
+    responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom')
+
     class Meta:
-
-        processus_name = serializers.ReadOnlyField(source='processus.processus_nom',default=None)
-        site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
-        responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom',default=None)
-
-    model = NC
-    fields = '__all__'
-        
-#Serializers Documentation 
-
-class DocumentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Document
+        model = NC
         fields = '__all__'
+
+
+

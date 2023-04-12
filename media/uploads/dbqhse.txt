@@ -1,0 +1,86 @@
+INSERT INTO qhseapi_utilisateur (compte, nom, courrier, numero_tel, presente_vous, image, fonction, adresse_sip, othermail)
+VALUES 
+    ('user1', 'Dupont', 'dupont@example.com', '0123456789', 'Je suis utilisateur 1', 'image1.jpg', 'Fonction 1', 'adresse_sip_1', 'othermail1@example.com'),
+    ('user2', 'Martin', 'martin@example.com', '0987654321', 'Je suis utilisateur 2', 'image2.jpg', 'Fonction 2', 'adresse_sip_2', 'othermail2@example.com'),
+    ('user3', 'Durand', 'durand@example.com', '0123456789', 'Je suis utilisateur 3', 'image3.jpg', 'Fonction 3', 'adresse_sip_3', 'othermail3@example.com');
+
+
+
+INSERT INTO qhseapi_site (site_nom, sigle, groupe_retso, responsable_site_id)
+VALUES 
+     ('Site A', 'SA', 'Groupe 1', 1),
+     ('Site B', 'SB', 'Groupe 2', 2),
+     ('Site C', 'SC', 'Groupe 3', 3);
+
+
+
+INSERT INTO qhseapi_processus (intitule, typologie, sigle, finalite, acteurs, donnee_entree, activites, donnee_sortie, ressources_tech_org, objectifs_ind, outils_surveil, pilote_id)
+VALUES 
+    ('Processus 1', 'Type 1', 'P1', 'Finalité 1', 'Acteur 1', 'Donnée d\'entrée 1', 'Activité 1', 'Donnée de sortie 1', 'Ressources 1', 'Objectifs 1', 'Outils de surveillance 1', 1),
+    ('Processus 2', 'Type 2', 'P2', 'Finalité 2', 'Acteur 2', 'Donnée d\'entrée 2', 'Activité 2', 'Donnée de sortie 2', 'Ressources 2', 'Objectifs 2', 'Outils de surveillance 2', 2),
+    ('Processus 3', 'Type 3', 'P3', 'Finalité 3', 'Acteur 3', 'Donnée d\'entrée 3', 'Activité 3', 'Donnée de sortie 3', 'Ressources 3', 'Objectifs 3', 'Outils de surveillance 3', 3);
+
+
+INSERT INTO qhseapi_commande (date_commande, type_commande, etat_commande, quantite, specificite_regime, specificite_texture)
+VALUES
+    ('2023-04-11', 'Achat de matières premières', 'En attente', 100, 'Halal', 'Liquide'),
+    ('2023-04-12', 'Achat de matières premières', 'En attente', 50, 'Bio', 'Solide'),
+    ('2023-04-13', 'Achat de fournitures', 'Validée', 10, 'Non spécifié', 'Non spécifié');
+
+
+INSERT INTO qhseapi_fichetechnique (fichier, nom_fiche, type_plat)
+VALUES
+    ('fichier1.pdf', 'Fiche technique pour le plat A', 'Entrée'),
+    ('fichier2.pdf', 'Fiche technique pour le plat B', 'Plat principal'),
+    ('fichier3.pdf', 'Fiche technique pour le plat C', 'Dessert');
+
+
+
+INSERT INTO qhseapi_famille (famille_nom)
+VALUES 
+    ('Produits chimiques'),
+    ('Matériaux dangereux'),
+    ('Radiations ionisantes');
+
+
+
+INSERT INTO qhseapi_services (service_nom) 
+VALUES 
+    ('Service A'),
+    ('Service B'),
+    ('Service C');
+
+
+
+INSERT INTO qhseapi_secteurs (secteur_nom)
+VALUES
+    ('Secteur A'),
+    ('Secteur B'),
+    ('Secteur C');
+
+
+
+INSERT INTO qhseapi_nc (intitule, nature, domaine, date_nc, date_prise_en_compte, description_detailee, annee, mois, detail_cause, delai_prevu, type_cause, cout, progress, etat, info_complementaires, piece_jointe, frequence, gravite, action_immediate, nc_cloture, processus_id, responsable_traitement_id, site_id) 
+VALUES 
+('Titre 1', 'Nature 1', 'Domaine 1', '2023-04-11', '2023-04-11', 'Description détaillée 1', 2023, 'Janvier', 'Détail cause 1', '2023-04-15', 'Type cause 1', 10.5, 0.5, 0, 'Informations complémentaires 1', 'pj1.docx', 1, 1, 0, 0, 1, 1, 1),
+('Titre 2', 'Nature 2', 'Domaine 2', '2023-04-12', '2023-04-12', 'Description détaillée 2', 2023, 'Février', 'Détail cause 2', '2023-04-20', 'Type cause 2', 20.5, 0.8, 1, 'Informations complémentaires 2', 'pj2.docx', 2, 2, 1, 1, 2, 2, 2),
+('Titre 3', 'Nature 3', 'Domaine 3', '2023-04-13', '2023-04-13', 'Description détaillée 3', 2023, 'Mars', 'Détail cause 3', '2023-04-25', 'Type cause 3', 30.5, 0.3, 0, 'Informations complémentaires 3', 'pj3.docx', 3, 3, 0, 0, 3, 3, 3);
+
+
+INSERT INTO qhseapi_evenements (type_contract, nom_personne, type_evenement, intitule, resume, temoins, premiere_pers_info, action_immediate, date_accident, periode_travail, lieu_accident, tache_effectue, utiliser_chien, siege_de_lesions_1, siege_de_lesions_2, nature_lesions, service_id, site_id)
+VALUES 
+('Type contrat 1', 'Nom personne 1', 'Type événement 1', 'Intitulé 1', 'Résumé 1', 'Témoins 1', 'Première pers info 1', 'Action immédiate 1', '2023-04-11', 'Période travail 1', 'Lieu accident 1', 'Tâche effectuée 1', 1, 'Siège lésions 1', 'Siège lésions 2', 'Nature lésions 1', 1, 1),
+('Type contrat 2', 'Nom personne 2', 'Type événement 2', 'Intitulé 2', 'Résumé 2', 'Témoins 2', 'Première pers info 2', 'Action immédiate 2', '2023-04-12', 'Période travail 2', 'Lieu accident 2', 'Tâche effectuée 2', 0, 'Siège lésions 3', 'Siège lésions 4', 'Nature lésions 2', 2, 2),
+('Type contrat 3', 'Nom personne 3', 'Type événement 3', 'Intitulé 3', 'Résumé 3', 'Témoins 3', 'Première pers info 3', 'Action immédiate 3', '2023-04-13', 'Période travail 3', 'Lieu accident 3', 'Tâche effectuée 3', 1, 'Siège lésions 5', 'Siège lésions 6', 'Nature lésions 3', 3, 3);
+
+
+INSERT INTO qhseapi_documentutilities (nom, modified_by, modified_date, typologie, document) 
+VALUES 
+('Nom 1', 'Modifié par 1', '2023-04-11 12:00:00.000000', 'Typologie 1', 'doc1.docx'),
+('Nom 2', 'Modifié par 2', '2023-04-12 14:30:00.000000', 'Typologie 2', 'doc2.docx'),
+('Nom 3', 'Modifié par 3', '2023-04-13 16:45:00.000000', 'Typologie 3', 'doc3.docx');
+
+INSERT INTO qhseapi_danger (poste_de_travail, taches, description, consequences, famille_id, service_id, site_id) VALUES 
+('Poste 1', 'Taches 1', 'Description 1', 'Conséquences 1', 1, 1, 1),
+('Poste 2', 'Taches 2', 'Description 2', 'Conséquences 2', 2, 2, 2),
+('Poste 3', 'Taches 3', 'Description 3', 'Conséquences 3', 3, 3, 3);
