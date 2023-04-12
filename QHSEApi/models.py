@@ -51,14 +51,14 @@ class Site(models.Model):
     sigle = models.CharField(max_length=255)
     responsable_site = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     groupe_retso = models.CharField(max_length=255)
-    documents = models.ManyToManyField(Document)
+   # documents = models.ManyToManyField(Document)
 
 class Services(models.Model):
     service_nom = models.CharField(max_length=255)
 
 class Secteurs(models.Model):
     secteur_nom = models.CharField(max_length=255)
-    documents = models.ManyToManyField(Document)
+    #documents = models.ManyToManyField(Document)
     
 
 #*Backend Danger :

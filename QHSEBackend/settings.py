@@ -80,8 +80,7 @@ WSGI_APPLICATION = 'QHSEBackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-import pymysql
-pymysql.install_as_MySQLdb()
+
 
 
 DATABASES = {
@@ -92,6 +91,7 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
+   
     }
 }
 
