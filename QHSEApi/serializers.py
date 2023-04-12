@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC
+from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement
 
 class SiteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -89,7 +89,21 @@ class NCSerializer(serializers.ModelSerializer):
     responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom',default=None)
 
 
-
     class Meta:
         model = NC
+        fields = '__all__'
+
+class SecteursSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Secteurs
+        fields = '__all__'
+
+class EquipementSerializer(serializers.ModelSerializer):
+
+    secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom',default=None)
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+
+
+    class Meta:
+        model = Equipement
         fields = '__all__'

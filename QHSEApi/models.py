@@ -187,5 +187,24 @@ class NC(models.Model):
     nc_cloture=models.BooleanField(null=True)
     responsable_traitement = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
 
+class Secteurs(models.Model):
+    secteur_nom = models.CharField(max_length=255)
+    def __str__(self):
+        return str(self.secteur_nom)
+
+class Equipement(models.Model):
+    site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    secteur=models.ForeignKey(Secteurs, on_delete=models.CASCADE,null=True, default=None)
+    type_equipement=models.CharField(max_length=255)
+    codification=models.CharField(max_length=255)
+    date_mise_en_service=models.DateField()
+    date_modification=models.DateField()
+    verification = models.CharField(max_length=255)
+    prochaine_verification= models.DateField()
+    commentaires=models.CharField(max_length=255)
+    Equipement_declasse=models.CharField(max_length=255)
+    N_serie=models.CharField(max_length=255)
+    Certificat=models.FileField(upload_to='uploads/',null=True, default=None)
+
 
 

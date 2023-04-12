@@ -20,6 +20,9 @@ router.register(r'mesure_efficacite', views.MesureEfficaciteViewSet, basename="m
 router.register(r'processus', views.ProcessusViewSet, basename="processus")
 router.register(r'nc', views.NCViewSet, basename="nc")
 router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur")
+router.register(r'secteurs', views.SecteursViewSet, basename="secteurs")
+router.register(r'equipement', views.EquipementViewSet, basename="equipement")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
