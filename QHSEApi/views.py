@@ -1,3 +1,9 @@
+
+from django.shortcuts import get_object_or_404, render
+from rest_framework.decorators import action
+from rest_framework import viewsets
+import requests
+
 import re
 import requests
 
@@ -41,7 +47,13 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
+
+    NC,
+    Secteurs,
+    Equipement
+
     Famille,
+
 )
 from .serializers import (
     CommandeSerializer,
@@ -69,7 +81,12 @@ from .serializers import (
     TacheSerializer,
     MesureEfficaciteSerializer,
     ProcessusSerializer,
+    NCSerializer,
+    SecteursSerializer,
+    EquipementSerializer
+
     FamilleSerializer,
+
 )
 
 
@@ -91,7 +108,6 @@ class EvaluationDangerViewSet(viewsets.ModelViewSet):
 class SiteViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.all()
     serializer_class = SiteSerializer
-
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()
@@ -218,10 +234,34 @@ class NCViewSet(viewsets.ModelViewSet):
         filename = response.data['filename']
 
         # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
-        response = FileResponse(requests.get(file_url, stream=True).raw)
+
+        response = (requests.get(file_url, stream=True).raw)
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         return response
+    
+class SecteursViewSet(viewsets.ModelViewSet):
+    queryset = Secteurs.objects.all()
+    serializer_class = SecteursSerializer
+
+class EquipementViewSet(viewsets.ModelViewSet):
+    queryset = Equipement.objects.all()
+    serializer_class = EquipementSerializer
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = NC.as_view()
+        response = view(request=request, pk=pk)
+        certificat = response.data['certificat']
+        file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+        response = (requests.get(file_url, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
+
 
 #Document Views Bochra
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -231,3 +271,4 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     
   
+
