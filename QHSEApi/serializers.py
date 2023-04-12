@@ -68,9 +68,16 @@ class EvenementSerializer(serializers.ModelSerializer):
             return None
 
 class AnalyseEvenementSerializer(serializers.ModelSerializer):
+    danger_name = serializers.SerializerMethodField()
     class Meta:
         model = AnalyseEvenement
         fields = '__all__'
+    def get_danger_name(self, obj):
+        danger_lie = obj.danger_lie.all()
+        if danger_lie:
+            return ', '.join(d.description for d in danger_lie)
+        else:
+            return None
 
 class ArretTravailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,9 +85,26 @@ class ArretTravailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ActionSerializer(serializers.ModelSerializer):
+    danger_name = serializers.SerializerMethodField()
+    evenement_name = serializers.SerializerMethodField()
+    Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
+    Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
     class Meta:
         model = Actions
         fields = '__all__'
+    def get_danger_name(self, obj):
+        danger = obj.danger.all()
+        if danger:
+            return ', '.join(d.description for d in danger)
+        else:
+            return None
+            
+    def get_evenement_name(self, obj):
+        evenement = obj.evenement.all()
+        if evenement:
+            return ', '.join(e.intitule for e in evenement)
+        else:
+            return None
 
 class RealisationSerializer(serializers.ModelSerializer):
     class Meta:

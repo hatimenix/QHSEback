@@ -2,6 +2,10 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 
+from django.core.validators import FileExtensionValidator
+import os
+
+
 #*Zakaria
 #*Backend document unique 
 
@@ -87,7 +91,13 @@ class EvaluationDanger(models.Model):
     severite = models.IntegerField()
     frequences_exposition = models.IntegerField()
     mesure_prevention = models.TextField()
+    ipr = models.FloatField()
+    indice_risque = models.IntegerField()
     danger = models.ForeignKey(Danger, on_delete=models.CASCADE)
+    
+    def clean(self):
+        if self.indice_risque not in [1, 2, 3]:
+            raise ValidationError("L'indice de risque doit être 1, 2 ou 3.")
     
 #*Table relation entre Service et Utilisateur 
 class ChefServices(Utilisateur):
@@ -113,7 +123,8 @@ class Evenements(models.Model):
     siege_de_lesions_1 = models.CharField(max_length=255, blank=True)
     siege_de_lesions_2 = models.CharField(max_length=255, blank=True)
     nature_lesions = models.CharField(max_length=255)
-    dangers = models.ManyToManyField(Danger)
+    arret_travail = models.BooleanField()
+    dangers = models.ManyToManyField(Danger, null=True, blank=True)
     
 class AnalyseEvenement(models.Model):
     cause = models.TextField()
@@ -121,12 +132,23 @@ class AnalyseEvenement(models.Model):
     frequences = models.IntegerField()
     severite = models.IntegerField()
     niveau_risque = models.IntegerField()
-    arbe_cause = models.TextField()
-    danger_lie = models.ForeignKey(Danger, on_delete=models.CASCADE)
+    arbe_cause = models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
+    danger_lie = models.ManyToManyField(Danger, null=True, blank=True)
     evenement = models.OneToOneField(Evenements, on_delete=models.CASCADE)
+    
+    def save(self, *args, **kwargs):
+        if self.id:
+            old_instance = AnalyseEvenement.objects.get(id=self.id)
+            if self.arbe_cause != old_instance.arbe_cause:
+                if old_instance.arbe_cause:
+                    os.remove(old_instance.arbe_cause.path)
+        super().save(*args, **kwargs)
 
 class ArretTravail(models.Model):
-    arret = models.BooleanField()
     CMI_volet_recup = models.CharField(max_length=50)
     date_debut_arret = models.DateField()
     date_fin_arret = models.DateField()
@@ -161,45 +183,72 @@ class Processus(models.Model):
 #*Backend Actions :
 class Actions(models.Model):
     intitule = models.CharField(max_length=100)
-    type_action = models.CharField(max_length=50)
+    type_action = models.CharField(max_length=100)
     origine_action = models.CharField(max_length=50)
-    reference = models.CharField(max_length=50, blank=True)
-    domaine = models.CharField(max_length=50)
+    reference = models.CharField(max_length=100, blank=True)
+    domaine = models.CharField(max_length=100)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
-    processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
-    analyse_cause = models.ForeignKey(AnalyseEvenement, on_delete=models.CASCADE)
+    processus = models.ForeignKey(Processus, on_delete=models.CASCADE, blank=True)
+    analyse_cause = models.CharField(max_length=255)
     plan_action = models.TextField()
     delai_mise_en_oeuvre = models.DateField()
-    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    assigne_a = models.CharField(max_length=100)
     priorite = models.IntegerField()
     delai_mesure_eff = models.DateField()
-    type_critere_eff = models.CharField(max_length=50)
+    type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
-    danger = models.ManyToManyField(Danger)
-    evenement = models.ManyToManyField(Evenements)
+    etat = models.CharField(max_length=150)
+    annee = models.DateField(auto_now=True)
+    danger = models.ManyToManyField(Danger, null=True, blank=True)
+    evenement = models.ManyToManyField(Evenements, null=True, blank=True)
+    piece_jointe = models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
+    
+    def save(self, *args, **kwargs):
+        if self.id:
+            old_instance = Actions.objects.get(id=self.id)
+            if self.piece_jointe != old_instance.piece_jointe:
+                if old_instance.piece_jointe:
+                    os.remove(old_instance.piece_jointe.path)
+        super().save(*args, **kwargs)
     
 class Realisation(models.Model):
-    action_realisee = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    action_associe = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    action_realise = models.CharField(max_length=255)
     date_realisation = models.DateField()
     etat = models.CharField(max_length=50)
     
 class Taches(models.Model):
-    source = models.CharField(max_length=50)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
     echeance = models.DateField()
     description = models.TextField()
-    priorite = models.CharField(max_length=50)
-    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    priorite = models.CharField(max_length=100)
+    assigne_a = models.CharField(max_length=100)
     date_realisation = models.DateField()
-    état = models.CharField(max_length=50)
-    commentaire = models.TextField()
-    piece_jointe = models.CharField(max_length=500, null=True, blank=True)
+    état = models.CharField(max_length=100)
+    commentaire = models.TextField(blank=True)
     realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
+    piece_jointe = models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
+    
+    def save(self, *args, **kwargs):
+        if self.id:
+            old_instance = Taches.objects.get(id=self.id)
+            if self.piece_jointe != old_instance.piece_jointe:
+                if old_instance.piece_jointe:
+                    os.remove(old_instance.piece_jointe.path)
+        super().save(*args, **kwargs)
     
 class MesureEfficacite(models.Model):
     date_cloture = models.DateField()
-    resultat_mesure_eff = models.TextField()
+    resultat_mesure_eff = models.CharField(max_length=100)
     mesure_eff = models.TextField()
     cout = models.FloatField()
     action_associee = models.OneToOneField(Actions, on_delete=models.CASCADE)
