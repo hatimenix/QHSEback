@@ -1,7 +1,6 @@
 from django.db import models
+from django.forms import ValidationError
 from django.utils import timezone
-from django.core.validators import FileExtensionValidator
-
 from django.core.validators import FileExtensionValidator
 import os
 
@@ -43,6 +42,8 @@ class Services(models.Model):
 class Secteurs(models.Model):
     secteur_nom = models.CharField(max_length=255)
     #documents = models.ManyToManyField(Document)
+
+
     
 
 #*Backend Danger :
@@ -133,7 +134,24 @@ class ArretTravail(models.Model):
     duree_total_arret = models.IntegerField()
     evenement = models.OneToOneField(Evenements, on_delete=models.CASCADE)
     
+#*Table Processus :
+class Processus(models.Model):
+    intitule = models.CharField(max_length=255)
+    typologie = models.CharField(max_length=255)
+    sigle = models.CharField(max_length=50)
+    finalite = models.TextField()
+    pilote = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    acteurs = models.TextField()
+    donnee_entree = models.TextField()
+    activites = models.TextField()
+    donnee_sortie = models.TextField()
+    ressources_tech_org = models.TextField()
+    objectifs_ind = models.TextField()
+    outils_surveil = models.TextField()
 
+    def __str__(self):
+        return self.intitule
+    
 
     
 #*Backend Actions :
@@ -220,8 +238,8 @@ class Commande(models.Model):
     quantite = models.IntegerField()
     specificite_regime = models.CharField(max_length=50)
     specificite_texture = models.CharField(max_length=50)
-    
-   
+
+  
 
 #modèle de la classe Fiche Technique BOCHRA
 
@@ -373,10 +391,6 @@ class NC(models.Model):
     responsable_traitement = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
 
 
-class Secteurs(models.Model):
-    secteur_nom = models.CharField(max_length=255)
-    def __str__(self):
-        return str(self.secteur_nom)
 
 class Equipement(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)

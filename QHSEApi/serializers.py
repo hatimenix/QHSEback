@@ -1,8 +1,7 @@
 from rest_framework import serializers
+from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 
-from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement
-from .models import Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur, Site, Services, Danger, EvaluationDanger, Traitement, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
-from .models import   FicheTechnique, Secteurs, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+
 
 
 
@@ -126,11 +125,6 @@ class TacheSerializer(serializers.ModelSerializer):
         model = Taches
         fields = '__all__'
 
-class CustomBooleanField(serializers.BooleanField):
-    def to_representation(self, value):
-        if value:
-            return 'Oui'
-        return 'non'
 
 
 class SecteursSerializer(serializers.ModelSerializer):
@@ -210,7 +204,7 @@ class NCSerializer(serializers.ModelSerializer):
     gravite = CustomBooleanField()
     action_immediate = CustomBooleanField()
     nc_cloture = CustomBooleanField()
-    etat=CustomBooleanField1
+    etat=CustomBooleanField1()
 
     processus_name = serializers.ReadOnlyField(source='processus.intitule')
     site_name = serializers.ReadOnlyField(source='site.site_nom')

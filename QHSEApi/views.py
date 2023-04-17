@@ -109,7 +109,8 @@ class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()
     serializer_class = ServiceSerializer
 
-class SecteurViewSet(viewsets.ModelViewSet):
+
+class SecteursViewSet(viewsets.ModelViewSet):
     queryset = Secteurs.objects.all()
     serializer_class = SecteursSerializer
 
@@ -178,18 +179,30 @@ class CommandeViewSet(viewsets.ModelViewSet):
 # CRUD pour les fiches techniques BOCHRA
 
 
-class FicheTechniqueView(APIView):
-    def get(self, request, pk):
-        fiche = get_object_or_404(FicheTechnique, pk=pk)
-        filename = fiche.fichier.name.split('/')[-1]
-        file_url = request.build_absolute_uri(fiche.fichier.url)
-        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url, 'filename': filename})
+class FicheTechniqueViewSet (viewsets.ModelViewSet):
+    queryset = FicheTechnique.objects.all()
+    serializer_class = FicheTechniqueSerializer
 
 
+    
 
 class FicheViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
     serializer_class = FicheTechniqueSerializer
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = FicheTechniqueViewSet.as_view()
+        response = view(request=request, pk=pk)
+        nom_fiche = response.data['nom_fiche']
+        file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+        response = FileResponse(requests.get(file_url, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
 
 #Achraf's views set 
 
@@ -216,6 +229,8 @@ class DocumentutilesViewSet(viewsets.ModelViewSet):
     queryset = DocumentUtilities.objects.all()
     serializer_class = DocumentUtilitiesSerializer
 
+
+#Ilyas
 #Create,update,retrieve and delete table non-conformité :
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
@@ -236,9 +251,7 @@ class NCViewSet(viewsets.ModelViewSet):
 
         return response
     
-class SecteursViewSet(viewsets.ModelViewSet):
-    queryset = Secteurs.objects.all()
-    serializer_class = SecteursSerializer
+
 
 class EquipementViewSet(viewsets.ModelViewSet):
     queryset = Equipement.objects.all()
