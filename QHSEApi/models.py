@@ -38,6 +38,17 @@ class Site(models.Model):
 
 class Services(models.Model):
     service_nom = models.CharField(max_length=255)
+    
+#*Table relation entre Service et Utilisateur 
+class ChefServices(Utilisateur):
+    services = models.ForeignKey(Services, on_delete=models.CASCADE)
+
+class Secteurs(models.Model):
+    secteur_nom = models.CharField(max_length=255)
+    #documents = models.ManyToManyField(Document)
+
+
+    
 
 class Secteurs(models.Model):
     secteur_nom = models.CharField(max_length=255)
@@ -64,7 +75,7 @@ class EvaluationDanger(models.Model):
     probabilite = models.IntegerField()
     severite = models.IntegerField()
     frequences_exposition = models.IntegerField()
-    mesure_prevention = models.TextField()
+    mesure_prevention = models.TextField(null=True, blank=True)
     ipr = models.FloatField()
     indice_risque = models.IntegerField()
     danger = models.ForeignKey(Danger, on_delete=models.CASCADE)
@@ -72,10 +83,7 @@ class EvaluationDanger(models.Model):
     def clean(self):
         if self.indice_risque not in [1, 2, 3]:
             raise ValidationError("L'indice de risque doit être 1, 2 ou 3.")
-    
-#*Table relation entre Service et Utilisateur 
-class ChefServices(Utilisateur):
-    services = models.ForeignKey(Services, on_delete=models.CASCADE)
+        
     
 #*Backend evenemnts :
 class Evenements(models.Model):
@@ -171,7 +179,9 @@ class Actions(models.Model):
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
-    etat = models.CharField(max_length=150, blank=True)
+
+    etat = models.CharField(max_length=150, null=True, blank=True)
+
     annee = models.DateField(auto_now=True)
     danger = models.ManyToManyField(Danger, null=True, blank=True)
     evenement = models.ManyToManyField(Evenements, null=True, blank=True)
@@ -196,15 +206,16 @@ class Realisation(models.Model):
     etat = models.CharField(max_length=50)
     
 class Taches(models.Model):
+    source = models.CharField(max_length=100, null=True, blank=True)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
-    echeance = models.DateField()
-    description = models.TextField()
-    priorite = models.CharField(max_length=100)
-    assigne_a = models.CharField(max_length=100)
-    date_realisation = models.DateField()
-    état = models.CharField(max_length=100)
-    commentaire = models.TextField(blank=True)
+    echeance = models.DateField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    priorite = models.CharField(max_length=100, null=True, blank=True)
+    assigne_a = models.CharField(max_length=100, null=True, blank=True)
+    date_realisation = models.DateField(null=True, blank=True)
+    état = models.CharField(max_length=100, null=True, blank=True)
+    commentaire = models.TextField(null=True, blank=True)
     realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
@@ -362,6 +373,7 @@ class DocumentUtilities(models.Model):
 #ilyas
 
 #Table des non-conformités :
+
 class NC(models.Model):
     intitule = models.CharField(max_length=255)
     nature= models.CharField(max_length=255)
