@@ -50,6 +50,13 @@ class Secteurs(models.Model):
 
     
 
+class Secteurs(models.Model):
+    secteur_nom = models.CharField(max_length=255)
+    #documents = models.ManyToManyField(Document)
+
+
+    
+
 #*Backend Danger :
 class Famille(models.Model):
     famille_nom = models.CharField(max_length=255)
@@ -172,7 +179,9 @@ class Actions(models.Model):
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
+
     etat = models.CharField(max_length=150, null=True, blank=True)
+
     annee = models.DateField(auto_now=True)
     danger = models.ManyToManyField(Danger, null=True, blank=True)
     evenement = models.ManyToManyField(Evenements, null=True, blank=True)
@@ -364,32 +373,31 @@ class DocumentUtilities(models.Model):
 #ilyas
 
 #Table des non-conformités :
-#Table des non-conformités :
+
 class NC(models.Model):
     intitule = models.CharField(max_length=255)
     nature= models.CharField(max_length=255)
 
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
     processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
-    domaine = models.CharField(max_length=255)
+    domaine = models.CharField(blank=True, null=True,max_length=255)
     date_nc=models.DateField()
-    date_prise_en_compte = models.DateField(null=True, default=None)
-    description_detailee= models.TextField(null=True, default=None)
-    annee=models.CharField(max_length=255)
+    date_prise_en_compte = models.DateField(blank=True, null=True, default=None)
+    description_detailee= models.TextField(blank=True, null=True, default=None)
+    annee=models.CharField(blank=True, null=True,max_length=255)
 
-    mois=models.CharField(max_length=255)
-    detail_cause=models.CharField(max_length=255)
-    delai_prevu=models.DateField()
-    type_cause=models.CharField(max_length=255)
-    cout=models.CharField(max_length=255)
-    progress=models.CharField(max_length=255)
-    etat=models.BooleanField()
-    info_complementaires=models.TextField()
-    piece_jointe=models.FileField(upload_to='uploads/',null=True, default=None)
-    frequence=models.BooleanField(null=True)
-    gravite=models.BooleanField(null=True)
-    action_immediate=models.BooleanField(null=True)
-    nc_cloture=models.BooleanField(null=True)
+    mois=models.CharField(blank=True, null=True,max_length=255)
+    detail_cause=models.CharField(blank=True, null=True,max_length=255)
+    delai_prevu=models.DateField(blank=True, null=True)
+    type_cause=models.CharField(blank=True, null=True,max_length=255)
+    cout=models.CharField(blank=True, null=True,max_length=255)
+    progress=models.CharField(blank=True, null=True,max_length=255)
+    info_complementaires=models.TextField(blank=True, null=True)
+    piece_jointe=models.FileField(upload_to='uploads/',blank=True, null=True, default=None)
+    frequence=models.BooleanField(blank=True, null=True)
+    gravite=models.BooleanField(blank=True, null=True)
+    action_immediate=models.BooleanField(blank=True, null=True)
+    nc_cloture=models.BooleanField(blank=True, null=True)
     responsable_traitement = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
 
 

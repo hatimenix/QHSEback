@@ -187,24 +187,9 @@ class DocumentUtilitiesSerializer(serializers.ModelSerializer):
 
 
 #ilyas
-class CustomBooleanField(serializers.BooleanField):
-    def to_representation(self, value):
-        if value:
-            return 'Oui'
-        return 'non'
-    
-class CustomBooleanField1(serializers.BooleanField):
-    def to_representation(self, value):
-        if value:
-            return 'Actif'
-        return 'Inactif'
-    
+
 class NCSerializer(serializers.ModelSerializer):
-    frequence = CustomBooleanField()
-    gravite = CustomBooleanField()
-    action_immediate = CustomBooleanField()
-    nc_cloture = CustomBooleanField()
-    etat=CustomBooleanField1()
+
 
     processus_name = serializers.ReadOnlyField(source='processus.intitule')
     site_name = serializers.ReadOnlyField(source='site.site_nom')

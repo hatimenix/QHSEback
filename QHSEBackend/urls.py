@@ -5,6 +5,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
 
+
+
 router = DefaultRouter()
 router.register(r'site', views.SiteViewSet, basename="site")
 router.register(r'service', views.ServiceViewSet, basename="service")

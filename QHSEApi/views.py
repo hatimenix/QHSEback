@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import action
 from rest_framework import viewsets
 import requests
+import re
+import requests
 
 from argparse import _ActionsContainer
 from django.http import FileResponse, JsonResponse
@@ -14,8 +16,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from rest_framework import viewsets
 from rest_framework import viewsets
+import requests
 
 
 from .models import (
