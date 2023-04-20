@@ -85,7 +85,7 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'qhseapi',
+        'NAME': 'qhsedb',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',

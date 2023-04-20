@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import Site, Services, Danger, Famille, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches
+from .models import Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+
+
+
+
 
 class SiteSerializer(serializers.ModelSerializer):
+    responsable_name = serializers.CharField(source='responsable_site.nom', default=None)
     class Meta:
         model = Site
         fields = '__all__'
@@ -11,12 +16,23 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Services
         fields = '__all__'
 
+class SecteursSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Secteurs
+        fields = '__all__'
+
 class DangerSerializer(serializers.ModelSerializer):
     famille_name = serializers.CharField(source='famille.famille_nom', default=None)
     Site_name = serializers.CharField(source='site.site_nom', default=None)
     service_name = serializers.CharField(source='service.service_nom', default=None)
     class Meta:
         model = Danger
+        fields = '__all__'
+
+#FamilleSerializer
+class FamilleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Famille
         fields = '__all__'
 
 class EvaluationDangerSerializer(serializers.ModelSerializer):
@@ -98,6 +114,8 @@ class MesureEfficaciteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProcessusSerializer(serializers.ModelSerializer):
+    pilote_name = serializers.CharField(source='pilote.nom', default=None)
+                                        
     class Meta:
         model = Processus
         fields = '__all__'
@@ -107,7 +125,94 @@ class TacheSerializer(serializers.ModelSerializer):
         model = Taches
         fields = '__all__'
 
-class FamilleSerializer(serializers.ModelSerializer):
+
+
+class SecteursSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Famille
+        model = Secteurs
         fields = '__all__'
+
+class EquipementSerializer(serializers.ModelSerializer):
+
+    secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom',default=None)
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+
+
+    class Meta:
+        model = Equipement
+        fields = '__all__'
+
+
+
+#Serializer pour la fiche technique BOCHRA 
+class FicheTechniqueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FicheTechnique
+        fields = '__all__'
+
+#Serializer pour la commande BOCHRA
+class CommandeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commande
+        fields = '__all__'
+
+#Achraf's serialisers 
+
+#RGPD MODULE
+  # SOUS MODULE REGISTRE DE TRAITEMENT
+
+#Fournisseur serializers
+class FournisseurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fournisseur
+        fields = '__all__'
+
+#Traitement serializers
+class TraitementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Traitement
+        fields = '__all__'
+
+#Evaluation serializers
+class EvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evaluation
+        fields = '__all__'
+
+#Document utiles  serializers
+class DocumentUtilitiesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DocumentUtilities
+        fields = '__all__'
+
+
+#ilyas
+class CustomBooleanField(serializers.BooleanField):
+    def to_representation(self, value):
+        if value:
+            return 'Oui'
+        return 'non'
+    
+class CustomBooleanField1(serializers.BooleanField):
+    def to_representation(self, value):
+        if value:
+            return 'Actif'
+        return 'Inactif'
+    
+class NCSerializer(serializers.ModelSerializer):
+    frequence = CustomBooleanField()
+    gravite = CustomBooleanField()
+    action_immediate = CustomBooleanField()
+    nc_cloture = CustomBooleanField()
+    etat=CustomBooleanField1()
+
+    processus_name = serializers.ReadOnlyField(source='processus.intitule')
+    site_name = serializers.ReadOnlyField(source='site.site_nom')
+    responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom')
+
+    class Meta:
+        model = NC
+        fields = '__all__'
+
+
+
