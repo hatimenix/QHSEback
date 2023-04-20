@@ -190,6 +190,7 @@ class DocumentUtilitiesSerializer(serializers.ModelSerializer):
 
 class NCSerializer(serializers.ModelSerializer):
 
+
     processus_name = serializers.ReadOnlyField(source='processus.intitule')
     site_name = serializers.ReadOnlyField(source='site.site_nom')
     responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom')
