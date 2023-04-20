@@ -26,6 +26,7 @@ from .models import (
     Commande,
     Danger,
     DocumentUtilities,
+    Documents,
     Evaluation,
 
     
@@ -57,6 +58,7 @@ from .serializers import (
     CommandeSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
+    DocumentsSerializer,
     EvaluationDangerSerializer,
     EvaluationSerializer,
     FamilleSerializer,
@@ -270,23 +272,10 @@ class EquipementViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         return response
-
-
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        view = DocumentViewSet.as_view()
-        response = view(request=request, pk=pk)
-        nom = response.data['nom']
-        url_document = response.data['url_document']
-        filename = response.data['filename']
-
-        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
-        response = FileResponse(requests.get(url_document, stream=True).raw)
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-        return response
-    
-
-    
+   
+#Document
+class DocumentsViewSet(viewsets.ModelViewSet):
+    queryset = Documents.objects.all()
+    serializer_class = DocumentsSerializer
   
 

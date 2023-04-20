@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import  Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from .models import  Documents, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 
 
 
@@ -198,6 +198,12 @@ class NCSerializer(serializers.ModelSerializer):
         model = NC
         fields = '__all__'
 
+
+#Document utiles  serializers
+class DocumentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Documents 
+        fields = '__all__'
 
 
 
