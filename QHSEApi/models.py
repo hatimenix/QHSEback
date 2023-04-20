@@ -171,7 +171,7 @@ class Actions(models.Model):
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
-    etat = models.CharField(max_length=150)
+    etat = models.CharField(max_length=150, blank=True)
     annee = models.DateField(auto_now=True)
     danger = models.ManyToManyField(Danger, null=True, blank=True)
     evenement = models.ManyToManyField(Evenements, null=True, blank=True)
