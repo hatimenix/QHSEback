@@ -26,6 +26,7 @@ from .models import (
     Commande,
     Danger,
     DocumentUtilities,
+    Documents,
     Evaluation,
 
     
@@ -57,6 +58,7 @@ from .serializers import (
     CommandeSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
+    DocumentsSerializer,
     EvaluationDangerSerializer,
     EvaluationSerializer,
     FamilleSerializer,
@@ -270,10 +272,10 @@ class EquipementViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         return response
-
-
-    
-
-    
+   
+#Document
+class DocumentsViewSet(viewsets.ModelViewSet):
+    queryset = Documents.objects.all()
+    serializer_class = DocumentsSerializer
   
 
