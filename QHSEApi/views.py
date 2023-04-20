@@ -1,3 +1,9 @@
+
+from django.shortcuts import get_object_or_404, render
+from rest_framework.decorators import action
+from rest_framework import viewsets
+import requests
+
 import re
 import requests
 
@@ -12,19 +18,25 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
-import requests
-from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
+import requests
+
 from .models import (
+    NC,
     Commande,
     Danger,
-    Document,
+    DocumentUtilities,
+    Evaluation,
+
     
     EvaluationDanger,
+    Famille,
     FicheTechnique,
+    Fournisseur,
     Secteurs,
     Site,
     Services,
+    Traitement,
     Utilisateur,
     ChefServices,
     Evenements,
@@ -35,17 +47,27 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
+
+    NC,
+    Secteurs,
+    Equipement
+
 )
 from .serializers import (
     CommandeSerializer,
     DangerSerializer,
-    DocumentSerializer,
+    DocumentUtilitiesSerializer,
     EvaluationDangerSerializer,
+    EvaluationSerializer,
+    FamilleSerializer,
     FicheTechniqueSerializer,
+    FournisseurSerializer,
+    NCSerializer,
     
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
+    TraitementSerializer,
     UtilisateurSerializer,
     ChefServiceSerializer,
     EvenementSerializer,
@@ -56,12 +78,22 @@ from .serializers import (
     TacheSerializer,
     MesureEfficaciteSerializer,
     ProcessusSerializer,
+    NCSerializer,
+    SecteursSerializer,
+    EquipementSerializer
+
+
 )
 
 
 class DangerViewSet(viewsets.ModelViewSet):
     queryset = Danger.objects.all()
     serializer_class = DangerSerializer
+
+#FamilleViewSet
+class FamilleViewSet(viewsets.ModelViewSet):
+    queryset = Famille.objects.all()
+    serializer_class = FamilleSerializer
 
 
 class EvaluationDangerViewSet(viewsets.ModelViewSet):
@@ -73,12 +105,12 @@ class SiteViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.all()
     serializer_class = SiteSerializer
 
-
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()
     serializer_class = ServiceSerializer
 
-class SecteurViewSet(viewsets.ModelViewSet):
+
+class SecteursViewSet(viewsets.ModelViewSet):
     queryset = Secteurs.objects.all()
     serializer_class = SecteursSerializer
 
@@ -132,7 +164,12 @@ class ProcessusViewSet(viewsets.ModelViewSet):
     serializer_class = ProcessusSerializer
 
 
+class FamilleViewSet(viewsets.ModelViewSet):
+    queryset = Famille.objects.all()
+    serializer_class = FamilleSerializer
+
 # CRUD pour les commandes BOCHRA
+
 
 class CommandeViewSet(viewsets.ModelViewSet):
     queryset = Commande.objects.all()
@@ -142,14 +179,12 @@ class CommandeViewSet(viewsets.ModelViewSet):
 # CRUD pour les fiches techniques BOCHRA
 
 
-class FicheTechniqueView(APIView):
-    def get(self, request, pk):
-        fiche = get_object_or_404(FicheTechnique, pk=pk)
-        filename = fiche.fichier.name.split('/')[-1]
-        file_url = request.build_absolute_uri(fiche.fichier.url)
-        return Response({'nom_fiche': fiche.nom_fiche, 'file_url': file_url, 'filename': filename})
+class FicheTechniqueViewSet (viewsets.ModelViewSet):
+    queryset = FicheTechnique.objects.all()
+    serializer_class = FicheTechniqueSerializer
 
 
+    
 
 class FicheViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
@@ -157,7 +192,7 @@ class FicheViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        view = FicheTechniqueView.as_view()
+        view = FicheTechniqueViewSet.as_view()
         response = view(request=request, pk=pk)
         nom_fiche = response.data['nom_fiche']
         file_url = response.data['file_url']
@@ -169,11 +204,74 @@ class FicheViewSet(viewsets.ModelViewSet):
 
         return response
 
-#Document Views Bochra
-class DocumentViewSet(viewsets.ModelViewSet):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
+#Achraf's views set 
+
+#RGPD MODULE
+  #REGISTRE DE TRAITEMENT
+#Fournisseur view Set Crud
+class FournisseurViewSet(viewsets.ModelViewSet):
+    queryset = Fournisseur.objects.all()
+    serializer_class = FournisseurSerializer
+
+#Traitement view set Crud
+class TraitementViewSet(viewsets.ModelViewSet):
+    queryset = Traitement.objects.all()
+    serializer_class = TraitementSerializer
     
+#Traitement view set Crud
+class EvaluationViewSet(viewsets.ModelViewSet):
+    queryset = Evaluation.objects.all()
+    serializer_class = EvaluationSerializer
+
+#Docuements utiles
+
+class DocumentutilesViewSet(viewsets.ModelViewSet):
+    queryset = DocumentUtilities.objects.all()
+    serializer_class = DocumentUtilitiesSerializer
+
+
+#Ilyas
+#Create,update,retrieve and delete table non-conformité :
+class NCViewSet(viewsets.ModelViewSet):
+    queryset = NC.objects.all()
+    serializer_class = NCSerializer
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = NC.as_view()
+        response = view(request=request, pk=pk)
+        piece_jointe = response.data['piece jointe']
+        file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+
+        response = (requests.get(file_url, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
+    
+
+
+class EquipementViewSet(viewsets.ModelViewSet):
+    queryset = Equipement.objects.all()
+    serializer_class = EquipementSerializer
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        view = NC.as_view()
+        response = view(request=request, pk=pk)
+        certificat = response.data['certificat']
+        file_url = response.data['file_url']
+        filename = response.data['filename']
+
+        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
+        response = (requests.get(file_url, stream=True).raw)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
+
+
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         view = DocumentViewSet.as_view()
@@ -191,3 +289,4 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     
   
+
