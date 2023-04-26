@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import action
 from rest_framework import viewsets
 import requests
-
 import re
 import requests
 
@@ -17,9 +16,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from rest_framework import viewsets
 from rest_framework import viewsets
 import requests
+
 
 from .models import (
     NC,
@@ -28,8 +29,6 @@ from .models import (
     DocumentUtilities,
     Documents,
     Evaluation,
-
-    
     EvaluationDanger,
     Famille,
     FavorisDocument,
@@ -50,7 +49,6 @@ from .models import (
     Taches,
     MesureEfficacite,
     Processus,
-
     NC,
     Secteurs,
     Equipement
@@ -69,7 +67,6 @@ from .serializers import (
     FournisseurSerializer,
     HistoriqueDocumentSerializer,
     NCSerializer,
-    
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
@@ -87,8 +84,6 @@ from .serializers import (
     NCSerializer,
     SecteursSerializer,
     EquipementSerializer
-
-
 )
 
 
