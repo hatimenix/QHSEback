@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import  Documents, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from .models import  Documents, HistoriqueDocument, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 
 
 
@@ -202,8 +202,24 @@ class NCSerializer(serializers.ModelSerializer):
 
 #Document utiles  serializers
 class DocumentsSerializer(serializers.ModelSerializer):
+    processus_name = serializers.ReadOnlyField(source='processus.intitule')
+    site_name = serializers.ReadOnlyField(source='site.site_nom')
+    secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom')
+    personnel_name = serializers.ReadOnlyField(source='utilisateur.nom')
+
     class Meta:
         model = Documents 
+        fields = '__all__'
+
+
+class HistoriqueDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoriqueDocument
+        fields = '__all__'
+
+class FavorisDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoriqueDocument
         fields = '__all__'
 
 

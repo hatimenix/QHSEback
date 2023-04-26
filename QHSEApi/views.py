@@ -31,8 +31,10 @@ from .models import (
     Evaluation,
     EvaluationDanger,
     Famille,
+    FavorisDocument,
     FicheTechnique,
     Fournisseur,
+    HistoriqueDocument,
     Secteurs,
     Site,
     Services,
@@ -60,8 +62,10 @@ from .serializers import (
     EvaluationDangerSerializer,
     EvaluationSerializer,
     FamilleSerializer,
+    FavorisDocumentSerializer,
     FicheTechniqueSerializer,
     FournisseurSerializer,
+    HistoriqueDocumentSerializer,
     NCSerializer,
     SecteursSerializer,
     SiteSerializer,
@@ -273,4 +277,10 @@ class DocumentsViewSet(viewsets.ModelViewSet):
     queryset = Documents.objects.all()
     serializer_class = DocumentsSerializer
   
+class HistoriqueDocumentViewSet(viewsets.ModelViewSet):
+    queryset = HistoriqueDocument.objects.all()
+    serializer_class = HistoriqueDocumentSerializer
 
+class FavorisDocumentViewSet(viewsets.ModelViewSet):
+    queryset = FavorisDocument.objects.all()
+    serializer_class = FavorisDocumentSerializer
