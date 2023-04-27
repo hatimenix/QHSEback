@@ -27,11 +27,14 @@ from .models import (
     Commande,
     Danger,
     DocumentUtilities,
+    Documents,
     Evaluation,
     EvaluationDanger,
     Famille,
+    FavorisDocument,
     FicheTechnique,
     Fournisseur,
+    HistoriqueDocument,
     Secteurs,
     Site,
     Services,
@@ -55,11 +58,14 @@ from .serializers import (
     CommandeSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
+    DocumentsSerializer,
     EvaluationDangerSerializer,
     EvaluationSerializer,
     FamilleSerializer,
+    FavorisDocumentSerializer,
     FicheTechniqueSerializer,
     FournisseurSerializer,
+    HistoriqueDocumentSerializer,
     NCSerializer,
     SecteursSerializer,
     SiteSerializer,
@@ -265,10 +271,16 @@ class EquipementViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         return response
-
-
-    
-
-    
+   
+#Document
+class DocumentsViewSet(viewsets.ModelViewSet):
+    queryset = Documents.objects.all()
+    serializer_class = DocumentsSerializer
   
+class HistoriqueDocumentViewSet(viewsets.ModelViewSet):
+    queryset = HistoriqueDocument.objects.all()
+    serializer_class = HistoriqueDocumentSerializer
 
+class FavorisDocumentViewSet(viewsets.ModelViewSet):
+    queryset = FavorisDocument.objects.all()
+    serializer_class = FavorisDocumentSerializer
