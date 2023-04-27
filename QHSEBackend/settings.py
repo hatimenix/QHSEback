@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'QHSEBackend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'QHSEDB',
+        'NAME': 'qhsedb',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
