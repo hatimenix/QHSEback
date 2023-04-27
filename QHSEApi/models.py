@@ -425,10 +425,28 @@ class Documents(models.Model):
     version = models.IntegerField()
     date_approbation = models.DateField()
     date_previsionnelle = models.DateField()
+    #change the type 
     nv_version = models.CharField(max_length=255)
     type_docs = models.CharField(max_length=255)
     url_document = models.FileField(upload_to='documents/')
+    #add blank true
     icon = models.CharField(max_length=255, blank=True)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     secteur = models.ForeignKey(Secteurs, on_delete=models.CASCADE)
+    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, default=None)
+
+class HistoriqueDocument(models.Model):
+    document = models.ForeignKey(Documents, on_delete=models.CASCADE)
+    version = models.IntegerField()
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    description_modif = models.CharField(max_length=255)
+    date_modif = models.DateTimeField(auto_now_add=True)
+
+class FavorisDocument(models.Model):
+    document = models.ForeignKey(Documents, on_delete=models.CASCADE)
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('document', 'utilisateur'),)
+
