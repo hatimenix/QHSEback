@@ -437,12 +437,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='actions',
             name='danger',
-            field=models.ManyToManyField(blank=True, null=True, to='QHSEApi.danger'),
+            field=models.ManyToManyField(blank=True, db_constraint=False, null=True, to='QHSEApi.danger'),
         ),
         migrations.AddField(
             model_name='actions',
             name='evenement',
-            field=models.ManyToManyField(blank=True, null=True, to='QHSEApi.evenements'),
+            field=models.ManyToManyField(blank=True, db_constraint=False, null=True, to='QHSEApi.evenements'),
         ),
         migrations.AddField(
             model_name='actions',
