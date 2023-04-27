@@ -179,12 +179,10 @@ class Actions(models.Model):
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
     detail_critere_eff = models.TextField()
-
-    etat = models.CharField(max_length=150, null=True, blank=True)
-
+    etat = models.CharField(max_length=150, default='Non commencé')
     annee = models.DateField(auto_now=True)
-    danger = models.ManyToManyField(Danger, null=True, blank=True)
-    evenement = models.ManyToManyField(Evenements, null=True, blank=True)
+    danger = models.ManyToManyField(Danger, null=True, blank=True, db_constraint=False)
+    evenement = models.ManyToManyField(Evenements, null=True, blank=True, db_constraint=False)
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
                             blank=True,
@@ -214,13 +212,13 @@ class Taches(models.Model):
     priorite = models.CharField(max_length=100, null=True, blank=True)
     assigne_a = models.CharField(max_length=100, null=True, blank=True)
     date_realisation = models.DateField(null=True, blank=True)
-    état = models.CharField(max_length=100, null=True, blank=True)
+    etat = models.CharField(max_length=100, null=True, blank=True)
     commentaire = models.TextField(null=True, blank=True)
     realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
                             blank=True,
-                            default=None,                            
+                            default=None,
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     
     def save(self, *args, **kwargs):

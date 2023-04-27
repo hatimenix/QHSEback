@@ -146,9 +146,16 @@ class EquipementSerializer(serializers.ModelSerializer):
 
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
+    fichier = serializers.SerializerMethodField()
     class Meta:
         model = FicheTechnique
         fields = '__all__'
+
+    def get_fichier(self, obj):
+        if obj.fichier:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.fichier.url)
+        return None
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
@@ -206,10 +213,18 @@ class DocumentsSerializer(serializers.ModelSerializer):
     site_name = serializers.ReadOnlyField(source='site.site_nom')
     secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom')
     personnel_name = serializers.ReadOnlyField(source='utilisateur.nom')
+    url_document = serializers.SerializerMethodField()
 
     class Meta:
         model = Documents 
         fields = '__all__'
+
+    def get_url_document(self, obj):
+        if obj.url_document:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.url_document.url)
+        return None
+
 
 
 class HistoriqueDocumentSerializer(serializers.ModelSerializer):
