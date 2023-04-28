@@ -448,3 +448,15 @@ class FavorisDocument(models.Model):
     class Meta:
         unique_together = (('document', 'utilisateur'),)
 
+#modele de gestion des menus Bochra 
+
+class Menus(models.Model):
+    mois_concerne = models.CharField(max_length=255)
+    menus_generaux = models.FileField(upload_to='documents/',blank=True)
+    menus_dessert = models.FileField(upload_to='documents/',blank=True)
+    menu_s1 = models.FileField(upload_to='documents/',blank=True)
+    menu_s2 = models.FileField(upload_to='documents/',blank=True)
+    menu_s3 = models.FileField(upload_to='documents/',blank=True)
+    menu_s4 = models.FileField(upload_to='documents/',blank=True)
+    menu_s5 = models.FileField(upload_to='documents/',blank=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)

@@ -35,6 +35,7 @@ from .models import (
     FicheTechnique,
     Fournisseur,
     HistoriqueDocument,
+    Menus,
     Secteurs,
     Site,
     Services,
@@ -66,6 +67,7 @@ from .serializers import (
     FicheTechniqueSerializer,
     FournisseurSerializer,
     HistoriqueDocumentSerializer,
+    MenusSerializer,
     NCSerializer,
     SecteursSerializer,
     SiteSerializer,
@@ -273,6 +275,8 @@ class EquipementViewSet(viewsets.ModelViewSet):
         return response
    
 #Document
+
+
 class DocumentsViewSet(viewsets.ModelViewSet):
     queryset = Documents.objects.all()
     serializer_class = DocumentsSerializer
@@ -284,3 +288,9 @@ class HistoriqueDocumentViewSet(viewsets.ModelViewSet):
 class FavorisDocumentViewSet(viewsets.ModelViewSet):
     queryset = FavorisDocument.objects.all()
     serializer_class = FavorisDocumentSerializer
+
+
+#Menus
+class MenusViewSet(viewsets.ModelViewSet):
+    queryset = Menus.objects.all()
+    serializer_class = MenusSerializer
