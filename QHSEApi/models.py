@@ -418,13 +418,13 @@ class Documents(models.Model):
     #change the type 
     nv_version = models.CharField(max_length=255)
     type_docs = models.CharField(max_length=255)
-    url_document = models.FileField(upload_to='documents/')
+    url_document = models.FileField(upload_to='documents/',blank=True)
     #add blank true
     icon = models.CharField(max_length=255, blank=True)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     secteur = models.ForeignKey(Secteurs, on_delete=models.CASCADE)
-    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, default=None)
+    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
 
 class HistoriqueDocument(models.Model):
     document = models.ForeignKey(Documents, on_delete=models.CASCADE)
