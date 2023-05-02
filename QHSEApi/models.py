@@ -292,41 +292,33 @@ class Fournisseur(models.Model):
 #Traitement model 
 class Traitement(models.Model):
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
-    REFtraitement = models.CharField(max_length=255,blank=True, null=True)
+    typeregistre = models.CharField(max_length=255,blank=True, null=True)
     nomtraitement = models.CharField(max_length=255,blank=True, null=True)
+    description_generale=models.TextField(blank=True, null=True)
     datedecreation = models.DateTimeField(auto_now_add=True)
     datedemiseajour = models.DateTimeField(auto_now=True)
-    donneesensible = models.BooleanField()
-    personneconcernee = models.CharField(max_length=255,blank=True, null=True)
-    precision = models.CharField(max_length=255,blank=True, null=True)
-    typeregistre = models.CharField(max_length=255,blank=True, null=True)
+    responsable_traitement=models.CharField(max_length=255,blank=True, null=True)
     finaliteprincipale = models.TextField(blank=True, null=True)
     sous_finalite1 = models.TextField(blank=True, null=True)
     sous_finalite2 = models.TextField(blank=True, null=True)
     sous_finalite3 = models.TextField(blank=True, null=True)
     sous_finalite4 = models.TextField(blank=True, null=True)
+    donneesensible = models.BooleanField(blank=True, null=True)
+    type_donnee=models.CharField(max_length=255,blank=True, null=True)
     categorie = models.CharField(max_length=255,blank=True, null=True)
     description = models.CharField(max_length=255,blank=True, null=True)
     dureedeconcesrvation = models.CharField(max_length=255,blank=True, null=True)
-    mtypedemesuredesecurite = models.CharField(max_length=255,blank=True, null=True)
-    precisiondumesuredesecurite = models.CharField(max_length=255,blank=True, null=True)
-    typedestinataire = models.CharField(max_length=255,blank=True, null=True)
+    personneconcernees = models.CharField(max_length=255,blank=True, null=True)
     precisions = models.CharField(max_length=255,blank=True, null=True)
-    donneeconcernee = models.CharField(max_length=255,blank=True, null=True)
+    typedestinataire = models.CharField(max_length=255,blank=True, null=True)
+    precision = models.CharField(max_length=255,blank=True, null=True)
+    donneeconcernees = models.CharField(max_length=255,blank=True, null=True)
+    mtypedemesuredesecurite = models.CharField(max_length=255,blank=True, null=True)
     destinataire = models.CharField(max_length=255,blank=True, null=True)
     pays = models.CharField(max_length=255,blank=True, null=True)
     typedegarantie = models.CharField(max_length=255,blank=True, null=True)
     lienversladocumentation = models.CharField(max_length=255,blank=True, null=True)
     lesdonneesconcernee = models.CharField(max_length=255,blank=True, null=True)
-    prenomnomresptraitement = models.CharField(max_length=255,blank=True, null=True)
-    emailresptraitement = models.CharField(max_length=255,blank=True, null=True)
-    telephonereesptraitement = models.CharField(max_length=255,blank=True, null=True)
-    prenommomDPO = models.CharField(max_length=255,blank=True, null=True)
-    EmailDPO = models.CharField(max_length=255,blank=True, null=True)
-    telephoneDPO = models.CharField(max_length=255,blank=True, null=True)
-    prenomnomrepresentant = models.CharField(max_length=255,blank=True, null=True)
-    emailrepresentant = models.CharField(max_length=255,blank=True, null=True)
-    telephonerepresentant = models.CharField(max_length=255,blank=True, null=True)
     
     def save(self, *args, **kwargs):
         if not self.id:  # only set REFtraitement if it's a new object
@@ -426,13 +418,13 @@ class Documents(models.Model):
     #change the type 
     nv_version = models.CharField(max_length=255)
     type_docs = models.CharField(max_length=255)
-    url_document = models.FileField(upload_to='documents/')
+    url_document = models.FileField(upload_to='documents/',blank=True)
     #add blank true
     icon = models.CharField(max_length=255, blank=True)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     secteur = models.ForeignKey(Secteurs, on_delete=models.CASCADE)
-    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, default=None)
+    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
 
 class HistoriqueDocument(models.Model):
     document = models.ForeignKey(Documents, on_delete=models.CASCADE)
@@ -447,4 +439,23 @@ class FavorisDocument(models.Model):
 
     class Meta:
         unique_together = (('document', 'utilisateur'),)
+
+#modele de gestion des menus Bochra 
+
+import os
+
+class Menus(models.Model):
+    mois_concerne = models.CharField(max_length=255)
+    menus_generaux = models.FileField(upload_to='documents/',blank=True)
+    menus_dessert = models.FileField(upload_to='documents/',blank=True)
+    menu_s1 = models.FileField(upload_to='documents/',blank=True)
+    menu_s2 = models.FileField(upload_to='documents/',blank=True)
+    menu_s3 = models.FileField(upload_to='documents/',blank=True)
+    menu_s4 = models.FileField(upload_to='documents/',blank=True)
+    menu_s5 = models.FileField(upload_to='documents/',blank=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+
+   
+
+
 

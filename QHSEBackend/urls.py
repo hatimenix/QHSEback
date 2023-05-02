@@ -37,6 +37,7 @@ router.register(r'famille', views.FamilleViewSet, basename="famille")
 router.register(r'documentation', views.DocumentsViewSet, basename="documentation")
 router.register(r'historiqueDocument', views.HistoriqueDocumentViewSet, basename="historiqueDocument")
 router.register(r'favorisDocument', views.FavorisDocumentViewSet, basename="favorisDocument")
+router.register(r'menus', views.MenusViewSet, basename="menus")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

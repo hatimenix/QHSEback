@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import  Documents, HistoriqueDocument, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from .models import  Documents, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from QHSEApi import models
 
 
 
@@ -146,9 +147,16 @@ class EquipementSerializer(serializers.ModelSerializer):
 
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
+    fichier = serializers.SerializerMethodField()
     class Meta:
         model = FicheTechnique
         fields = '__all__'
+
+    def get_fichier(self, obj):
+        if obj.fichier:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.fichier.url)
+        return None
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
@@ -181,9 +189,16 @@ class EvaluationSerializer(serializers.ModelSerializer):
 
 #Document utiles  serializers
 class DocumentUtilitiesSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
     class Meta:
         model = DocumentUtilities
         fields = '__all__'
+
+    def get_image(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.image.url)
+        return None
 
 
 #ilyas
@@ -200,7 +215,7 @@ class NCSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-#Document utiles  serializers
+#Documentation  serializers
 class DocumentsSerializer(serializers.ModelSerializer):
     processus_name = serializers.ReadOnlyField(source='processus.intitule')
     site_name = serializers.ReadOnlyField(source='site.site_nom')
@@ -230,7 +245,14 @@ class FavorisDocumentSerializer(serializers.ModelSerializer):
         model = HistoriqueDocument
         fields = '__all__'
 
+#menu serializer 
 
+class MenusSerializer(serializers.ModelSerializer):
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+    class Meta: 
+        model = Menus
+        fields = '__all__'
+    
 
 
 
