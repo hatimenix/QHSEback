@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import  Documents, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from QHSEApi import models
 
 
 
@@ -247,8 +248,11 @@ class FavorisDocumentSerializer(serializers.ModelSerializer):
 #menu serializer 
 
 class MenusSerializer(serializers.ModelSerializer):
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
     class Meta: 
         model = Menus
         fields = '__all__'
+    
+
 
 

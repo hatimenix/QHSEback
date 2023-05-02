@@ -442,6 +442,8 @@ class FavorisDocument(models.Model):
 
 #modele de gestion des menus Bochra 
 
+import os
+
 class Menus(models.Model):
     mois_concerne = models.CharField(max_length=255)
     menus_generaux = models.FileField(upload_to='documents/',blank=True)
@@ -452,3 +454,8 @@ class Menus(models.Model):
     menu_s4 = models.FileField(upload_to='documents/',blank=True)
     menu_s5 = models.FileField(upload_to='documents/',blank=True)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
+
+   
+
+
+
