@@ -420,13 +420,13 @@ class Documents(models.Model):
     #change the type 
     nv_version = models.CharField(max_length=255)
     type_docs = models.CharField(max_length=255)
-    url_document = models.FileField(upload_to='documents/')
+    url_document = models.FileField(upload_to='documents/',blank=True)
     #add blank true
     icon = models.CharField(max_length=255, blank=True)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     secteur = models.ForeignKey(Secteurs, on_delete=models.CASCADE)
-    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, default=None)
+    personnel = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
 
 class HistoriqueDocument(models.Model):
     document = models.ForeignKey(Documents, on_delete=models.CASCADE)
@@ -441,4 +441,23 @@ class FavorisDocument(models.Model):
 
     class Meta:
         unique_together = (('document', 'utilisateur'),)
+
+#modele de gestion des menus Bochra 
+
+import os
+
+class Menus(models.Model):
+    mois_concerne = models.CharField(max_length=255)
+    menus_generaux = models.FileField(upload_to='documents/',blank=True)
+    menus_dessert = models.FileField(upload_to='documents/',blank=True)
+    menu_s1 = models.FileField(upload_to='documents/',blank=True)
+    menu_s2 = models.FileField(upload_to='documents/',blank=True)
+    menu_s3 = models.FileField(upload_to='documents/',blank=True)
+    menu_s4 = models.FileField(upload_to='documents/',blank=True)
+    menu_s5 = models.FileField(upload_to='documents/',blank=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+
+   
+
+
 
