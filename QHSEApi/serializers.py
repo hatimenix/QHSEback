@@ -177,6 +177,11 @@ class FournisseurSerializer(serializers.ModelSerializer):
 
 #Traitement serializers
 class TraitementSerializer(serializers.ModelSerializer):
+    
+    fournisseur_name = serializers.ReadOnlyField(source='fournisseur.nom')
+    fournisseur_dpoName = serializers.ReadOnlyField(source='fournisseur_dpo.nom')
+    fournisseur_representantName = serializers.ReadOnlyField(source='fournisseur_representant.nom')
+
     class Meta:
         model = Traitement
         fields = '__all__'
