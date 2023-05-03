@@ -319,6 +319,8 @@ class Traitement(models.Model):
     typedegarantie = models.CharField(max_length=255,blank=True, null=True)
     lienversladocumentation = models.CharField(max_length=255,blank=True, null=True)
     lesdonneesconcernee = models.CharField(max_length=255,blank=True, null=True)
+    fournisseur_dpo = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, related_name='traitements_dpo')
+    fournisseur_representant = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, related_name='traitements_representant')
     
     def save(self, *args, **kwargs):
         if not self.id:  # only set REFtraitement if it's a new object
