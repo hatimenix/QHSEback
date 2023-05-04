@@ -5,7 +5,8 @@ from rest_framework import viewsets
 import requests
 import re
 import requests
-
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
 from argparse import _ActionsContainer
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -239,39 +240,23 @@ class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer
 
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        view = NC.as_view()
-        response = view(request=request, pk=pk)
-        piece_jointe = response.data['piece jointe']
-        file_url = response.data['file_url']
-        filename = response.data['filename']
-
-        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
-
-        response = (requests.get(file_url, stream=True).raw)
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
+    @api_view(['GET'])
+    def download_file(request, pk):
+        piece_jointe = get_object_or_404(NC, pk=pk)
+        response = FileResponse(piece_jointe.file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(piece_jointe.filename)
         return response
-    
 
 
 class EquipementViewSet(viewsets.ModelViewSet):
     queryset = Equipement.objects.all()
     serializer_class = EquipementSerializer
 
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        view = NC.as_view()
-        response = view(request=request, pk=pk)
-        certificat = response.data['certificat']
-        file_url = response.data['file_url']
-        filename = response.data['filename']
-
-        # Créer une réponse pour le téléchargement du fichier avec le nom de fichier correct
-        response = (requests.get(file_url, stream=True).raw)
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
+    @api_view(['GET'])
+    def download_file(request, pk):
+        Certificat = get_object_or_404(Equipement, pk=pk)
+        response = FileResponse(Certificat.file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(Certificat.filename)
         return response
    
 #Document
