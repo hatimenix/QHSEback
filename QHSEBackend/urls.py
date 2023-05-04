@@ -27,7 +27,6 @@ router.register(r'equipement', views.EquipementViewSet, basename="equipement")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
 #les routes pour commande et fiche 
 router.register(r'commande', views.CommandeViewSet, basename="commande")
-router.register(r'fiche', views.FicheViewSet, basename="fiche")
 router.register(r'fournisseurs',views.FournisseurViewSet)
 router.register(r'traitements', views.TraitementViewSet)
 #router.register(r'evaluations',views.EvaluationViewSet)
@@ -38,6 +37,7 @@ router.register(r'documentation', views.DocumentsViewSet, basename="documentatio
 router.register(r'historiqueDocument', views.HistoriqueDocumentViewSet, basename="historiqueDocument")
 router.register(r'favorisDocument', views.FavorisDocumentViewSet, basename="favorisDocument")
 router.register(r'menus', views.MenusViewSet, basename="menus")
+router.register(r'fiche', views.FicheTechniqueViewSet, basename="fiche")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

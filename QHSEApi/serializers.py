@@ -1,8 +1,12 @@
+from django.http import FileResponse
 from rest_framework import serializers
 from .models import  Documents, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 from QHSEApi import models
 
-
+from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import FicheTechnique
 
 
 
@@ -148,15 +152,17 @@ class EquipementSerializer(serializers.ModelSerializer):
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
     fichier = serializers.SerializerMethodField()
+
     class Meta:
         model = FicheTechnique
         fields = '__all__'
 
     def get_fichier(self, obj):
+        request = self.context.get('request')
         if obj.fichier:
-            request = self.context.get('request')
             return request.build_absolute_uri(obj.fichier.url)
         return None
+    
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
