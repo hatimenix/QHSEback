@@ -147,16 +147,12 @@ class EquipementSerializer(serializers.ModelSerializer):
 
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
-    fichier = serializers.SerializerMethodField()
+    
     class Meta:
         model = FicheTechnique
         fields = '__all__'
 
-    def get_fichier(self, obj):
-        if obj.fichier:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.fichier.url)
-        return None
+ 
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):

@@ -293,28 +293,9 @@ class MenusViewSet(viewsets.ModelViewSet):
     queryset = Menus.objects.all()
     serializer_class = MenusSerializer
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
 
-        # Loop through the menus and extract the filenames
-        for menu in serializer.data:
-            if menu['menus_generaux'] is not None:
-                menu['menus_generaux'] = menu['menus_generaux'].split('/')[-1]
-            if menu['menus_dessert'] is not None:
-                menu['menus_dessert'] = menu['menus_dessert'].split('/')[-1]
-            if menu['menu_s1'] is not None:
-                menu['menu_s1'] = menu['menu_s1'].split('/')[-1]
-            if menu['menu_s2'] is not None:
-                menu['menu_s2'] = menu['menu_s2'].split('/')[-1]
-            if menu['menu_s3'] is not None:
-                menu['menu_s3'] = menu['menu_s3'].split('/')[-1]
-            if menu['menu_s4'] is not None:
-                menu['menu_s4'] = menu['menu_s4'].split('/')[-1]
-            if menu['menu_s5'] is not None:
-                menu['menu_s5'] = menu['menu_s5'].split('/')[-1]
 
-        return Response(serializer.data)
+  
 
     
 
