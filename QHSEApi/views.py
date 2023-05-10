@@ -232,6 +232,12 @@ class EvaluationViewSet(viewsets.ModelViewSet):
 class DocumentutilesViewSet(viewsets.ModelViewSet):
     queryset = DocumentUtilities.objects.all()
     serializer_class = DocumentUtilitiesSerializer
+    @api_view(['GET'])
+    def download_file(request, pk):
+        document = get_object_or_404(DocumentUtilities, pk=pk)
+        response = FileResponse(document.file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(document.filename)
+        return response
 
 
 #Ilyas

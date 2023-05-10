@@ -193,17 +193,20 @@ class EvaluationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 #Document utiles  serializers
+class CustomDateField(serializers.ReadOnlyField):
+    def to_representation(self, value):
+        # Convert the datetime object to the desired format
+        formatted_date = value.strftime('%Y-%m-%d')
+
+        # Return the formatted date
+        return formatted_date
 class DocumentUtilitiesSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+
+    modified_date = CustomDateField()
+
     class Meta:
         model = DocumentUtilities
         fields = '__all__'
-
-    def get_image(self, obj):
-        if obj.image:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.image.url)
-        return None
 
 
 #ilyas
