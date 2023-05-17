@@ -2,7 +2,9 @@ from django.db import models
 from django.forms import ValidationError
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
+from django.contrib.auth.models import AbstractUser
 import os
+
 
 
 #*Zakaria
@@ -319,6 +321,8 @@ class Traitement(models.Model):
     typedegarantie = models.CharField(max_length=255,blank=True, null=True)
     lienversladocumentation = models.CharField(max_length=255,blank=True, null=True)
     lesdonneesconcernee = models.CharField(max_length=255,blank=True, null=True)
+    fournisseur_dpo = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, related_name='traitements_dpo')
+    fournisseur_representant = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, related_name='traitements_representant')
     
     def save(self, *args, **kwargs):
         if not self.id:  # only set REFtraitement if it's a new object
@@ -455,7 +459,32 @@ class Menus(models.Model):
     menu_s5 = models.FileField(upload_to='documents/',blank=True)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
 
-   
+
+#UserApp/ Groupes et les droits d'accès 
+
+class UserApp(models.Model):
+    nom_user = models.CharField(max_length=100)
+    nom_complet = models.CharField(max_length=100)
+    mot_de_passe = models.CharField(max_length=100)
+    adresse_email = models.EmailField()
+    actif = models.BooleanField()
+    groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
+
+    def envoyer_email(self):
+        # Logique pour envoyer un e-mail de bienvenue
+        pass
+
+class GroupeUser(models.Model):
+    nom = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True, default=None)
+    proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
+    membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
+    
+
+
+
+
+
 
 
 

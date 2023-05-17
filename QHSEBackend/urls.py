@@ -38,6 +38,11 @@ router.register(r'documentation', views.DocumentsViewSet, basename="documentatio
 router.register(r'historiqueDocument', views.HistoriqueDocumentViewSet, basename="historiqueDocument")
 router.register(r'favorisDocument', views.FavorisDocumentViewSet, basename="favorisDocument")
 router.register(r'menus', views.MenusViewSet, basename="menus")
+#users and groupes 
+router.register(r'userapp', views.UserAppViewSet, basename="userapp")
+router.register(r'groupeUser', views.GroupeUserViewSet, basename="groupeUser")
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import  Documents, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 from QHSEApi import models
 
 
@@ -173,6 +173,11 @@ class FournisseurSerializer(serializers.ModelSerializer):
 
 #Traitement serializers
 class TraitementSerializer(serializers.ModelSerializer):
+    
+    fournisseur_name = serializers.ReadOnlyField(source='fournisseur.nom')
+    fournisseur_dpoName = serializers.ReadOnlyField(source='fournisseur_dpo.nom')
+    fournisseur_representantName = serializers.ReadOnlyField(source='fournisseur_representant.nom')
+
     class Meta:
         model = Traitement
         fields = '__all__'
@@ -249,6 +254,28 @@ class MenusSerializer(serializers.ModelSerializer):
         model = Menus
         fields = '__all__'
     
+#User/Groupes 
+
+class UserAppSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = UserApp
+        fields = '__all__'
+
+class GroupeUserSerializer(serializers.ModelSerializer):
+    proprietaire_groupe_names = serializers.SerializerMethodField()
+    membres_names = serializers.SerializerMethodField()
+
+    class Meta:
+        model = GroupeUser
+        fields = '__all__'
+
+    def get_proprietaire_groupe_names(self, obj):
+        proprietaire_groupe = obj.proprietaire_groupe.all()
+        return [user.nom_user for user in proprietaire_groupe]
+    def get_membres_names(self, obj):
+        membres = obj.membres.all()
+        return [user.nom_user for user in membres]
 
 
 

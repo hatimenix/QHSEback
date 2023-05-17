@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import NC, Site, Utilisateur,Services,Famille,Danger,EvaluationDanger,ChefServices,Evenements,AnalyseEvenement,ArretTravail,Processus,Actions,Realisation,Taches,MesureEfficacite
+from .models import NC, Commande, Documents, FicheTechnique, Menus, Site, Utilisateur,Services,Famille,Danger,EvaluationDanger,ChefServices,Evenements,AnalyseEvenement,ArretTravail,Processus,Actions,Realisation,Taches,MesureEfficacite
 # Register your models here.
 
 admin.site.register(NC)
@@ -18,4 +18,8 @@ admin.site.register(Actions)
 admin.site.register(Realisation)
 admin.site.register(Taches)
 admin.site.register(MesureEfficacite)
+admin.site.register(FicheTechnique)
+admin.site.register(Commande)
+admin.site.register(Documents)
+admin.site.register(Menus)
 
