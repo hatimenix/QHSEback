@@ -37,11 +37,16 @@ router.register(r'documentation', views.DocumentsViewSet, basename="documentatio
 router.register(r'historiqueDocument', views.HistoriqueDocumentViewSet, basename="historiqueDocument")
 router.register(r'favorisDocument', views.FavorisDocumentViewSet, basename="favorisDocument")
 router.register(r'menus', views.MenusViewSet, basename="menus")
-router.register(r'fiche', views.FicheTechniqueViewSet, basename="fiche")
+#users and groupes 
+router.register(r'userapp', views.UserAppViewSet, basename="userapp")
+router.register(r'groupeUser', views.GroupeUserViewSet, basename="groupeUser")
+
+###########################
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-
+    
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

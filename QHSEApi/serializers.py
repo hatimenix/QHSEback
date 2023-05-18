@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  Documents, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -151,18 +151,12 @@ class EquipementSerializer(serializers.ModelSerializer):
 
 #Serializer pour la fiche technique BOCHRA 
 class FicheTechniqueSerializer(serializers.ModelSerializer):
-    fichier = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = FicheTechnique
         fields = '__all__'
 
-    def get_fichier(self, obj):
-        request = self.context.get('request')
-        if obj.fichier:
-            return request.build_absolute_uri(obj.fichier.url)
-        return None
-    
+ 
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
@@ -267,6 +261,32 @@ class MenusSerializer(serializers.ModelSerializer):
         model = Menus
         fields = '__all__'
     
+#User/Groupes 
+
+class UserAppSerializer(serializers.ModelSerializer):
+    nom_groupe = serializers.SerializerMethodField()
+
+    def get_nom_groupe(self, user):
+        groupes = user.groupes_roles.all()
+        return [g.nom for g in groupes]
+    class Meta:
+        model = UserApp
+        fields = '__all__'
+
+class GroupeUserSerializer(serializers.ModelSerializer):
+    proprietaire_groupe_names = serializers.SerializerMethodField()
+    membres_names = serializers.SerializerMethodField()
+
+    class Meta:
+        model = GroupeUser
+        fields = '__all__'
+
+    def get_proprietaire_groupe_names(self, obj):
+        proprietaire_groupe = obj.proprietaire_groupe.all()
+        return [user.nom_user for user in proprietaire_groupe]
+    def get_membres_names(self, obj):
+        membres = obj.membres.all()
+        return [user.nom_user for user in membres]
 
 
 

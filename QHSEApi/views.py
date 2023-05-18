@@ -35,12 +35,14 @@ from .models import (
     FavorisDocument,
     FicheTechnique,
     Fournisseur,
+    GroupeUser,
     HistoriqueDocument,
     Menus,
     Secteurs,
     Site,
     Services,
     Traitement,
+    UserApp,
     Utilisateur,
     ChefServices,
     Evenements,
@@ -57,6 +59,7 @@ from .models import (
 
 )
 from .serializers import (
+    
     CommandeSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
@@ -67,6 +70,7 @@ from .serializers import (
     FavorisDocumentSerializer,
     FicheTechniqueSerializer,
     FournisseurSerializer,
+    GroupeUserSerializer,
     HistoriqueDocumentSerializer,
     MenusSerializer,
     NCSerializer,
@@ -74,6 +78,7 @@ from .serializers import (
     SiteSerializer,
     ServiceSerializer,
     TraitementSerializer,
+    UserAppSerializer,
     UtilisateurSerializer,
     ChefServiceSerializer,
     EvenementSerializer,
@@ -273,28 +278,20 @@ class MenusViewSet(viewsets.ModelViewSet):
     queryset = Menus.objects.all()
     serializer_class = MenusSerializer
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
+#User and groupes 
+class UserAppViewSet(viewsets.ModelViewSet):
+    queryset = UserApp.objects.all()
+    serializer_class = UserAppSerializer
 
-        # Loop through the menus and extract the filenames
-        for menu in serializer.data:
-            if menu['menus_generaux'] is not None:
-                menu['menus_generaux'] = menu['menus_generaux'].split('/')[-1]
-            if menu['menus_dessert'] is not None:
-                menu['menus_dessert'] = menu['menus_dessert'].split('/')[-1]
-            if menu['menu_s1'] is not None:
-                menu['menu_s1'] = menu['menu_s1'].split('/')[-1]
-            if menu['menu_s2'] is not None:
-                menu['menu_s2'] = menu['menu_s2'].split('/')[-1]
-            if menu['menu_s3'] is not None:
-                menu['menu_s3'] = menu['menu_s3'].split('/')[-1]
-            if menu['menu_s4'] is not None:
-                menu['menu_s4'] = menu['menu_s4'].split('/')[-1]
-            if menu['menu_s5'] is not None:
-                menu['menu_s5'] = menu['menu_s5'].split('/')[-1]
+class GroupeUserViewSet(viewsets.ModelViewSet):
+    queryset = GroupeUser.objects.all()
+    serializer_class = GroupeUserSerializer
 
-        return Response(serializer.data)
+#Authentication 
+ 
+
+  
+
 
     
 
