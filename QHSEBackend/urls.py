@@ -41,7 +41,7 @@ router.register(r'menus', views.MenusViewSet, basename="menus")
 router.register(r'userapp', views.UserAppViewSet, basename="userapp")
 router.register(r'groupeUser', views.GroupeUserViewSet, basename="groupeUser")
 
-
+###########################
 
 
 urlpatterns = [
