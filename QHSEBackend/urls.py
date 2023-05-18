@@ -27,7 +27,6 @@ router.register(r'equipement', views.EquipementViewSet, basename="equipement")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
 #les routes pour commande et fiche 
 router.register(r'commande', views.CommandeViewSet, basename="commande")
-router.register(r'fiche', views.FicheViewSet, basename="fiche")
 router.register(r'fournisseurs',views.FournisseurViewSet)
 router.register(r'traitements', views.TraitementViewSet)
 #router.register(r'evaluations',views.EvaluationViewSet)
@@ -44,9 +43,10 @@ router.register(r'groupeUser', views.GroupeUserViewSet, basename="groupeUser")
 
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-
+    
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

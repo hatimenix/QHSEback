@@ -1,8 +1,12 @@
+from django.http import FileResponse
 from rest_framework import serializers
 from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
 from QHSEApi import models
 
-
+from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import FicheTechnique
 
 
 
@@ -189,17 +193,20 @@ class EvaluationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 #Document utiles  serializers
+class CustomDateField(serializers.ReadOnlyField):
+    def to_representation(self, value):
+        # Convert the datetime object to the desired format
+        formatted_date = value.strftime('%Y-%m-%d')
+
+        # Return the formatted date
+        return formatted_date
 class DocumentUtilitiesSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+
+    modified_date = CustomDateField()
+
     class Meta:
         model = DocumentUtilities
         fields = '__all__'
-
-    def get_image(self, obj):
-        if obj.image:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.image.url)
-        return None
 
 
 #ilyas
@@ -257,7 +264,11 @@ class MenusSerializer(serializers.ModelSerializer):
 #User/Groupes 
 
 class UserAppSerializer(serializers.ModelSerializer):
-    
+    nom_groupe = serializers.SerializerMethodField()
+
+    def get_nom_groupe(self, user):
+        groupes = user.groupes_roles.all()
+        return [g.nom for g in groupes]
     class Meta:
         model = UserApp
         fields = '__all__'
