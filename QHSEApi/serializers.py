@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur
+from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -289,4 +289,11 @@ class GroupeUserSerializer(serializers.ModelSerializer):
         return [user.nom_user for user in membres]
 
 
+class SanteSerializer(serializers.ModelSerializer):
 
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+
+
+    class Meta:
+        model = Sante
+        fields = '__all__'

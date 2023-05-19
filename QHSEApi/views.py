@@ -55,7 +55,8 @@ from .models import (
     Processus,
     NC,
     Secteurs,
-    Equipement
+    Equipement,
+    Sante
 
 )
 from .serializers import (
@@ -91,7 +92,8 @@ from .serializers import (
     ProcessusSerializer,
     NCSerializer,
     SecteursSerializer,
-    EquipementSerializer
+    EquipementSerializer,
+    SanteSerializer
 )
 
 
@@ -288,6 +290,10 @@ class GroupeUserViewSet(viewsets.ModelViewSet):
     serializer_class = GroupeUserSerializer
 
 #Authentication 
+
+class SanteViewSet(viewsets.ModelViewSet):
+    queryset = Sante.objects.all()
+    serializer_class = SanteSerializer
  
 
   
