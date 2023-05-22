@@ -190,6 +190,8 @@ class Actions(models.Model):
                             blank=True,
                             default=None,                            
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
+    qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
+
     
     def save(self, *args, **kwargs):
         if self.id:
@@ -489,6 +491,19 @@ class Sante(models.Model):
     demande_de_groupe=models.CharField(max_length=255,blank=True, null=True,)
     comentaires=models.TextField(blank=True, null=True, default=None)
     demande_entretien=models.CharField(max_length=255,blank=True, null=True,)
+
+class Qualite(models.Model):
+    site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    titre=models.CharField(max_length=255,blank=True, null=True,)
+    date_analyse = models.DateField(blank=True, null=True, default=None)
+    reflexion=models.CharField(max_length=255,blank=True, null=True,)
+    objectifs=models.CharField(max_length=255,blank=True, null=True,)
+    commentaires_responsable=models.CharField(max_length=255,blank=True, null=True,)
+    objectifs_annees=models.CharField(max_length=255,blank=True, null=True,)
+
+
+
+
 
 
 
