@@ -5,7 +5,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
 
+#jwt login imports
 
+
+#end imports
 
 router = DefaultRouter()
 router.register(r'site', views.SiteViewSet, basename="site")
@@ -49,6 +52,8 @@ router.register(r'sante', views.SanteViewSet, basename="sante")
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    
+    #login imports 
+    path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
+
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

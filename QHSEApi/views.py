@@ -1,4 +1,3 @@
-
 from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import action
 from rest_framework import viewsets
@@ -21,7 +20,18 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework import viewsets
 import requests
+#logi imports 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from rest_framework_jwt.settings import api_settings
+#login imports 
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
+from django.contrib.auth.hashers import check_password
 
 from .models import (
     NC,
@@ -95,7 +105,35 @@ from .serializers import (
     EquipementSerializer,
     SanteSerializer
 )
-
+#login 
+# Authentication
+class UserTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("adresse_email")
+        password = request.data.get("password")
+        try:
+            user = UserApp.objects.get(adresse_email=email)
+            
+            
+            if not user.check_password(password):
+                    return Response(
+                        {"message": "Email ou mot de passe invalide"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            refresh = RefreshToken.for_user(user)
+            return Response(
+                    {
+                        "access": str(refresh.access_token),
+                        "refresh": str(refresh),
+                    }
+                )
+           
+        except UserApp.DoesNotExist:
+            return Response(
+                {"message": "Email ou mot de passe invalide"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 class DangerViewSet(viewsets.ModelViewSet):
     queryset = Danger.objects.all()
