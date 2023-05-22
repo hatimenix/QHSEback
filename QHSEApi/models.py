@@ -527,12 +527,7 @@ class UserApp(AbstractBaseUser):
         self.password = make_password(self.password)
         if self.id:
             old_instance = UserApp.objects.get(id=self.id)
-            # if self.image != old_instance.image:
-            #     if (
-            #         old_instance.image
-            #         and old_instance.image != "uploads/avatars/paiperleck.jpg"
-            #     ):
-            #         os.remove(old_instance.image.path)
+            
         super().save(*args, **kwargs)
 
     def envoyer_email(self):
