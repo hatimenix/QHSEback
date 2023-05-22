@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser
 import os
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 
@@ -464,17 +465,77 @@ class Menus(models.Model):
 
 #UserApp/ Groupes et les droits d'accès 
 
-class UserApp(models.Model):
+# class UserManager(BaseUserManager):
+#     def create_user(self, email, password=None):
+#         if not email:
+#             raise ValueError("Email is required")
+#         user = self.model(email=self.normalize_email(email))
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+#     def create_superuser(self, email, password=None):
+#         user = self.create_user(email, password)
+#         user.is_admin = True
+#         user.save(using=self._db)
+#         return user
+    
+
+# class UserApp(AbstractBaseUser):
+#     nom_user = models.CharField(max_length=100)
+#     nom_complet = models.CharField(max_length=100)
+#     #mot_de_passe = models.CharField(max_length=100)
+#     adresse_email = models.EmailField(unique=True, max_length=255)
+#     actif = models.BooleanField(blank=True)
+#     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
+
+#     objects = UserManager()
+#     USERNAME_FIELD = "adresse_email"
+
+#     def envoyer_email(self):
+#         # Logique pour envoyer un e-mail de bienvenue
+#         pass
+
+from django.contrib.auth.hashers import make_password
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        if not email:
+            raise ValueError("Email is required")
+        user = self.model(email=self.normalize_email(email))
+        user.password = make_password(password)  # Use make_password to hash the password
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None):
+        user = self.create_user(email, password)
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+    
+
+class UserApp(AbstractBaseUser):
     nom_user = models.CharField(max_length=100)
     nom_complet = models.CharField(max_length=100)
-    mot_de_passe = models.CharField(max_length=100)
-    adresse_email = models.EmailField()
-    actif = models.BooleanField()
+    password = models.CharField(max_length=128)  # Use CharField with sufficient length for hashed passwords
+    adresse_email = models.EmailField(unique=True, max_length=255)
+    actif = models.BooleanField(blank=True)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
+
+    objects = UserManager()
+    USERNAME_FIELD = "adresse_email"
+    # hasher le password 
+    def save(self, *args, **kwargs):
+        
+        self.password = make_password(self.password)
+        if self.id:
+            old_instance = UserApp.objects.get(id=self.id)
+            
+        super().save(*args, **kwargs)
 
     def envoyer_email(self):
         # Logique pour envoyer un e-mail de bienvenue
         pass
+
 
 class GroupeUser(models.Model):
     nom = models.CharField(max_length=100)
