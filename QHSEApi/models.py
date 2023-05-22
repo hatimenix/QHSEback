@@ -541,6 +541,15 @@ class GroupeUser(models.Model):
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
     membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
     
+class Sante(models.Model):
+    site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    demande_de_conseils=models.CharField(max_length=255,blank=True, null=True,)
+    demande_de_supervision=models.CharField(max_length=255,blank=True, null=True,)
+    demande_de_reunion=models.CharField(max_length=255,blank=True, null=True,)
+    demande_de_coaching=models.CharField(max_length=255,blank=True, null=True,)
+    demande_de_groupe=models.CharField(max_length=255,blank=True, null=True,)
+    comentaires=models.TextField(blank=True, null=True, default=None)
+    demande_entretien=models.CharField(max_length=255,blank=True, null=True,)
 
 
 
