@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante
+from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -88,6 +88,7 @@ class ArretTravailSerializer(serializers.ModelSerializer):
 
 class ActionSerializer(serializers.ModelSerializer):
     danger_name = serializers.SerializerMethodField()
+    qualite_name = serializers.SerializerMethodField()
     evenement_name = serializers.SerializerMethodField()
     Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
@@ -100,7 +101,12 @@ class ActionSerializer(serializers.ModelSerializer):
             return ', '.join(d.description for d in danger)
         else:
             return None
-            
+    def get_qualite_name(self, obj):
+        qualite = obj.danger.all()
+        if qualite:
+            return ', '.join(q.description for q in qualite)
+        else:
+            return None       
     def get_evenement_name(self, obj):
         evenement = obj.evenement.all()
         if evenement:
@@ -296,4 +302,12 @@ class SanteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sante
+        fields = '__all__'
+
+class QualiteSerializer(serializers.ModelSerializer):
+
+    site_name = serializers.ReadOnlyField(source='site.site_nom')
+
+    class Meta:
+        model = Qualite
         fields = '__all__'
