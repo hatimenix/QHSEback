@@ -7,6 +7,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import FicheTechnique
+from django.core.mail import send_mail
 
 
 
@@ -278,6 +279,24 @@ class UserAppSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserApp
         fields = '__all__'
+    def create(self, validated_data):
+        groupes_roles_data = validated_data.pop('groupes_roles', [])
+        user = UserApp.objects.create(**validated_data)
+        
+        # Assign groupes_roles
+        user.groupes_roles.set(groupes_roles_data)
+        
+        # Send welcome email
+        sujet = "Bienvenue sur notre site"
+        message = f"Bonjour {user.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
+        email_emetteur = "elhamri.bochra98@gmail.com"
+        destinataires = [user.adresse_email]
+        
+        send_mail(sujet, message, email_emetteur, destinataires)
+
+        return user
+
+        
 
 class GroupeUserSerializer(serializers.ModelSerializer):
     proprietaire_groupe_names = serializers.SerializerMethodField()

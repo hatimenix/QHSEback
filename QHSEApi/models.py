@@ -5,6 +5,8 @@ from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser
 import os
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+#send email 
+from django.core.mail import send_mail
 
 
 
@@ -533,8 +535,12 @@ class UserApp(AbstractBaseUser):
         super().save(*args, **kwargs)
 
     def envoyer_email(self):
-        # Logique pour envoyer un e-mail de bienvenue
-        pass
+        sujet = "Bienvenue sur notre site"
+        message = f"Bonjour {self.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
+        email_emetteur = "b.elhamri@atexperts.ma"
+        destinataires = [self.adresse_email]
+
+        send_mail(sujet, message, email_emetteur, destinataires)
 
 
 class GroupeUser(models.Model):
