@@ -270,29 +270,35 @@ class MenusSerializer(serializers.ModelSerializer):
     
 #User/Groupes 
 
+
 class UserAppSerializer(serializers.ModelSerializer):
     nom_groupe = serializers.SerializerMethodField()
 
     def get_nom_groupe(self, user):
         groupes = user.groupes_roles.all()
         return [g.nom for g in groupes]
+    
     class Meta:
         model = UserApp
         fields = '__all__'
+        
     def create(self, validated_data):
         groupes_roles_data = validated_data.pop('groupes_roles', [])
+        send_email = validated_data.pop('send_email', False)  # Get the value of send_email checkbox
+        
         user = UserApp.objects.create(**validated_data)
         
         # Assign groupes_roles
         user.groupes_roles.set(groupes_roles_data)
         
-        # Send welcome email
-        sujet = "Bienvenue sur notre site"
-        message = f"Bonjour {user.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
-        email_emetteur = "elhamri.bochra98@gmail.com"
-        destinataires = [user.adresse_email]
-        
-        send_mail(sujet, message, email_emetteur, destinataires)
+        # Send welcome email if send_email is True
+        if send_email:
+            sujet = "Bienvenue sur notre site"
+            message = f"Bonjour {user.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
+            email_emetteur = "elhamri.bochra98@gmail.com"
+            destinataires = [user.adresse_email]
+            
+            send_mail(sujet, message, email_emetteur, destinataires)
 
         return user
 
