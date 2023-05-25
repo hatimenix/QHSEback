@@ -192,6 +192,7 @@ class Actions(models.Model):
                             default=None,                            
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
+    nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
 
     
     def save(self, *args, **kwargs):

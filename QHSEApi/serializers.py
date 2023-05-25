@@ -88,7 +88,6 @@ class ArretTravailSerializer(serializers.ModelSerializer):
 
 class ActionSerializer(serializers.ModelSerializer):
     danger_name = serializers.SerializerMethodField()
-    qualite_name = serializers.SerializerMethodField()
     evenement_name = serializers.SerializerMethodField()
     Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
@@ -100,19 +99,13 @@ class ActionSerializer(serializers.ModelSerializer):
         if danger:
             return ', '.join(d.description for d in danger)
         else:
-            return None
-    def get_qualite_name(self, obj):
-        qualite = obj.danger.all()
-        if qualite:
-            return ', '.join(q.description for q in qualite)
-        else:
-            return None       
+            return None      
     def get_evenement_name(self, obj):
         evenement = obj.evenement.all()
         if evenement:
             return ', '.join(e.intitule for e in evenement)
         else:
-            return None
+            return None   
 
 class RealisationSerializer(serializers.ModelSerializer):
     class Meta:
