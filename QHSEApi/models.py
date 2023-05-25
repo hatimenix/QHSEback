@@ -5,6 +5,8 @@ from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser
 import os
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+#send email 
+from django.core.mail import send_mail
 
 
 
@@ -516,25 +518,31 @@ class UserManager(BaseUserManager):
 class UserApp(AbstractBaseUser):
     nom_user = models.CharField(max_length=100)
     nom_complet = models.CharField(max_length=100)
-    password = models.CharField(max_length=128)  # Use CharField with sufficient length for hashed passwords
+    password = models.CharField(max_length=128)
     adresse_email = models.EmailField(unique=True, max_length=255)
     actif = models.BooleanField(blank=True)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
+    
+    send_email = models.BooleanField(default=False)  # New field for checkbox
 
     objects = UserManager()
     USERNAME_FIELD = "adresse_email"
-    # hasher le password 
+    
     def save(self, *args, **kwargs):
-        
         self.password = make_password(self.password)
         if self.id:
             old_instance = UserApp.objects.get(id=self.id)
-            
         super().save(*args, **kwargs)
 
+#send email 
     def envoyer_email(self):
-        # Logique pour envoyer un e-mail de bienvenue
-        pass
+        if self.send_email:  # Check the checkbox state
+            sujet = "Bienvenue sur notre site"
+            message = f"Bonjour {self.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
+            email_emetteur = "elhamri.bochra98@gmail.com"
+            destinataires = [self.adresse_email]
+
+            send_mail(sujet, message, email_emetteur, destinataires)
 
 
 class GroupeUser(models.Model):

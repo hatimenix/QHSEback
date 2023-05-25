@@ -56,6 +56,8 @@ urlpatterns = [
     path('', include(router.urls)),
     #login imports 
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
+    path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
+
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
