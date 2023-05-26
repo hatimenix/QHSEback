@@ -82,6 +82,7 @@ from .serializers import (
     FavorisDocumentSerializer,
     FicheTechniqueSerializer,
     FournisseurSerializer,
+
     GroupeUserSerializer,
     HistoriqueDocumentSerializer,
     MenusSerializer,
@@ -112,10 +113,10 @@ from .serializers import (
 class UserTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
-        email = request.data.get("adresse_email")
+        email = request.data.get("email")
         password = request.data.get("password")
         try:
-            user = UserApp.objects.get(adresse_email=email)
+            user = UserApp.objects.get(email=email)
             
             
             if not user.check_password(password):
@@ -128,7 +129,6 @@ class UserTokenObtainPairView(TokenObtainPairView):
             return Response(
                     {
                         "access": str(refresh.access_token),
-                        "user": {user.nom_complet, user.adresse_email},
                         "refresh": str(refresh),
                     }
                 )
@@ -138,7 +138,8 @@ class UserTokenObtainPairView(TokenObtainPairView):
                 {"message": "Email ou mot de passe invalide2"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-    #Details Users 
+        
+#Details Users 
 class UserDetailsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -147,6 +148,11 @@ class UserDetailsAPIView(APIView):
         # Add any additional logic or data processing you need here
         serialized_user = UserAppSerializer(user).data  # Replace UserSerializer with your user serializer
         return Response(serialized_user)
+
+
+
+    
+
 
 class DangerViewSet(viewsets.ModelViewSet):
     queryset = Danger.objects.all()

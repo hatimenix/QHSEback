@@ -7,7 +7,12 @@ import os
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 #send email 
 from django.core.mail import send_mail
-
+from django.contrib.auth.hashers import make_password
+#permissions
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 
 
 #*Zakaria
@@ -451,7 +456,7 @@ class FavorisDocument(models.Model):
 
 #modele de gestion des menus Bochra 
 
-import os
+
 
 class Menus(models.Model):
     mois_concerne = models.CharField(max_length=255)
@@ -465,39 +470,6 @@ class Menus(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
 
 
-#UserApp/ Groupes et les droits d'accès 
-
-# class UserManager(BaseUserManager):
-#     def create_user(self, email, password=None):
-#         if not email:
-#             raise ValueError("Email is required")
-#         user = self.model(email=self.normalize_email(email))
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-#     def create_superuser(self, email, password=None):
-#         user = self.create_user(email, password)
-#         user.is_admin = True
-#         user.save(using=self._db)
-#         return user
-    
-
-# class UserApp(AbstractBaseUser):
-#     nom_user = models.CharField(max_length=100)
-#     nom_complet = models.CharField(max_length=100)
-#     #mot_de_passe = models.CharField(max_length=100)
-#     adresse_email = models.EmailField(unique=True, max_length=255)
-#     actif = models.BooleanField(blank=True)
-#     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
-
-#     objects = UserManager()
-#     USERNAME_FIELD = "adresse_email"
-
-#     def envoyer_email(self):
-#         # Logique pour envoyer un e-mail de bienvenue
-#         pass
-
-from django.contrib.auth.hashers import make_password
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -511,6 +483,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None):
         user = self.create_user(email, password)
         user.is_admin = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
     
@@ -519,30 +492,38 @@ class UserApp(AbstractBaseUser):
     nom_user = models.CharField(max_length=100)
     nom_complet = models.CharField(max_length=100)
     password = models.CharField(max_length=128)
-    adresse_email = models.EmailField(unique=True, max_length=255)
-    actif = models.BooleanField(blank=True)
+    email = models.EmailField(unique=True, max_length=255)
+    actif = models.BooleanField(blank=True, default=False)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
-    
     send_email = models.BooleanField(default=False)  # New field for checkbox
-
+    is_staff = models.BooleanField(default=False)
     objects = UserManager()
-    USERNAME_FIELD = "adresse_email"
+    USERNAME_FIELD = "email"
     
     def save(self, *args, **kwargs):
         self.password = make_password(self.password)
         if self.id:
             old_instance = UserApp.objects.get(id=self.id)
         super().save(*args, **kwargs)
+    
+    def has_module_perms(self, app_label):
+        # By default, grant module permissions to all staff (superuser) users
+        return self.is_staff
+    def has_perm(self, perm, obj=None):
+        # By default, grant all permissions to staff (superuser) users
+        return self.is_staff
 
-#send email 
-    def envoyer_email(self):
-        if self.send_email:  # Check the checkbox state
-            sujet = "Bienvenue sur notre site"
-            message = f"Bonjour {self.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
-            email_emetteur = "elhamri.bochra98@gmail.com"
-            destinataires = [self.adresse_email]
 
-            send_mail(sujet, message, email_emetteur, destinataires)
+
+# class GroupeUser(models.Model):
+#     nom = models.CharField(max_length=100)
+#     description = models.TextField(blank=True, null=True, default=None)
+#     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
+#     membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
+
+
+#Groupes and permissions 
+
 
 
 class GroupeUser(models.Model):
@@ -550,6 +531,21 @@ class GroupeUser(models.Model):
     description = models.TextField(blank=True, null=True, default=None)
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
     membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Save the GroupeUser instance first to generate an id
+        
+        # Assign group permissions to members after saving the GroupeUser instance
+        if self.group:
+            for user in self.membres.all():
+                self.group.user_set.add(user)
+
+
+
+
+
+  
     
 class Sante(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
