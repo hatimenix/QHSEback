@@ -289,7 +289,7 @@ class UserAppSerializer(serializers.ModelSerializer):
             sujet = "Bienvenue sur notre site"
             message = f"Bonjour {user.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
             email_emetteur = "elhamri.bochra98@gmail.com"
-            destinataires = [user.adresse_email]
+            destinataires = [user.email]
             
             send_mail(sujet, message, email_emetteur, destinataires)
 
@@ -311,6 +311,9 @@ class GroupeUserSerializer(serializers.ModelSerializer):
     def get_membres_names(self, obj):
         membres = obj.membres.all()
         return [user.nom_user for user in membres]
+    
+
+
 
 
 class SanteSerializer(serializers.ModelSerializer):
