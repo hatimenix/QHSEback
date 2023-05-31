@@ -16,6 +16,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.decorators.http import require_GET
+
 
 from rest_framework import viewsets
 from rest_framework import viewsets
@@ -350,10 +352,14 @@ class QualiteViewSet(viewsets.ModelViewSet):
     queryset = Qualite.objects.all()
     serializer_class = QualiteSerializer
  
-
-  
-
-
+@require_GET
+def get_existing_file_url(request, nc_id):
+    try:
+        nc = NC.objects.get(id=nc_id)
+        file_url = nc.piece_jointe.url if nc.piece_jointe else None
+        return JsonResponse({'file_url': file_url})
+    except NC.DoesNotExist:
+        return JsonResponse({'error': 'NC not found'}, status=404)
     
 
   

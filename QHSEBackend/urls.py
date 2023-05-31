@@ -5,6 +5,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
 
+
 #jwt login imports
 
 
@@ -57,6 +58,8 @@ urlpatterns = [
     #login imports 
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
     path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
+    path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
+
 
 
 
