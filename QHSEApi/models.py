@@ -472,6 +472,7 @@ class Menus(models.Model):
 
 
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
@@ -503,29 +504,22 @@ class UserApp(AbstractBaseUser):
     
     def save(self, *args, **kwargs):
         self.password = make_password(self.password)
-        if self.id:
-            old_instance = UserApp.objects.get(id=self.id)
+        # if self.id:
+        #     old_instance = UserApp.objects.get(id=self.id)
         super().save(*args, **kwargs)
     
     def has_module_perms(self, app_label):
         # By default, grant module permissions to all staff (superuser) users
         return self.is_staff
+    
     def has_perm(self, perm, obj=None):
+        # Check if the user has the permission assigned to their group
+        if self.groupes_roles.exists() and self.is_active:
+            group_permissions = Permission.objects.filter(group__groupeuser=self.groupes_roles.first())
+            return group_permissions.filter(codename=perm).exists()
+        
         # By default, grant all permissions to staff (superuser) users
         return self.is_staff
-
-
-
-# class GroupeUser(models.Model):
-#     nom = models.CharField(max_length=100)
-#     description = models.TextField(blank=True, null=True, default=None)
-#     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
-#     membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
-
-
-#Groupes and permissions 
-
-
 
 class GroupeUser(models.Model):
     nom = models.CharField(max_length=100)
@@ -536,11 +530,17 @@ class GroupeUser(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # Save the GroupeUser instance first to generate an id
-        
+
         # Assign group permissions to members after saving the GroupeUser instance
         if self.group:
+            # Get the group permissions
+            group_permissions = Permission.objects.filter(group=self.group)
+
+            # Assign the group permissions to members
             for user in self.membres.all():
-                self.group.user_set.add(user)
+                user.user_permissions.set(group_permissions)
+
+        return self
 
 
 
