@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
+from .models import  AnalyseRisque, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -331,4 +331,52 @@ class QualiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Qualite
+        fields = '__all__'
+
+class TypePartieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TypePartie
+        fields = '__all__'
+
+class PartiesInteressesSerializer(serializers.ModelSerializer):
+    typepartie_name = serializers.ReadOnlyField(source='typepartie.nom')
+    processus_name = serializers.SerializerMethodField()
+
+
+    class Meta:
+        model = PartiesInteresses
+        fields = '__all__'
+    def get_processus_name(self, obj):
+        processus = obj.processus.all()
+        if processus:
+             return ', '.join(p.intitule for p in processus)
+        else:
+            return None 
+
+class ExigencesSerializer(serializers.ModelSerializer):
+
+    partieinteresses_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Exigences
+        fields = '__all__'
+    def get_partieinteresses_name(self, obj):
+        partieinteresses = obj.partieinteresses.all()
+        if partieinteresses:
+            return ', '.join(p.partieinteresse for p in partieinteresses)
+        else:
+            return None 
+
+class AnalyseRisqueSerializer(serializers.ModelSerializer):
+
+    Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
+    Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
+
+    class Meta:
+        model = AnalyseRisque
+        fields = '__all__'
+
+class CotationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cotation
         fields = '__all__'

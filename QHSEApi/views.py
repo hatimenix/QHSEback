@@ -37,12 +37,15 @@ from django.contrib.auth.hashers import check_password
 
 from .models import (
     NC,
+    AnalyseRisque,
     Commande,
+    Cotation,
     Danger,
     DocumentUtilities,
     Documents,
     Evaluation,
     EvaluationDanger,
+    Exigences,
     Famille,
     FavorisDocument,
     FicheTechnique,
@@ -50,10 +53,12 @@ from .models import (
     GroupeUser,
     HistoriqueDocument,
     Menus,
+    PartiesInteresses,
     Secteurs,
     Site,
     Services,
     Traitement,
+    TypePartie,
     UserApp,
     Utilisateur,
     ChefServices,
@@ -74,12 +79,15 @@ from .models import (
 )
 from .serializers import (
     
+    AnalyseRisqueSerializer,
     CommandeSerializer,
+    CotationSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
     DocumentsSerializer,
     EvaluationDangerSerializer,
     EvaluationSerializer,
+    ExigencesSerializer,
     FamilleSerializer,
     FavorisDocumentSerializer,
     FicheTechniqueSerializer,
@@ -89,10 +97,12 @@ from .serializers import (
     HistoriqueDocumentSerializer,
     MenusSerializer,
     NCSerializer,
+    PartiesInteressesSerializer,
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
     TraitementSerializer,
+    TypePartieSerializer,
     UserAppSerializer,
     UtilisateurSerializer,
     ChefServiceSerializer,
@@ -357,6 +367,26 @@ class SanteViewSet(viewsets.ModelViewSet):
 class QualiteViewSet(viewsets.ModelViewSet):
     queryset = Qualite.objects.all()
     serializer_class = QualiteSerializer
+
+class TypePartieViewSet(viewsets.ModelViewSet):
+    queryset = TypePartie.objects.all()
+    serializer_class = TypePartieSerializer
+
+class PartiesInteressesViewSet(viewsets.ModelViewSet):
+    queryset = PartiesInteresses.objects.all()
+    serializer_class = PartiesInteressesSerializer
+
+class ExigencesViewSet(viewsets.ModelViewSet):
+    queryset = Exigences.objects.all()
+    serializer_class = ExigencesSerializer
+
+class AnalyseRisqueViewSet(viewsets.ModelViewSet):
+    queryset = AnalyseRisque.objects.all()
+    serializer_class = AnalyseRisqueSerializer
+
+class CotationViewSet(viewsets.ModelViewSet):
+    queryset = Cotation.objects.all()
+    serializer_class = CotationSerializer
  
 @require_GET
 def get_existing_file_url(request, nc_id):
