@@ -13,7 +13,8 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 #*Zakaria
 #*Backend document unique 
@@ -509,17 +510,28 @@ class UserApp(AbstractBaseUser):
         super().save(*args, **kwargs)
     
     def has_module_perms(self, app_label):
+        
         # By default, grant module permissions to all staff (superuser) users
         return self.is_staff
     
     def has_perm(self, perm, obj=None):
-        # Check if the user has the permission assigned to their group
+    # Check if the user has the permission assigned to their group
         if self.groupes_roles.exists() and self.is_active:
-            group_permissions = Permission.objects.filter(group__groupeuser=self.groupes_roles.first())
-            return group_permissions.filter(codename=perm).exists()
-        
-        # By default, grant all permissions to staff (superuser) users
+          group_permissions = Permission.objects.filter(group__groupeuser=self.groupes_roles.first())
+          print(f"Group Permissions: {group_permissions}")  # Console log to check group permissions
+
+          permission_exists = group_permissions.filter(codename=perm).exists()
+          print(f"Permission Exists: {permission_exists}")  # Console log to check if permission exists
+
+          print(f"Checking permissions: {perm}")  # Console log to display the codenames being checked
+
+          return permission_exists
+
+    # By default, grant all permissions to staff (superuser) users
         return self.is_staff
+
+
+
 
 class GroupeUser(models.Model):
     nom = models.CharField(max_length=100)
@@ -541,10 +553,6 @@ class GroupeUser(models.Model):
                 user.user_permissions.set(group_permissions)
 
         return self
-
-
-
-
 
   
     
