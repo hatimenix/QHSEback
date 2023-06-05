@@ -4,18 +4,18 @@ from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser
 import os
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 #send email 
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 #permissions
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
-from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from django.contrib.auth import get_user_model
 #*Zakaria
 #*Backend document unique 
 
@@ -505,54 +505,36 @@ class UserApp(AbstractBaseUser):
     
     def save(self, *args, **kwargs):
         self.password = make_password(self.password)
-        # if self.id:
-        #     old_instance = UserApp.objects.get(id=self.id)
         super().save(*args, **kwargs)
     
     def has_module_perms(self, app_label):
         
-        # By default, grant module permissions to all staff (superuser) users
         return self.is_staff
     
     def has_perm(self, perm, obj=None):
-    # Check if the user has the permission assigned to their group
-        if self.groupes_roles.exists() and self.is_active:
-          group_permissions = Permission.objects.filter(group__groupeuser=self.groupes_roles.first())
-          print(f"Group Permissions: {group_permissions}")  # Console log to check group permissions
 
-          permission_exists = group_permissions.filter(codename=perm).exists()
-          print(f"Permission Exists: {permission_exists}")  # Console log to check if permission exists
-
-          print(f"Checking permissions: {perm}")  # Console log to display the codenames being checked
-
-          return permission_exists
-
-    # By default, grant all permissions to staff (superuser) users
         return self.is_staff
 
 
-
-
 class GroupeUser(models.Model):
+    AUTORISATION_CHOICES = [
+        ('Control_total', 'Control total'),
+        ('Lecture', 'Lecture'),
+        ('collaboration_avec_suppression', 'Collaboration avec suppression'),
+        ('collaboration_sans_suppression', 'Collaboration sans suppression'),
+    ]
+
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True, default=None)
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
-    membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
+    autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Save the GroupeUser instance first to generate an id
 
-        # Assign group permissions to members after saving the GroupeUser instance
-        if self.group:
-            # Get the group permissions
-            group_permissions = Permission.objects.filter(group=self.group)
 
-            # Assign the group permissions to members
-            for user in self.membres.all():
-                user.user_permissions.set(group_permissions)
+    # Rest of your model code...
 
-        return self
+
+  
 
   
     

@@ -299,7 +299,7 @@ class UserAppSerializer(serializers.ModelSerializer):
 
 class GroupeUserSerializer(serializers.ModelSerializer):
     proprietaire_groupe_names = serializers.SerializerMethodField()
-    membres_names = serializers.SerializerMethodField()
+  
 
     class Meta:
         model = GroupeUser
@@ -308,14 +308,8 @@ class GroupeUserSerializer(serializers.ModelSerializer):
     def get_proprietaire_groupe_names(self, obj):
         proprietaire_groupe = obj.proprietaire_groupe.all()
         return [user.nom_user for user in proprietaire_groupe]
-    def get_membres_names(self, obj):
-        membres = obj.membres.all()
-        return [user.nom_user for user in membres]
+
     
-
-
-
-
 class SanteSerializer(serializers.ModelSerializer):
 
     site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
