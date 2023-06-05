@@ -46,6 +46,12 @@ router.register(r'userapp', views.UserAppViewSet, basename="userapp")
 router.register(r'groupeUser', views.GroupeUserViewSet, basename="groupeUser")
 router.register(r'sante', views.SanteViewSet, basename="sante")
 router.register(r'qualite', views.QualiteViewSet, basename="qualite")
+router.register(r'typePartie', views.TypePartieViewSet, basename="typePartie")
+router.register(r'partiesInteresses', views.PartiesInteressesViewSet, basename="partiesInteresses")
+router.register(r'exigences', views.ExigencesViewSet, basename="exigences")
+router.register(r'analyseRisque', views.AnalyseRisqueViewSet, basename="analyseRisque")
+router.register(r'cotation', views.CotationViewSet, basename="cotation")
+
 
 
 

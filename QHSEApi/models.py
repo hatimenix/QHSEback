@@ -201,6 +201,7 @@ class Actions(models.Model):
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
+    analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
 
     
     def save(self, *args, **kwargs):
@@ -556,6 +557,81 @@ class Qualite(models.Model):
     objectifs=models.CharField(max_length=255,blank=True, null=True,)
     commentaires_responsable=models.CharField(max_length=255,blank=True, null=True,)
     objectifs_annees=models.CharField(max_length=255,blank=True, null=True,)
+
+class TypePartie(models.Model):
+    nom=models.CharField(max_length=255,blank=True, null=True,)
+    def __str__(self):
+        return str(self.nom)
+
+class PartiesInteresses(models.Model):
+    typepartie=models.ForeignKey(TypePartie, on_delete=models.CASCADE,null=True, default=None)
+    partieinteresse=models.CharField(max_length=255,blank=True, null=True,)
+    importance=models.CharField(max_length=255,blank=True, null=True,)
+    nature=models.CharField(max_length=255,blank=True, null=True,)
+    enjeux=models.CharField(max_length=255,blank=True, null=True,)
+    besoin=models.CharField(max_length=255,blank=True, null=True,)
+    impactfinal=models.CharField(max_length=255,blank=True, null=True,)
+    impactentreprise=models.CharField(max_length=255,blank=True, null=True,)
+    cotation=models.CharField(max_length=255,blank=True, null=True,)
+    impact=models.CharField(max_length=255,blank=True, null=True,)
+    processus = models.ManyToManyField(Processus)
+    def __str__(self):
+        return self.partieinteresse
+
+
+class Exigences(models.Model):
+    type_exigence=models.CharField(max_length=255,blank=True, null=True,)
+    intitule=models.CharField(max_length=255,blank=True, null=True,)
+    evaluation_maitrise=models.CharField(max_length=255,blank=True, null=True,)
+    description=models.CharField(max_length=255,blank=True, null=True,)
+    commentaire=models.CharField(max_length=255,blank=True, null=True,)
+    action=models.BooleanField(blank=True, null=True)
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)  
+   
+
+class AnalyseRisque(models.Model):
+    site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    description=models.CharField(max_length=255,blank=True, null=True,)
+    typologie=models.CharField(max_length=255,blank=True, null=True,)
+    axe=models.CharField(max_length=255,blank=True, null=True,)
+    famille=models.CharField(max_length=255,blank=True, null=True,)
+    indice=models.CharField(max_length=255,blank=True, null=True,)
+    niveau_risque=models.CharField(max_length=255,blank=True, null=True,)
+    date_evaluation=models.DateField(blank=True, null=True)
+    opportunite=models.CharField(max_length=255,blank=True, null=True,)
+    origine=models.CharField(max_length=255,blank=True, null=True,)
+    processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
+    contexte_int=models.CharField(max_length=255,blank=True, null=True,)
+    contexte_ext=models.CharField(max_length=255,blank=True, null=True,)
+    consequences=models.CharField(max_length=255,blank=True, null=True,)
+    impact=models.CharField(max_length=255,blank=True, null=True,)
+    probabilite=models.CharField(max_length=255,blank=True, null=True,)
+    maitrise=models.CharField(max_length=255,blank=True, null=True,)
+    mesure=models.CharField(max_length=255,blank=True, null=True,)
+    type_action=models.CharField(max_length=255,blank=True, null=True,)
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)  
+
+class Cotation(models.Model):
+    maitrise=models.CharField(max_length=255,blank=True, null=True,)
+    impact=models.CharField(max_length=255,blank=True, null=True,)
+    probabilite=models.CharField(max_length=255,blank=True, null=True,)
+    ipr=models.CharField(max_length=255,blank=True, null=True,)
+    indice=models.CharField(max_length=255,blank=True, null=True,)
+    date_evaluation=models.DateField(blank=True, null=True)
+    analyserisque= models.ManyToManyField(AnalyseRisque, null=True, blank=True, db_constraint=False)
+   
+
+
+
+   
+
+
+    
+
+
+
+
+
 
 
 
