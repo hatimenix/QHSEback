@@ -229,17 +229,17 @@ class DocumentsSerializer(serializers.ModelSerializer):
     site_name = serializers.ReadOnlyField(source='site.site_nom')
     secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom')
     personnel_name = serializers.ReadOnlyField(source='utilisateur.nom')
-    url_document = serializers.SerializerMethodField()
+    # url_document = serializers.SerializerMethodField()
 
     class Meta:
         model = Documents 
         fields = '__all__'
 
-    def get_url_document(self, obj):
-        if obj.url_document:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.url_document.url)
-        return None
+    # def get_url_document(self, obj):
+    #     if obj.url_document:
+    #         request = self.context.get('request')
+    #         return request.build_absolute_uri(obj.url_document.url)
+    #     return None
 
 
 
