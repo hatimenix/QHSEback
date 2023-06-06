@@ -147,7 +147,7 @@ class UserTokenObtainPairView(TokenObtainPairView):
        
         except UserApp.DoesNotExist:
             return Response(
-                {"message": "Email ou mot de passe invalide2"},
+                {"message": "Email ou mot de passe invalide"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         
@@ -161,9 +161,15 @@ class UserDetailsAPIView(APIView):
         serialized_user = UserAppSerializer(user).data  # Replace UserSerializer with your user serializer
         return Response(serialized_user)
 
+#Details Group 
 
+class GroupDetailsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    
+    def get(self, request, group_id):
+        group = GroupeUser.objects.get(id=group_id)
+        serialized_group = GroupeUserSerializer(group).data
+        return Response(serialized_group)
 
 
 class DangerViewSet(viewsets.ModelViewSet):
@@ -264,14 +270,7 @@ class FicheTechniqueViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
     serializer_class = FicheTechniqueSerializer
 
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        fiche = self.get_object()
-        file_path = fiche.fichier.path
-        file_name = fiche.fichier.name.split('/')[-1]
-        file = open(file_path, 'rb')
-        response = FileResponse(file, as_attachment=True, filename=file_name)
-        return response
+   
 
 #Achraf's views set 
 

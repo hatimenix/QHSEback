@@ -30,6 +30,7 @@ router.register(r'secteurs', views.SecteursViewSet, basename="secteurs")
 router.register(r'equipement', views.EquipementViewSet, basename="equipement")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
 #les routes pour commande et fiche 
+router.register(r'fiche_technique', views.FicheTechniqueViewSet, basename="fiche_technique")
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fournisseurs',views.FournisseurViewSet)
 router.register(r'traitements', views.TraitementViewSet)
@@ -65,6 +66,7 @@ urlpatterns = [
     #login imports 
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
     path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
+    path('group/<int:group_id>', views.GroupDetailsAPIView.as_view(), name='get_authenticated_group'),
     path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
 
 

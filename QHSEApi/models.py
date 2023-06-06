@@ -269,7 +269,7 @@ class Commande(models.Model):
 
 class FicheTechnique(models.Model):
     id_fiche = models.AutoField(primary_key=True)
-    fichier = models.FileField(upload_to='uploads/', validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    fichier = models.FileField(upload_to='uploads/', validators=[FileExtensionValidator(['pdf', 'docx','odt'])],blank=True)
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
 
