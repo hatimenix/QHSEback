@@ -4,10 +4,18 @@ from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser
 import os
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+#send email 
+from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password
+#permissions
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+from django.contrib.auth.models import Permission
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-
-
+from django.contrib.auth import get_user_model
 #*Zakaria
 #*Backend document unique 
 
@@ -192,6 +200,8 @@ class Actions(models.Model):
                             default=None,                            
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
+    nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
+    analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
 
     
     def save(self, *args, **kwargs):
@@ -259,7 +269,7 @@ class Commande(models.Model):
 
 class FicheTechnique(models.Model):
     id_fiche = models.AutoField(primary_key=True)
-    fichier = models.FileField(upload_to='uploads/', validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    fichier = models.FileField(upload_to='uploads/', validators=[FileExtensionValidator(['pdf', 'docx','odt'])],blank=True)
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
 
@@ -449,7 +459,7 @@ class FavorisDocument(models.Model):
 
 #modele de gestion des menus Bochra 
 
-import os
+
 
 class Menus(models.Model):
     mois_concerne = models.CharField(max_length=255)
@@ -463,39 +473,7 @@ class Menus(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
 
 
-#UserApp/ Groupes et les droits d'accès 
 
-# class UserManager(BaseUserManager):
-#     def create_user(self, email, password=None):
-#         if not email:
-#             raise ValueError("Email is required")
-#         user = self.model(email=self.normalize_email(email))
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-#     def create_superuser(self, email, password=None):
-#         user = self.create_user(email, password)
-#         user.is_admin = True
-#         user.save(using=self._db)
-#         return user
-    
-
-# class UserApp(AbstractBaseUser):
-#     nom_user = models.CharField(max_length=100)
-#     nom_complet = models.CharField(max_length=100)
-#     #mot_de_passe = models.CharField(max_length=100)
-#     adresse_email = models.EmailField(unique=True, max_length=255)
-#     actif = models.BooleanField(blank=True)
-#     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
-
-#     objects = UserManager()
-#     USERNAME_FIELD = "adresse_email"
-
-#     def envoyer_email(self):
-#         # Logique pour envoyer un e-mail de bienvenue
-#         pass
-
-from django.contrib.auth.hashers import make_password
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -509,6 +487,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None):
         user = self.create_user(email, password)
         user.is_admin = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
     
@@ -516,32 +495,49 @@ class UserManager(BaseUserManager):
 class UserApp(AbstractBaseUser):
     nom_user = models.CharField(max_length=100)
     nom_complet = models.CharField(max_length=100)
-    password = models.CharField(max_length=128)  # Use CharField with sufficient length for hashed passwords
-    adresse_email = models.EmailField(unique=True, max_length=255)
-    actif = models.BooleanField(blank=True)
+    password = models.CharField(max_length=128)
+    email = models.EmailField(unique=True, max_length=255)
+    actif = models.BooleanField(blank=True, default=False)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
-
+    send_email = models.BooleanField(default=False)  # New field for checkbox
+    is_staff = models.BooleanField(default=False)
     objects = UserManager()
-    USERNAME_FIELD = "adresse_email"
-    # hasher le password 
+    USERNAME_FIELD = "email"
+    
     def save(self, *args, **kwargs):
-        
         self.password = make_password(self.password)
-        if self.id:
-            old_instance = UserApp.objects.get(id=self.id)
-            
         super().save(*args, **kwargs)
+    
+    def has_module_perms(self, app_label):
+        
+        return self.is_staff
+    
+    def has_perm(self, perm, obj=None):
 
-    def envoyer_email(self):
-        # Logique pour envoyer un e-mail de bienvenue
-        pass
+        return self.is_staff
 
 
 class GroupeUser(models.Model):
+    AUTORISATION_CHOICES = [
+        ('Control_total', 'Control total'),
+        ('Lecture', 'Lecture'),
+        ('collaboration_avec_suppression', 'Collaboration avec suppression'),
+        ('collaboration_sans_suppression', 'Collaboration sans suppression'),
+    ]
+
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True, default=None)
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
-    membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
+    autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
+
+
+
+    # Rest of your model code...
+
+
+  
+
+  
     
 class Sante(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
@@ -561,6 +557,81 @@ class Qualite(models.Model):
     objectifs=models.CharField(max_length=255,blank=True, null=True,)
     commentaires_responsable=models.CharField(max_length=255,blank=True, null=True,)
     objectifs_annees=models.CharField(max_length=255,blank=True, null=True,)
+
+class TypePartie(models.Model):
+    nom=models.CharField(max_length=255,blank=True, null=True,)
+    def __str__(self):
+        return str(self.nom)
+
+class PartiesInteresses(models.Model):
+    typepartie=models.ForeignKey(TypePartie, on_delete=models.CASCADE,null=True, default=None)
+    partieinteresse=models.CharField(max_length=255,blank=True, null=True,)
+    importance=models.CharField(max_length=255,blank=True, null=True,)
+    nature=models.CharField(max_length=255,blank=True, null=True,)
+    enjeux=models.CharField(max_length=255,blank=True, null=True,)
+    besoin=models.CharField(max_length=255,blank=True, null=True,)
+    impactfinal=models.CharField(max_length=255,blank=True, null=True,)
+    impactentreprise=models.CharField(max_length=255,blank=True, null=True,)
+    cotation=models.CharField(max_length=255,blank=True, null=True,)
+    impact=models.CharField(max_length=255,blank=True, null=True,)
+    processus = models.ManyToManyField(Processus)
+    def __str__(self):
+        return self.partieinteresse
+
+
+class Exigences(models.Model):
+    type_exigence=models.CharField(max_length=255,blank=True, null=True,)
+    intitule=models.CharField(max_length=255,blank=True, null=True,)
+    evaluation_maitrise=models.CharField(max_length=255,blank=True, null=True,)
+    description=models.CharField(max_length=255,blank=True, null=True,)
+    commentaire=models.CharField(max_length=255,blank=True, null=True,)
+    action=models.BooleanField(blank=True, null=True)
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)  
+   
+
+class AnalyseRisque(models.Model):
+    site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    description=models.CharField(max_length=255,blank=True, null=True,)
+    typologie=models.CharField(max_length=255,blank=True, null=True,)
+    axe=models.CharField(max_length=255,blank=True, null=True,)
+    famille=models.CharField(max_length=255,blank=True, null=True,)
+    indice=models.CharField(max_length=255,blank=True, null=True,)
+    niveau_risque=models.CharField(max_length=255,blank=True, null=True,)
+    date_evaluation=models.DateField(blank=True, null=True)
+    opportunite=models.CharField(max_length=255,blank=True, null=True,)
+    origine=models.CharField(max_length=255,blank=True, null=True,)
+    processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
+    contexte_int=models.CharField(max_length=255,blank=True, null=True,)
+    contexte_ext=models.CharField(max_length=255,blank=True, null=True,)
+    consequences=models.CharField(max_length=255,blank=True, null=True,)
+    impact=models.CharField(max_length=255,blank=True, null=True,)
+    probabilite=models.CharField(max_length=255,blank=True, null=True,)
+    maitrise=models.CharField(max_length=255,blank=True, null=True,)
+    mesure=models.CharField(max_length=255,blank=True, null=True,)
+    type_action=models.CharField(max_length=255,blank=True, null=True,)
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)  
+
+class Cotation(models.Model):
+    maitrise=models.CharField(max_length=255,blank=True, null=True,)
+    impact=models.CharField(max_length=255,blank=True, null=True,)
+    probabilite=models.CharField(max_length=255,blank=True, null=True,)
+    ipr=models.CharField(max_length=255,blank=True, null=True,)
+    indice=models.CharField(max_length=255,blank=True, null=True,)
+    date_evaluation=models.DateField(blank=True, null=True)
+    analyserisque= models.ManyToManyField(AnalyseRisque, null=True, blank=True, db_constraint=False)
+   
+
+
+
+   
+
+
+    
+
+
+
+
+
 
 
 

@@ -1,12 +1,13 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  Documents, GroupeUser, HistoriqueDocument, Menus, Site, Services, Danger, EvaluationDanger, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
+from .models import  AnalyseRisque, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import FicheTechnique
+from django.core.mail import send_mail
 
 
 
@@ -88,7 +89,6 @@ class ArretTravailSerializer(serializers.ModelSerializer):
 
 class ActionSerializer(serializers.ModelSerializer):
     danger_name = serializers.SerializerMethodField()
-    qualite_name = serializers.SerializerMethodField()
     evenement_name = serializers.SerializerMethodField()
     Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
@@ -100,19 +100,13 @@ class ActionSerializer(serializers.ModelSerializer):
         if danger:
             return ', '.join(d.description for d in danger)
         else:
-            return None
-    def get_qualite_name(self, obj):
-        qualite = obj.danger.all()
-        if qualite:
-            return ', '.join(q.description for q in qualite)
-        else:
-            return None       
+            return None      
     def get_evenement_name(self, obj):
         evenement = obj.evenement.all()
         if evenement:
             return ', '.join(e.intitule for e in evenement)
         else:
-            return None
+            return None   
 
 class RealisationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -235,17 +229,17 @@ class DocumentsSerializer(serializers.ModelSerializer):
     site_name = serializers.ReadOnlyField(source='site.site_nom')
     secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom')
     personnel_name = serializers.ReadOnlyField(source='utilisateur.nom')
-    url_document = serializers.SerializerMethodField()
+    # url_document = serializers.SerializerMethodField()
 
     class Meta:
         model = Documents 
         fields = '__all__'
 
-    def get_url_document(self, obj):
-        if obj.url_document:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.url_document.url)
-        return None
+    # def get_url_document(self, obj):
+    #     if obj.url_document:
+    #         request = self.context.get('request')
+    #         return request.build_absolute_uri(obj.url_document.url)
+    #     return None
 
 
 
@@ -269,19 +263,43 @@ class MenusSerializer(serializers.ModelSerializer):
     
 #User/Groupes 
 
+
 class UserAppSerializer(serializers.ModelSerializer):
     nom_groupe = serializers.SerializerMethodField()
 
     def get_nom_groupe(self, user):
         groupes = user.groupes_roles.all()
         return [g.nom for g in groupes]
+    
     class Meta:
         model = UserApp
         fields = '__all__'
+        
+    def create(self, validated_data):
+        groupes_roles_data = validated_data.pop('groupes_roles', [])
+        send_email = validated_data.pop('send_email', False)  # Get the value of send_email checkbox
+        
+        user = UserApp.objects.create(**validated_data)
+        
+        # Assign groupes_roles
+        user.groupes_roles.set(groupes_roles_data)
+        
+        # Send welcome email if send_email is True
+        if send_email:
+            sujet = "Bienvenue sur notre site"
+            message = f"Bonjour {user.nom_user},\n\nBienvenue sur notre site ! Nous sommes ravis de vous compter parmi nos utilisateurs.\n\nCordialement,\nL'équipe du site"
+            email_emetteur = "elhamri.bochra98@gmail.com"
+            destinataires = [user.email]
+            
+            send_mail(sujet, message, email_emetteur, destinataires)
+
+        return user
+
+        
 
 class GroupeUserSerializer(serializers.ModelSerializer):
     proprietaire_groupe_names = serializers.SerializerMethodField()
-    membres_names = serializers.SerializerMethodField()
+  
 
     class Meta:
         model = GroupeUser
@@ -290,11 +308,8 @@ class GroupeUserSerializer(serializers.ModelSerializer):
     def get_proprietaire_groupe_names(self, obj):
         proprietaire_groupe = obj.proprietaire_groupe.all()
         return [user.nom_user for user in proprietaire_groupe]
-    def get_membres_names(self, obj):
-        membres = obj.membres.all()
-        return [user.nom_user for user in membres]
 
-
+    
 class SanteSerializer(serializers.ModelSerializer):
 
     site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
@@ -310,4 +325,52 @@ class QualiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Qualite
+        fields = '__all__'
+
+class TypePartieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TypePartie
+        fields = '__all__'
+
+class PartiesInteressesSerializer(serializers.ModelSerializer):
+    typepartie_name = serializers.ReadOnlyField(source='typepartie.nom')
+    processus_name = serializers.SerializerMethodField()
+
+
+    class Meta:
+        model = PartiesInteresses
+        fields = '__all__'
+    def get_processus_name(self, obj):
+        processus = obj.processus.all()
+        if processus:
+             return ', '.join(p.intitule for p in processus)
+        else:
+            return None 
+
+class ExigencesSerializer(serializers.ModelSerializer):
+
+    partieinteresses_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Exigences
+        fields = '__all__'
+    def get_partieinteresses_name(self, obj):
+        partieinteresses = obj.partieinteresses.all()
+        if partieinteresses:
+            return ', '.join(p.partieinteresse for p in partieinteresses)
+        else:
+            return None 
+
+class AnalyseRisqueSerializer(serializers.ModelSerializer):
+
+    Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
+    Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
+
+    class Meta:
+        model = AnalyseRisque
+        fields = '__all__'
+
+class CotationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cotation
         fields = '__all__'

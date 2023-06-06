@@ -32,6 +32,16 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+CORS_ORIGIN_ALLOW_ALL = True
+#Email Settings 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'elhamri.bochra98@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'xvawwayieptcyrjk'  # Your Gmail password or app password
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,6 +92,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:8000"
 ]
+CORS_ALLOWED_HEADERS = [
+    'cache-control',  # Add 'cache-control' to the allowed headers
+    # Other allowed headers
+]
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

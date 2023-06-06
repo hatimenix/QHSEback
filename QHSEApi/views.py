@@ -16,6 +16,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.decorators.http import require_GET
+
 
 from rest_framework import viewsets
 from rest_framework import viewsets
@@ -36,12 +38,15 @@ from django.contrib.auth.hashers import check_password
 
 from .models import (
     NC,
+    AnalyseRisque,
     Commande,
+    Cotation,
     Danger,
     DocumentUtilities,
     Documents,
     Evaluation,
     EvaluationDanger,
+    Exigences,
     Famille,
     FavorisDocument,
     FicheTechnique,
@@ -49,10 +54,12 @@ from .models import (
     GroupeUser,
     HistoriqueDocument,
     Menus,
+    PartiesInteresses,
     Secteurs,
     Site,
     Services,
     Traitement,
+    TypePartie,
     UserApp,
     Utilisateur,
     ChefServices,
@@ -73,24 +80,30 @@ from .models import (
 )
 from .serializers import (
     
+    AnalyseRisqueSerializer,
     CommandeSerializer,
+    CotationSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
     DocumentsSerializer,
     EvaluationDangerSerializer,
     EvaluationSerializer,
+    ExigencesSerializer,
     FamilleSerializer,
     FavorisDocumentSerializer,
     FicheTechniqueSerializer,
     FournisseurSerializer,
+
     GroupeUserSerializer,
     HistoriqueDocumentSerializer,
     MenusSerializer,
     NCSerializer,
+    PartiesInteressesSerializer,
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
     TraitementSerializer,
+    TypePartieSerializer,
     UserAppSerializer,
     UtilisateurSerializer,
     ChefServiceSerializer,
@@ -113,10 +126,10 @@ from .serializers import (
 class UserTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
-        email = request.data.get("adresse_email")
+        email = request.data.get("email")
         password = request.data.get("password")
         try:
-            user = UserApp.objects.get(adresse_email=email)
+            user = UserApp.objects.get(email=email)
             
             
             if not user.check_password(password):
@@ -125,18 +138,40 @@ class UserTokenObtainPairView(TokenObtainPairView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             refresh = RefreshToken.for_user(user)
+            
             return Response(
                     {
                         "access": str(refresh.access_token),
                         "refresh": str(refresh),
                     }
                 )
-           
+       
         except UserApp.DoesNotExist:
             return Response(
                 {"message": "Email ou mot de passe invalide"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+#Details Users 
+class UserDetailsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        # Add any additional logic or data processing you need here
+        serialized_user = UserAppSerializer(user).data  # Replace UserSerializer with your user serializer
+        return Response(serialized_user)
+
+#Details Group 
+
+class GroupDetailsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, group_id):
+        group = GroupeUser.objects.get(id=group_id)
+        serialized_group = GroupeUserSerializer(group).data
+        return Response(serialized_group)
+
 
 class DangerViewSet(viewsets.ModelViewSet):
     queryset = Danger.objects.all()
@@ -236,14 +271,7 @@ class FicheTechniqueViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
     serializer_class = FicheTechniqueSerializer
 
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        fiche = self.get_object()
-        file_path = fiche.fichier.path
-        file_name = fiche.fichier.name.split('/')[-1]
-        file = open(file_path, 'rb')
-        response = FileResponse(file, as_attachment=True, filename=file_name)
-        return response
+   
 
 #Achraf's views set 
 
@@ -339,11 +367,35 @@ class SanteViewSet(viewsets.ModelViewSet):
 class QualiteViewSet(viewsets.ModelViewSet):
     queryset = Qualite.objects.all()
     serializer_class = QualiteSerializer
+
+class TypePartieViewSet(viewsets.ModelViewSet):
+    queryset = TypePartie.objects.all()
+    serializer_class = TypePartieSerializer
+
+class PartiesInteressesViewSet(viewsets.ModelViewSet):
+    queryset = PartiesInteresses.objects.all()
+    serializer_class = PartiesInteressesSerializer
+
+class ExigencesViewSet(viewsets.ModelViewSet):
+    queryset = Exigences.objects.all()
+    serializer_class = ExigencesSerializer
+
+class AnalyseRisqueViewSet(viewsets.ModelViewSet):
+    queryset = AnalyseRisque.objects.all()
+    serializer_class = AnalyseRisqueSerializer
+
+class CotationViewSet(viewsets.ModelViewSet):
+    queryset = Cotation.objects.all()
+    serializer_class = CotationSerializer
  
-
-  
-
-
+@require_GET
+def get_existing_file_url(request, nc_id):
+    try:
+        nc = NC.objects.get(id=nc_id)
+        file_url = nc.piece_jointe.url if nc.piece_jointe else None
+        return JsonResponse({'file_url': file_url})
+    except NC.DoesNotExist:
+        return JsonResponse({'error': 'NC not found'}, status=404)
     
 
   

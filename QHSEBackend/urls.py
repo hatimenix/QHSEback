@@ -5,6 +5,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
 
+
 #jwt login imports
 
 
@@ -29,6 +30,7 @@ router.register(r'secteurs', views.SecteursViewSet, basename="secteurs")
 router.register(r'equipement', views.EquipementViewSet, basename="equipement")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
 #les routes pour commande et fiche 
+router.register(r'fiche_technique', views.FicheTechniqueViewSet, basename="fiche_technique")
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fournisseurs',views.FournisseurViewSet)
 router.register(r'traitements', views.TraitementViewSet)
@@ -45,6 +47,13 @@ router.register(r'userapp', views.UserAppViewSet, basename="userapp")
 router.register(r'groupeUser', views.GroupeUserViewSet, basename="groupeUser")
 router.register(r'sante', views.SanteViewSet, basename="sante")
 router.register(r'qualite', views.QualiteViewSet, basename="qualite")
+router.register(r'typePartie', views.TypePartieViewSet, basename="typePartie")
+router.register(r'partiesInteresses', views.PartiesInteressesViewSet, basename="partiesInteresses")
+router.register(r'exigences', views.ExigencesViewSet, basename="exigences")
+router.register(r'analyseRisque', views.AnalyseRisqueViewSet, basename="analyseRisque")
+router.register(r'cotation', views.CotationViewSet, basename="cotation")
+
+
 
 
 
@@ -56,6 +65,11 @@ urlpatterns = [
     path('', include(router.urls)),
     #login imports 
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
+    path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
+    path('group/<int:group_id>', views.GroupDetailsAPIView.as_view(), name='get_authenticated_group'),
+    path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
+
+
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
