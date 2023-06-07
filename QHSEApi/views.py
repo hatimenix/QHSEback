@@ -40,6 +40,7 @@ from .models import (
     AnalyseRisque,
     Commande,
     Cotation,
+    Control,
     Danger,
     DocumentUtilities,
     Documents,
@@ -54,6 +55,7 @@ from .models import (
     HistoriqueDocument,
     Menus,
     PartiesInteresses,
+    PreviousControl,
     Secteurs,
     Site,
     Services,
@@ -81,6 +83,7 @@ from .serializers import (
     
     AnalyseRisqueSerializer,
     CommandeSerializer,
+    ControlSerializer,
     CotationSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
@@ -98,6 +101,7 @@ from .serializers import (
     MenusSerializer,
     NCSerializer,
     PartiesInteressesSerializer,
+    PreviousControlSerializer,
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
@@ -153,7 +157,6 @@ class UserTokenObtainPairView(TokenObtainPairView):
         
 #Details Users 
 class UserDetailsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -164,12 +167,18 @@ class UserDetailsAPIView(APIView):
 #Details Group 
 
 class GroupDetailsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, group_id):
-        group = GroupeUser.objects.get(id=group_id)
-        serialized_group = GroupeUserSerializer(group).data
-        return Response(serialized_group)
+        try:
+            group = GroupeUser.objects.get(id=group_id)
+        except GroupeUser.DoesNotExist:
+            return Response(
+                {"message": "Group not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        serializer = GroupeUserSerializer(group)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class DangerViewSet(viewsets.ModelViewSet):
@@ -398,3 +407,14 @@ def get_existing_file_url(request, nc_id):
     
 
   
+#suivie des contrôles réglementaires
+
+class ControlViewSet(viewsets.ModelViewSet):
+    queryset = Control.objects.all()
+    serializer_class = ControlSerializer
+
+
+
+class PreviousControlViewSet(viewsets.ModelViewSet):
+    queryset = PreviousControl.objects.all()
+    serializer_class = PreviousControlSerializer
