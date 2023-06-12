@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  AnalyseRisque, PreviousControl, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
+from .models import  AnalyseRisque, CertificatCalibration, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -378,11 +378,31 @@ class CotationSerializer(serializers.ModelSerializer):
 #suivie des contrôles réglementaires 
 
 class ControlSerializer(serializers.ModelSerializer):
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
     class Meta:
         model = Control
         fields = '__all__'
 
-class PreviousControlSerializer(serializers.ModelSerializer):
+# class PreviousControlSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PreviousControl
+#         fields = '__all__'
+
+class PJSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='modifie_par.nom')
+
     class Meta:
-        model = PreviousControl
+        model = Pj
+        fields = '__all__'
+
+class RapportDauditSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='modifie_par.nom')
+    class Meta:
+        model = RapportDaudit
+        fields = '__all__'
+
+class CertificatCalibrationSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='modifie_par.nom')
+    class Meta:
+        model = CertificatCalibration
         fields = '__all__'

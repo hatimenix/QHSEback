@@ -614,26 +614,42 @@ class Cotation(models.Model):
 
 
 #suivie des contrôles réglementaires 
+
 class Control(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     nature_control = models.CharField(max_length=255, blank=True)
     origine_reglementaire = models.CharField(max_length=255, blank=True)
-    date_dernier_control = models.DateField()
-    action_ouverte = models.BooleanField(blank=True, default=False)
-
-
-
-class PreviousControl(models.Model):
-    control= models.ForeignKey(Control, on_delete=models.CASCADE,related_name='previous_controls')
-    control_date = models.DateField()
+    date_dernier_control = models.DateField(blank=True, null=True)
+    date_control_suivant = models.DateField(blank=True, null=True)
+    action_ouverte = models.CharField(max_length=255, blank=True, null=True)
     rapport = models.FileField(upload_to='documents/',blank=True)
-    action_ouverte = models.BooleanField(blank=True, default=False) 
-    date_control_suivant = models.DateField()
 
 
-   
+# class PreviousControl(models.Model):
+#     control= models.ForeignKey(Control, on_delete=models.CASCADE,related_name='previous_controls')
+#     control_date = models.DateField(blank=True, null=True)
+#     rapport = models.FileField(upload_to='documents/',blank=True)
+#     action_ouverte = models.BooleanField(blank=True, default=False) 
+#     date_control_suivant = models.DateField(blank=True, null=True)
 
 
+class Pj(models.Model):
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+class RapportDaudit(models.Model): 
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+class CertificatCalibration(models.Model):
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     
 
 

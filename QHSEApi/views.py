@@ -38,6 +38,7 @@ from django.contrib.auth.hashers import check_password
 from .models import (
     NC,
     AnalyseRisque,
+    CertificatCalibration,
     Commande,
     Cotation,
     Control,
@@ -55,7 +56,8 @@ from .models import (
     HistoriqueDocument,
     Menus,
     PartiesInteresses,
-    PreviousControl,
+    Pj,
+    RapportDaudit,
     Secteurs,
     Site,
     Services,
@@ -82,6 +84,7 @@ from .models import (
 from .serializers import (
     
     AnalyseRisqueSerializer,
+    CertificatCalibrationSerializer,
     CommandeSerializer,
     ControlSerializer,
     CotationSerializer,
@@ -100,8 +103,9 @@ from .serializers import (
     HistoriqueDocumentSerializer,
     MenusSerializer,
     NCSerializer,
+    PJSerializer,
     PartiesInteressesSerializer,
-    PreviousControlSerializer,
+    RapportDauditSerializer,
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
@@ -415,6 +419,18 @@ class ControlViewSet(viewsets.ModelViewSet):
 
 
 
-class PreviousControlViewSet(viewsets.ModelViewSet):
-    queryset = PreviousControl.objects.all()
-    serializer_class = PreviousControlSerializer
+# class PreviousControlViewSet(viewsets.ModelViewSet):
+#     queryset = PreviousControl.objects.all()
+#     serializer_class = PreviousControlSerializer
+
+class PJViewSet(viewsets.ModelViewSet):
+    queryset = Pj.objects.all()
+    serializer_class = PJSerializer
+
+class RapportDauditViewSet(viewsets.ModelViewSet):
+    queryset = RapportDaudit.objects.all()
+    serializer_class = RapportDauditSerializer
+
+class CertificatCalibrationViewSet(viewsets.ModelViewSet):
+    queryset = CertificatCalibration.objects.all()
+    serializer_class = CertificatCalibrationSerializer
