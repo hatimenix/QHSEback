@@ -53,7 +53,9 @@ router.register(r'exigences', views.ExigencesViewSet, basename="exigences")
 router.register(r'analyseRisque', views.AnalyseRisqueViewSet, basename="analyseRisque")
 router.register(r'cotation', views.CotationViewSet, basename="cotation")
 
-
+#suivie des contrôles réglementaires 
+router.register(r'control', views.ControlViewSet, basename="control")
+router.register(r'previous_control', views.PreviousControlViewSet, basename="previous_control")
 
 
 
@@ -66,7 +68,7 @@ urlpatterns = [
     #login imports 
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
     path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
-    path('group/<int:group_id>', views.GroupDetailsAPIView.as_view(), name='get_authenticated_group'),
+    path('groups/<int:group_id>/', views.GroupDetailsAPIView.as_view(), name='group_details'),
     path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
 
 

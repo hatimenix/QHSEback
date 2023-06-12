@@ -531,14 +531,6 @@ class GroupeUser(models.Model):
     autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
 
 
-
-    # Rest of your model code...
-
-
-  
-
-  
-    
 class Sante(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
     demande_de_conseils=models.CharField(max_length=255,blank=True, null=True,)
@@ -619,8 +611,24 @@ class Cotation(models.Model):
     indice=models.CharField(max_length=255,blank=True, null=True,)
     date_evaluation=models.DateField(blank=True, null=True)
     analyserisque= models.ManyToManyField(AnalyseRisque, null=True, blank=True, db_constraint=False)
-   
 
+
+#suivie des contrôles réglementaires 
+class Control(models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    nature_control = models.CharField(max_length=255, blank=True)
+    origine_reglementaire = models.CharField(max_length=255, blank=True)
+    date_dernier_control = models.DateField()
+    action_ouverte = models.BooleanField(blank=True, default=False)
+
+
+
+class PreviousControl(models.Model):
+    control= models.ForeignKey(Control, on_delete=models.CASCADE,related_name='previous_controls')
+    control_date = models.DateField()
+    rapport = models.FileField(upload_to='documents/',blank=True)
+    action_ouverte = models.BooleanField(blank=True, default=False) 
+    date_control_suivant = models.DateField()
 
 
    
