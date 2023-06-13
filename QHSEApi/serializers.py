@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  AnalyseRisque, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite,Source
+from .models import  AnalyseRisque, CertificatCalibration, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite,Source
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -238,17 +238,17 @@ class DocumentsSerializer(serializers.ModelSerializer):
     site_name = serializers.ReadOnlyField(source='site.site_nom')
     secteur_name = serializers.ReadOnlyField(source='secteur.secteur_nom')
     personnel_name = serializers.ReadOnlyField(source='utilisateur.nom')
-    url_document = serializers.SerializerMethodField()
+    # url_document = serializers.SerializerMethodField()
 
     class Meta:
         model = Documents 
         fields = '__all__'
 
-    def get_url_document(self, obj):
-        if obj.url_document:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.url_document.url)
-        return None
+    # def get_url_document(self, obj):
+    #     if obj.url_document:
+    #         request = self.context.get('request')
+    #         return request.build_absolute_uri(obj.url_document.url)
+    #     return None
 
 
 
@@ -308,7 +308,7 @@ class UserAppSerializer(serializers.ModelSerializer):
 
 class GroupeUserSerializer(serializers.ModelSerializer):
     proprietaire_groupe_names = serializers.SerializerMethodField()
-    membres_names = serializers.SerializerMethodField()
+  
 
     class Meta:
         model = GroupeUser
@@ -317,14 +317,8 @@ class GroupeUserSerializer(serializers.ModelSerializer):
     def get_proprietaire_groupe_names(self, obj):
         proprietaire_groupe = obj.proprietaire_groupe.all()
         return [user.nom_user for user in proprietaire_groupe]
-    def get_membres_names(self, obj):
-        membres = obj.membres.all()
-        return [user.nom_user for user in membres]
+
     
-
-
-
-
 class SanteSerializer(serializers.ModelSerializer):
 
     site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
@@ -388,4 +382,36 @@ class AnalyseRisqueSerializer(serializers.ModelSerializer):
 class CotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cotation
+        fields = '__all__'
+
+#suivie des contrôles réglementaires 
+
+class ControlSerializer(serializers.ModelSerializer):
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+    class Meta:
+        model = Control
+        fields = '__all__'
+
+# class PreviousControlSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PreviousControl
+#         fields = '__all__'
+
+class PJSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='modifie_par.nom')
+
+    class Meta:
+        model = Pj
+        fields = '__all__'
+
+class RapportDauditSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='modifie_par.nom')
+    class Meta:
+        model = RapportDaudit
+        fields = '__all__'
+
+class CertificatCalibrationSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='modifie_par.nom')
+    class Meta:
+        model = CertificatCalibration
         fields = '__all__'

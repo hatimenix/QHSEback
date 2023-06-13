@@ -4,17 +4,18 @@ from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser
 import os
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 #send email 
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 #permissions
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
-from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-
+from django.contrib.auth import get_user_model
 #*Zakaria
 #*Backend document unique 
 
@@ -275,7 +276,7 @@ class Commande(models.Model):
 
 class FicheTechnique(models.Model):
     id_fiche = models.AutoField(primary_key=True)
-    fichier = models.FileField(upload_to='uploads/', validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    fichier = models.FileField(upload_to='uploads/', validators=[FileExtensionValidator(['pdf', 'docx','odt'])],blank=True)
     nom_fiche = models.CharField(max_length=255)
     type_plat = models.CharField(max_length=50)
 
@@ -512,50 +513,31 @@ class UserApp(AbstractBaseUser):
     
     def save(self, *args, **kwargs):
         self.password = make_password(self.password)
-        # if self.id:
-        #     old_instance = UserApp.objects.get(id=self.id)
         super().save(*args, **kwargs)
     
     def has_module_perms(self, app_label):
-        # By default, grant module permissions to all staff (superuser) users
+        
         return self.is_staff
     
     def has_perm(self, perm, obj=None):
-        # Check if the user has the permission assigned to their group
-        if self.groupes_roles.exists() and self.is_active:
-            group_permissions = Permission.objects.filter(group__groupeuser=self.groupes_roles.first())
-            return group_permissions.filter(codename=perm).exists()
-        
-        # By default, grant all permissions to staff (superuser) users
+
         return self.is_staff
 
+
 class GroupeUser(models.Model):
+    AUTORISATION_CHOICES = [
+        ('Control_total', 'Control total'),
+        ('Lecture', 'Lecture'),
+        ('collaboration_avec_suppression', 'Collaboration avec suppression'),
+        ('collaboration_sans_suppression', 'Collaboration sans suppression'),
+    ]
+
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True, default=None)
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
-    membres = models.ManyToManyField(UserApp, related_name='groupes_membre', blank=True)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Save the GroupeUser instance first to generate an id
-
-        # Assign group permissions to members after saving the GroupeUser instance
-        if self.group:
-            # Get the group permissions
-            group_permissions = Permission.objects.filter(group=self.group)
-
-            # Assign the group permissions to members
-            for user in self.membres.all():
-                user.user_permissions.set(group_permissions)
-
-        return self
+    autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
 
 
-
-
-
-  
-    
 class Sante(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
     demande_de_conseils=models.CharField(max_length=255,blank=True, null=True,)
@@ -636,13 +618,45 @@ class Cotation(models.Model):
     indice=models.CharField(max_length=255,blank=True, null=True,)
     date_evaluation=models.DateField(blank=True, null=True)
     analyserisque= models.ManyToManyField(AnalyseRisque, null=True, blank=True, db_constraint=False)
-   
 
 
+#suivie des contrôles réglementaires 
 
-   
+class Control(models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    nature_control = models.CharField(max_length=255, blank=True)
+    origine_reglementaire = models.CharField(max_length=255, blank=True)
+    date_dernier_control = models.DateField(blank=True, null=True)
+    date_control_suivant = models.DateField(blank=True, null=True)
+    action_ouverte = models.CharField(max_length=255, blank=True, null=True)
+    rapport = models.FileField(upload_to='documents/',blank=True)
 
 
+# class PreviousControl(models.Model):
+#     control= models.ForeignKey(Control, on_delete=models.CASCADE,related_name='previous_controls')
+#     control_date = models.DateField(blank=True, null=True)
+#     rapport = models.FileField(upload_to='documents/',blank=True)
+#     action_ouverte = models.BooleanField(blank=True, default=False) 
+#     date_control_suivant = models.DateField(blank=True, null=True)
+
+
+class Pj(models.Model):
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+class RapportDaudit(models.Model): 
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+class CertificatCalibration(models.Model):
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     
 
 

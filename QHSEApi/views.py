@@ -38,8 +38,10 @@ from django.contrib.auth.hashers import check_password
 from .models import (
     NC,
     AnalyseRisque,
+    CertificatCalibration,
     Commande,
     Cotation,
+    Control,
     Danger,
     DocumentUtilities,
     Documents,
@@ -54,6 +56,8 @@ from .models import (
     HistoriqueDocument,
     Menus,
     PartiesInteresses,
+    Pj,
+    RapportDaudit,
     Secteurs,
     Site,
     Services,
@@ -81,7 +85,9 @@ from .models import (
 from .serializers import (
     
     AnalyseRisqueSerializer,
+    CertificatCalibrationSerializer,
     CommandeSerializer,
+    ControlSerializer,
     CotationSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
@@ -98,7 +104,9 @@ from .serializers import (
     HistoriqueDocumentSerializer,
     MenusSerializer,
     NCSerializer,
+    PJSerializer,
     PartiesInteressesSerializer,
+    RapportDauditSerializer,
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
@@ -149,13 +157,12 @@ class UserTokenObtainPairView(TokenObtainPairView):
        
         except UserApp.DoesNotExist:
             return Response(
-                {"message": "Email ou mot de passe invalide2"},
+                {"message": "Email ou mot de passe invalide"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         
 #Details Users 
 class UserDetailsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -163,9 +170,21 @@ class UserDetailsAPIView(APIView):
         serialized_user = UserAppSerializer(user).data  # Replace UserSerializer with your user serializer
         return Response(serialized_user)
 
+#Details Group 
 
+class GroupDetailsAPIView(APIView):
+    def get(self, request, group_id):
+        try:
+            group = GroupeUser.objects.get(id=group_id)
+        except GroupeUser.DoesNotExist:
+            return Response(
+                {"message": "Group not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        serializer = GroupeUserSerializer(group)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
 
 
 class DangerViewSet(viewsets.ModelViewSet):
@@ -270,14 +289,7 @@ class FicheTechniqueViewSet(viewsets.ModelViewSet):
     queryset = FicheTechnique.objects.all()
     serializer_class = FicheTechniqueSerializer
 
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        fiche = self.get_object()
-        file_path = fiche.fichier.path
-        file_name = fiche.fichier.name.split('/')[-1]
-        file = open(file_path, 'rb')
-        response = FileResponse(file, as_attachment=True, filename=file_name)
-        return response
+   
 
 #Achraf's views set 
 
@@ -405,3 +417,26 @@ def get_existing_file_url(request, nc_id):
     
 
   
+#suivie des contrôles réglementaires
+
+class ControlViewSet(viewsets.ModelViewSet):
+    queryset = Control.objects.all()
+    serializer_class = ControlSerializer
+
+
+
+# class PreviousControlViewSet(viewsets.ModelViewSet):
+#     queryset = PreviousControl.objects.all()
+#     serializer_class = PreviousControlSerializer
+
+class PJViewSet(viewsets.ModelViewSet):
+    queryset = Pj.objects.all()
+    serializer_class = PJSerializer
+
+class RapportDauditViewSet(viewsets.ModelViewSet):
+    queryset = RapportDaudit.objects.all()
+    serializer_class = RapportDauditSerializer
+
+class CertificatCalibrationViewSet(viewsets.ModelViewSet):
+    queryset = CertificatCalibration.objects.all()
+    serializer_class = CertificatCalibrationSerializer

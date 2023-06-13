@@ -30,6 +30,7 @@ router.register(r'secteurs', views.SecteursViewSet, basename="secteurs")
 router.register(r'equipement', views.EquipementViewSet, basename="equipement")
 router.register(r'famille', views.FamilleViewSet, basename="famille")
 #les routes pour commande et fiche 
+router.register(r'fiche_technique', views.FicheTechniqueViewSet, basename="fiche_technique")
 router.register(r'commande', views.CommandeViewSet, basename="commande")
 router.register(r'fournisseurs',views.FournisseurViewSet)
 router.register(r'traitements', views.TraitementViewSet)
@@ -54,9 +55,12 @@ router.register(r'cotation', views.CotationViewSet, basename="cotation")
 router.register(r'source', views.SourceViewSet, basename="source")
 
 
-
-
-
+#suivie des contrôles réglementaires 
+router.register(r'control', views.ControlViewSet, basename="control")
+# Récents
+router.register(r'pj', views.PJViewSet, basename="pj")
+router.register(r'rapportAudit', views.RapportDauditViewSet, basename="rapportAudit")
+router.register(r'CertificatCalibration', views.CertificatCalibrationViewSet, basename="CertificatCalibration")
 
 ###########################
 
@@ -67,6 +71,7 @@ urlpatterns = [
     #login imports 
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
     path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
+    path('groups/<int:group_id>/', views.GroupDetailsAPIView.as_view(), name='group_details'),
     path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
 
 
