@@ -51,6 +51,8 @@ router.register(r'partiesInteresses', views.PartiesInteressesViewSet, basename="
 router.register(r'exigences', views.ExigencesViewSet, basename="exigences")
 router.register(r'analyseRisque', views.AnalyseRisqueViewSet, basename="analyseRisque")
 router.register(r'cotation', views.CotationViewSet, basename="cotation")
+router.register(r'source', views.SourceViewSet, basename="source")
+
 
 
 
