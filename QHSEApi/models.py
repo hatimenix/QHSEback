@@ -202,6 +202,8 @@ class Actions(models.Model):
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
+    tache= models.ManyToManyField('Taches', null=True, blank=True, db_constraint=False)
+
 
     
     def save(self, *args, **kwargs):
@@ -217,15 +219,20 @@ class Realisation(models.Model):
     action_realise = models.CharField(max_length=255)
     date_realisation = models.DateField()
     etat = models.CharField(max_length=50)
-    
+
+class Source(models.Model):
+    nom=models.CharField(max_length=255,blank=True, null=True,)
+    def __str__(self):
+        return str(self.nom)
+        
 class Taches(models.Model):
-    source = models.CharField(max_length=100, null=True, blank=True)
+    source=models.ForeignKey(Source, on_delete=models.CASCADE,null=True, default=None)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
     echeance = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     priorite = models.CharField(max_length=100, null=True, blank=True)
-    assigne_a = models.CharField(max_length=100, null=True, blank=True)
+    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     date_realisation = models.DateField(null=True, blank=True)
     etat = models.CharField(max_length=100, null=True, blank=True)
     commentaire = models.TextField(null=True, blank=True)
