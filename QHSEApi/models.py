@@ -168,6 +168,10 @@ class Processus(models.Model):
     objectifs_ind = models.TextField()
     outils_surveil = models.TextField()
 
+    
+
+
+
     def __str__(self):
         return self.intitule
     
@@ -202,6 +206,7 @@ class Actions(models.Model):
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
+    ca = models.ManyToManyField('ConstatAudit', null=True, blank=True, db_constraint=False)
 
     
     def save(self, *args, **kwargs):
@@ -217,6 +222,11 @@ class Realisation(models.Model):
     action_realise = models.CharField(max_length=255)
     date_realisation = models.DateField()
     etat = models.CharField(max_length=50)
+
+class Source(models.Model):
+    nom=models.CharField(max_length=255,blank=True, null=True,)
+    def __str__(self):
+        return str(self.nom)
     
 class Taches(models.Model):
     source = models.CharField(max_length=100, null=True, blank=True)
@@ -531,14 +541,6 @@ class GroupeUser(models.Model):
     autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
 
 
-
-    # Rest of your model code...
-
-
-  
-
-  
-    
 class Sante(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
     demande_de_conseils=models.CharField(max_length=255,blank=True, null=True,)
@@ -609,7 +611,8 @@ class AnalyseRisque(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
     mesure=models.CharField(max_length=255,blank=True, null=True,)
     type_action=models.CharField(max_length=255,blank=True, null=True,)
-    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)  
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False) 
+
 
 class Cotation(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
@@ -619,13 +622,54 @@ class Cotation(models.Model):
     indice=models.CharField(max_length=255,blank=True, null=True,)
     date_evaluation=models.DateField(blank=True, null=True)
     analyserisque= models.ManyToManyField(AnalyseRisque, null=True, blank=True, db_constraint=False)
+
+
+#suivie des contrôles réglementaires 
+
+class Control(models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    nature_control = models.CharField(max_length=255, blank=True)
+    origine_reglementaire = models.CharField(max_length=255, blank=True)
+    date_dernier_control = models.DateField(blank=True, null=True)
+    date_control_suivant = models.DateField(blank=True, null=True)
+    action_ouverte = models.CharField(max_length=255, blank=True, null=True)
+    rapport = models.FileField(upload_to='documents/',blank=True)
+
+class ConstatAudit(models.Model):
+    intitule_constat = models.CharField(max_length=255,blank=True, null=True,)
+    description_constat = models.CharField(max_length=255,blank=True, null=True,)
+    type_constat = models.CharField(max_length=255,blank=True, null=True,)  
+    audit_associe =  models.CharField(max_length=255,blank=True, null=True,)  
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    responsable_traitement = models.ManyToManyField(Utilisateur, null=True, blank=True, db_constraint=False)
+    processus = models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
+    date_reponse = models.DateField(blank=True, null=True)
+    localisation =  models.CharField(max_length=255,blank=True, null=True,) 
+    type_audit =  models.CharField(max_length=255,blank=True, null=True,) 
+    rapport_audit =  models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            )   
    
 
+class Pj(models.Model):
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
 
+class RapportDaudit(models.Model): 
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
 
-   
-
-
+class CertificatCalibration(models.Model):
+    nom = models.CharField(max_length=255, blank=True)
+    url_document = models.FileField(upload_to='documents/', blank=True)
+    date_modification = models.DateField(blank=True, null=True)
+    modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     
 
 

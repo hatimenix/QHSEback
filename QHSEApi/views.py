@@ -17,6 +17,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.views.decorators.http import require_GET
+from django.db.models import Count
+
 
 
 from rest_framework import viewsets
@@ -39,8 +41,10 @@ from django.contrib.auth.hashers import check_password
 from .models import (
     NC,
     AnalyseRisque,
+    CertificatCalibration,
     Commande,
     Cotation,
+    Control,
     Danger,
     DocumentUtilities,
     Documents,
@@ -55,9 +59,12 @@ from .models import (
     HistoriqueDocument,
     Menus,
     PartiesInteresses,
+    Pj,
+    RapportDaudit,
     Secteurs,
     Site,
     Services,
+    Source,
     Traitement,
     TypePartie,
     UserApp,
@@ -75,13 +82,17 @@ from .models import (
     Secteurs,
     Equipement,
     Sante,
-    Qualite
+    Qualite,
+    ConstatAudit
 
 )
 from .serializers import (
     
     AnalyseRisqueSerializer,
+    CertificatCalibrationSerializer,
     CommandeSerializer,
+    ConstatAuditSerializer,
+    ControlSerializer,
     CotationSerializer,
     DangerSerializer,
     DocumentUtilitiesSerializer,
@@ -98,10 +109,13 @@ from .serializers import (
     HistoriqueDocumentSerializer,
     MenusSerializer,
     NCSerializer,
+    PJSerializer,
     PartiesInteressesSerializer,
+    RapportDauditSerializer,
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
+    SourceSerializer,
     TraitementSerializer,
     TypePartieSerializer,
     UserAppSerializer,
@@ -119,7 +133,8 @@ from .serializers import (
     SecteursSerializer,
     EquipementSerializer,
     SanteSerializer,
-    QualiteSerializer
+    QualiteSerializer,
+    ConstatAuditSerializer
 )
 #login 
 # Authentication
@@ -154,7 +169,6 @@ class UserTokenObtainPairView(TokenObtainPairView):
         
 #Details Users 
 class UserDetailsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -165,12 +179,18 @@ class UserDetailsAPIView(APIView):
 #Details Group 
 
 class GroupDetailsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, group_id):
-        group = GroupeUser.objects.get(id=group_id)
-        serialized_group = GroupeUserSerializer(group).data
-        return Response(serialized_group)
+        try:
+            group = GroupeUser.objects.get(id=group_id)
+        except GroupeUser.DoesNotExist:
+            return Response(
+                {"message": "Group not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        serializer = GroupeUserSerializer(group)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class DangerViewSet(viewsets.ModelViewSet):
@@ -230,6 +250,11 @@ class ActionsViewSet(viewsets.ModelViewSet):
     queryset = Actions.objects.all()
     serializer_class = ActionSerializer
 
+    @action(detail=False, methods=['GET'])
+    def stats_by_type_action(self, request):
+        stats = Actions.objects.values('type_action').annotate(count=Count('id'))
+        return Response(stats)
+
 
 class RealisationViewSet(viewsets.ModelViewSet):
     queryset = Realisation.objects.all()
@@ -240,6 +265,10 @@ class TachesViewSet(viewsets.ModelViewSet):
     queryset = Taches.objects.all()
     serializer_class = TacheSerializer
 
+
+class SourceViewSet(viewsets.ModelViewSet):
+    queryset = Source.objects.all()
+    serializer_class = SourceSerializer
 
 class MesureEfficaciteViewSet(viewsets.ModelViewSet):
     queryset = MesureEfficacite.objects.all()
@@ -310,6 +339,11 @@ class DocumentutilesViewSet(viewsets.ModelViewSet):
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer
+    
+    @action(detail=False, methods=['GET'])
+    def stats_by_nature(self, request):
+        stats = NC.objects.values('nature').annotate(count=Count('id'))
+        return Response(stats)
 
     @api_view(['GET'])
     def download_file(request, pk):
@@ -399,3 +433,29 @@ def get_existing_file_url(request, nc_id):
     
 
   
+class ConstatAuditViewSet(viewsets.ModelViewSet):
+    queryset = ConstatAudit.objects.all()
+    serializer_class = ConstatAuditSerializer
+#suivie des contrôles réglementaires
+
+class ControlViewSet(viewsets.ModelViewSet):
+    queryset = Control.objects.all()
+    serializer_class = ControlSerializer
+
+
+
+# class PreviousControlViewSet(viewsets.ModelViewSet):
+#     queryset = PreviousControl.objects.all()
+#     serializer_class = PreviousControlSerializer
+
+class PJViewSet(viewsets.ModelViewSet):
+    queryset = Pj.objects.all()
+    serializer_class = PJSerializer
+
+class RapportDauditViewSet(viewsets.ModelViewSet):
+    queryset = RapportDaudit.objects.all()
+    serializer_class = RapportDauditSerializer
+
+class CertificatCalibrationViewSet(viewsets.ModelViewSet):
+    queryset = CertificatCalibration.objects.all()
+    serializer_class = CertificatCalibrationSerializer
