@@ -63,6 +63,7 @@ from .models import (
     Secteurs,
     Site,
     Services,
+    Source,
     Traitement,
     TypePartie,
     UserApp,
@@ -81,7 +82,7 @@ from .models import (
     Equipement,
     Sante,
     Qualite,
-    Source
+    ConstatAudit
 
 )
 from .serializers import (
@@ -89,6 +90,7 @@ from .serializers import (
     AnalyseRisqueSerializer,
     CertificatCalibrationSerializer,
     CommandeSerializer,
+    ConstatAuditSerializer,
     ControlSerializer,
     CotationSerializer,
     DangerSerializer,
@@ -112,6 +114,7 @@ from .serializers import (
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
+    SourceSerializer,
     TraitementSerializer,
     TypePartieSerializer,
     UserAppSerializer,
@@ -130,7 +133,7 @@ from .serializers import (
     EquipementSerializer,
     SanteSerializer,
     QualiteSerializer,
-    SourceSerializer
+    ConstatAuditSerializer
 )
 #login 
 # Authentication
@@ -261,10 +264,10 @@ class TachesViewSet(viewsets.ModelViewSet):
     queryset = Taches.objects.all()
     serializer_class = TacheSerializer
 
+
 class SourceViewSet(viewsets.ModelViewSet):
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
-
 
 class MesureEfficaciteViewSet(viewsets.ModelViewSet):
     queryset = MesureEfficacite.objects.all()
@@ -429,6 +432,9 @@ def get_existing_file_url(request, nc_id):
     
 
   
+class ConstatAuditViewSet(viewsets.ModelViewSet):
+    queryset = ConstatAudit.objects.all()
+    serializer_class = ConstatAuditSerializer
 #suivie des contrôles réglementaires
 
 class ControlViewSet(viewsets.ModelViewSet):
