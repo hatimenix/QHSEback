@@ -61,6 +61,7 @@ from .models import (
     Secteurs,
     Site,
     Services,
+    Source,
     Traitement,
     TypePartie,
     UserApp,
@@ -78,8 +79,7 @@ from .models import (
     Secteurs,
     Equipement,
     Sante,
-    Qualite,
-    Source
+    Qualite
 
 )
 from .serializers import (
@@ -110,6 +110,7 @@ from .serializers import (
     SecteursSerializer,
     SiteSerializer,
     ServiceSerializer,
+    SourceSerializer,
     TraitementSerializer,
     TypePartieSerializer,
     UserAppSerializer,
@@ -127,8 +128,8 @@ from .serializers import (
     SecteursSerializer,
     EquipementSerializer,
     SanteSerializer,
-    QualiteSerializer,
-    SourceSerializer
+    QualiteSerializer
+    
 )
 #login 
 # Authentication
@@ -254,10 +255,10 @@ class TachesViewSet(viewsets.ModelViewSet):
     queryset = Taches.objects.all()
     serializer_class = TacheSerializer
 
+
 class SourceViewSet(viewsets.ModelViewSet):
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
-
 
 class MesureEfficaciteViewSet(viewsets.ModelViewSet):
     queryset = MesureEfficacite.objects.all()

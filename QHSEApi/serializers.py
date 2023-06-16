@@ -1,12 +1,12 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  AnalyseRisque, CertificatCalibration, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite,Source
+from .models import  AnalyseRisque, CertificatCalibration, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import FicheTechnique
+ 
 from django.core.mail import send_mail
 
 
@@ -124,17 +124,14 @@ class ProcessusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Processus
         fields = '__all__'
-
+        
 class SourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Source
         fields = '__all__'
 
+
 class TacheSerializer(serializers.ModelSerializer):
-    utilisateur_name = serializers.ReadOnlyField(source='assigne_a.nom')
-    source_name = serializers.ReadOnlyField(source='source.nom')
-
-
     class Meta:
         model = Taches
         fields = '__all__'

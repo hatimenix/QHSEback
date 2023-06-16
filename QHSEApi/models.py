@@ -168,6 +168,10 @@ class Processus(models.Model):
     objectifs_ind = models.TextField()
     outils_surveil = models.TextField()
 
+    
+
+
+
     def __str__(self):
         return self.intitule
     
@@ -202,8 +206,6 @@ class Actions(models.Model):
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
-    tache= models.ManyToManyField('Taches', null=True, blank=True, db_constraint=False)
-
 
     
     def save(self, *args, **kwargs):
@@ -224,15 +226,15 @@ class Source(models.Model):
     nom=models.CharField(max_length=255,blank=True, null=True,)
     def __str__(self):
         return str(self.nom)
-        
+    
 class Taches(models.Model):
-    source=models.ForeignKey(Source, on_delete=models.CASCADE,null=True, default=None)
+    source = models.CharField(max_length=100, null=True, blank=True)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
     echeance = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     priorite = models.CharField(max_length=100, null=True, blank=True)
-    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
+    assigne_a = models.CharField(max_length=100, null=True, blank=True)
     date_realisation = models.DateField(null=True, blank=True)
     etat = models.CharField(max_length=100, null=True, blank=True)
     commentaire = models.TextField(null=True, blank=True)
@@ -599,7 +601,7 @@ class AnalyseRisque(models.Model):
     date_evaluation=models.DateField(blank=True, null=True)
     opportunite=models.CharField(max_length=255,blank=True, null=True,)
     origine=models.CharField(max_length=255,blank=True, null=True,)
-    #processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
+    processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
     contexte_int=models.CharField(max_length=255,blank=True, null=True,)
     contexte_ext=models.CharField(max_length=255,blank=True, null=True,)
     consequences=models.CharField(max_length=255,blank=True, null=True,)
@@ -608,10 +610,8 @@ class AnalyseRisque(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
     mesure=models.CharField(max_length=255,blank=True, null=True,)
     type_action=models.CharField(max_length=255,blank=True, null=True,)
-    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)
-    processus= models.ManyToManyField('Processus', null=True, blank=True, db_constraint=False)
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False) 
 
-      
 
 class Cotation(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
@@ -633,7 +633,6 @@ class Control(models.Model):
     date_control_suivant = models.DateField(blank=True, null=True)
     action_ouverte = models.CharField(max_length=255, blank=True, null=True)
     rapport = models.FileField(upload_to='documents/',blank=True)
-
 
 
 
