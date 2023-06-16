@@ -74,7 +74,8 @@ from .models import (
     Secteurs,
     Equipement,
     Sante,
-    Qualite
+    Qualite,
+    ConstatAudit
 
 )
 from .serializers import (
@@ -118,7 +119,8 @@ from .serializers import (
     SecteursSerializer,
     EquipementSerializer,
     SanteSerializer,
-    QualiteSerializer
+    QualiteSerializer,
+    ConstatAuditSerializer
 )
 #login 
 # Authentication
@@ -398,3 +400,6 @@ def get_existing_file_url(request, nc_id):
     
 
   
+class ConstatAuditViewSet(viewsets.ModelViewSet):
+    queryset = ConstatAudit.objects.all()
+    serializer_class = ConstatAuditSerializer

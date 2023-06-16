@@ -54,6 +54,7 @@ router.register(r'analyseRisque', views.AnalyseRisqueViewSet, basename="analyseR
 router.register(r'cotation', views.CotationViewSet, basename="cotation")
 
 
+router.register(r'constataudit', views.ConstatAuditViewSet, basename="constataudit")
 
 
 
