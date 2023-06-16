@@ -599,7 +599,7 @@ class AnalyseRisque(models.Model):
     date_evaluation=models.DateField(blank=True, null=True)
     opportunite=models.CharField(max_length=255,blank=True, null=True,)
     origine=models.CharField(max_length=255,blank=True, null=True,)
-    processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
+    #processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
     contexte_int=models.CharField(max_length=255,blank=True, null=True,)
     contexte_ext=models.CharField(max_length=255,blank=True, null=True,)
     consequences=models.CharField(max_length=255,blank=True, null=True,)
@@ -608,7 +608,10 @@ class AnalyseRisque(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
     mesure=models.CharField(max_length=255,blank=True, null=True,)
     type_action=models.CharField(max_length=255,blank=True, null=True,)
-    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)  
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)
+    processus= models.ManyToManyField('Processus', null=True, blank=True, db_constraint=False)
+
+      
 
 class Cotation(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
@@ -632,12 +635,7 @@ class Control(models.Model):
     rapport = models.FileField(upload_to='documents/',blank=True)
 
 
-# class PreviousControl(models.Model):
-#     control= models.ForeignKey(Control, on_delete=models.CASCADE,related_name='previous_controls')
-#     control_date = models.DateField(blank=True, null=True)
-#     rapport = models.FileField(upload_to='documents/',blank=True)
-#     action_ouverte = models.BooleanField(blank=True, default=False) 
-#     date_control_suivant = models.DateField(blank=True, null=True)
+
 
 
 class Pj(models.Model):
