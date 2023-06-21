@@ -27,7 +27,8 @@ import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from rest_framework_jwt.settings import api_settings
+from rest_framework_simplejwt.settings import api_settings
+
 #login imports 
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
