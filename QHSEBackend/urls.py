@@ -55,6 +55,9 @@ router.register(r'cotation', views.CotationViewSet, basename="cotation")
 router.register(r'source', views.SourceViewSet, basename="source")
 
 
+router.register(r'constataudit', views.ConstatAuditViewSet, basename="constataudit")
+
+
 #suivie des contrôles réglementaires 
 router.register(r'control', views.ControlViewSet, basename="control")
 # Récents

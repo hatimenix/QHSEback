@@ -17,6 +17,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.views.decorators.http import require_GET
+from django.db.models import Count
+
 
 
 from rest_framework import viewsets
@@ -26,7 +28,8 @@ import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from rest_framework_jwt.settings import api_settings
+from rest_framework_simplejwt.settings import api_settings
+
 #login imports 
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
@@ -81,7 +84,8 @@ from .models import (
     Secteurs,
     Equipement,
     Sante,
-    Qualite
+    Qualite,
+    ConstatAudit
 
 )
 from .serializers import (
@@ -89,6 +93,7 @@ from .serializers import (
     AnalyseRisqueSerializer,
     CertificatCalibrationSerializer,
     CommandeSerializer,
+    ConstatAuditSerializer,
     ControlSerializer,
     CotationSerializer,
     DangerSerializer,
@@ -130,8 +135,8 @@ from .serializers import (
     SecteursSerializer,
     EquipementSerializer,
     SanteSerializer,
-    QualiteSerializer
-    
+    QualiteSerializer,
+    ConstatAuditSerializer
 )
 #login 
 # Authentication
@@ -261,6 +266,11 @@ class ActionsViewSet(viewsets.ModelViewSet):
     queryset = Actions.objects.all()
     serializer_class = ActionSerializer
 
+    @action(detail=False, methods=['GET'])
+    def stats_by_type_action(self, request):
+        stats = Actions.objects.values('type_action').annotate(count=Count('id'))
+        return Response(stats)
+
 
 class RealisationViewSet(viewsets.ModelViewSet):
     queryset = Realisation.objects.all()
@@ -345,6 +355,11 @@ class DocumentutilesViewSet(viewsets.ModelViewSet):
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer
+    
+    @action(detail=False, methods=['GET'])
+    def stats_by_nature(self, request):
+        stats = NC.objects.values('nature').annotate(count=Count('id'))
+        return Response(stats)
 
     @api_view(['GET'])
     def download_file(request, pk):
@@ -434,6 +449,9 @@ def get_existing_file_url(request, nc_id):
     
 
   
+class ConstatAuditViewSet(viewsets.ModelViewSet):
+    queryset = ConstatAudit.objects.all()
+    serializer_class = ConstatAuditSerializer
 #suivie des contrôles réglementaires
 
 class ControlViewSet(viewsets.ModelViewSet):

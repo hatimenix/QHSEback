@@ -206,6 +206,7 @@ class Actions(models.Model):
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
+    ca = models.ManyToManyField('ConstatAudit', null=True, blank=True, db_constraint=False)
 
     
     def save(self, *args, **kwargs):
@@ -634,8 +635,23 @@ class Control(models.Model):
     action_ouverte = models.CharField(max_length=255, blank=True, null=True)
     rapport = models.FileField(upload_to='documents/',blank=True)
 
-
-
+class ConstatAudit(models.Model):
+    intitule_constat = models.CharField(max_length=255,blank=True, null=True,)
+    description_constat = models.CharField(max_length=255,blank=True, null=True,)
+    type_constat = models.CharField(max_length=255,blank=True, null=True,)  
+    audit_associe =  models.CharField(max_length=255,blank=True, null=True,)  
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    responsable_traitement = models.ManyToManyField(Utilisateur, null=True, blank=True, db_constraint=False)
+    processus = models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
+    date_reponse = models.DateField(blank=True, null=True)
+    localisation =  models.CharField(max_length=255,blank=True, null=True,) 
+    type_audit =  models.CharField(max_length=255,blank=True, null=True,) 
+    rapport_audit =  models.FileField(upload_to='uploads/docs',
+                            null=True,
+                            blank=True,
+                            default=None,                            
+                            )   
+   
 
 class Pj(models.Model):
     nom = models.CharField(max_length=255, blank=True)
