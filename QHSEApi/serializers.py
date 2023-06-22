@@ -369,7 +369,7 @@ class ExigencesSerializer(serializers.ModelSerializer):
 
 class AnalyseRisqueSerializer(serializers.ModelSerializer):
 
-    Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
+    #Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
 
     class Meta:
