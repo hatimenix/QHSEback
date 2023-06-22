@@ -528,10 +528,10 @@ class UserApp(AbstractBaseUser):
 
 class GroupeUser(models.Model):
     AUTORISATION_CHOICES = [
-        ('Control_total', 'Control total'),
+        ('Control total', 'Control total'),
         ('Lecture', 'Lecture'),
-        ('collaboration_avec_suppression', 'Collaboration avec suppression'),
-        ('collaboration_sans_suppression', 'Collaboration sans suppression'),
+        ('Collaboration avec suppression', 'Collaboration avec suppression'),
+        ('Collaboration sans suppression', 'Collaboration sans suppression'),
     ]
 
     nom = models.CharField(max_length=100)
@@ -601,7 +601,6 @@ class AnalyseRisque(models.Model):
     date_evaluation=models.DateField(blank=True, null=True)
     opportunite=models.CharField(max_length=255,blank=True, null=True,)
     origine=models.CharField(max_length=255,blank=True, null=True,)
-    processus=models.ForeignKey(Processus, on_delete=models.CASCADE,null=True, default=None)
     contexte_int=models.CharField(max_length=255,blank=True, null=True,)
     contexte_ext=models.CharField(max_length=255,blank=True, null=True,)
     consequences=models.CharField(max_length=255,blank=True, null=True,)
@@ -610,7 +609,8 @@ class AnalyseRisque(models.Model):
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
     mesure=models.CharField(max_length=255,blank=True, null=True,)
     type_action=models.CharField(max_length=255,blank=True, null=True,)
-    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False) 
+    partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)
+    processus= models.ManyToManyField(Processus, null=True, blank=True, db_constraint=False) 
 
 
 class Cotation(models.Model):

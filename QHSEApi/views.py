@@ -34,6 +34,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
+from django.views.decorators.http import require_POST
+
 
 from .models import (
     NC,
@@ -133,34 +135,48 @@ from .serializers import (
 )
 #login 
 # Authentication
+@require_POST
+def check_email_exists(request):
+    email = request.POST.get('email')
+
+    if email:
+        email_exists = UserApp.objects.filter(email=email).exists()
+        return JsonResponse({'exists': email_exists})
+
+    return JsonResponse({'error': 'Invalid email'})
+
+
 class UserTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
+    
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
+        
         try:
             user = UserApp.objects.get(email=email)
             
-            
             if not user.check_password(password):
-                    return Response(
-                        {"message": "Email ou mot de passe invalide"},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                return Response(
+                    {"message": "Email ou mot de passe invalide"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
             refresh = RefreshToken.for_user(user)
             
             return Response(
-                    {
-                        "access": str(refresh.access_token),
-                        "refresh": str(refresh),
-                    }
-                )
+                {
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                }
+            )
        
         except UserApp.DoesNotExist:
             return Response(
                 {"message": "Email ou mot de passe invalide"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         
 #Details Users 
 class UserDetailsAPIView(APIView):
