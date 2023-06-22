@@ -380,8 +380,6 @@ class CotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cotation
         fields = '__all__'
-        
-        
 
 class ConstatAuditSerializer(serializers.ModelSerializer):
     
@@ -399,8 +397,6 @@ class ConstatAuditSerializer(serializers.ModelSerializer):
             return ', '.join(r.nom for r in responsable_traitement)
         else:
             return None
-
-    
 
 #suivie des contrôles réglementaires 
 
