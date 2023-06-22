@@ -612,6 +612,7 @@ class AnalyseRisque(models.Model):
     type_action=models.CharField(max_length=255,blank=True, null=True,)
     partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)
     processus= models.ManyToManyField(Processus, null=True, blank=True, db_constraint=False) 
+ 
 
 
 class Cotation(models.Model):
