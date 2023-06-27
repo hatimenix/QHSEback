@@ -671,6 +671,40 @@ class CertificatCalibration(models.Model):
     date_modification = models.DateField(blank=True, null=True)
     modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     
+    
+class PlanAlimentaire(models.Model):
+    matin = models.BooleanField(blank=True , null = True)
+    client  =  models.CharField(max_length=255, blank=True)
+    regime =  models.CharField(max_length=255, blank=True)
+    midi =models.BooleanField(blank=True , null = True)
+    alcool =models.BooleanField(blank=True , null = True)
+    texture = models.TextField( blank=True)
+    specificite_diet_matin = models.TextField( blank=True)
+    soir  =models.BooleanField(blank=True , null = True)
+    soupe_soir = models.CharField(max_length=255, blank=True)
+    dessert = models.CharField(max_length=255, blank=True)
+    menu_velours_matin = models.BooleanField(blank=True , null = True)
+    soupe_midi =  models.CharField(max_length=255, blank=True)
+    specificites_midi =  models.TextField( blank=True)
+    taille_portion =models.CharField(max_length=255  , blank=True , null = True)
+    statut =  models.CharField(max_length=255, blank=True)
+    specificite_dessert = models.TextField( blank=True)
+    gouter  = models.BooleanField(blank=True , null = True)
+    specifite_gouter =  models.TextField( blank=True)
+    localisation_repas  =   models.CharField(max_length=255, blank=True)
+    specifite_resto_matin = models.TextField( blank=True)
+    menu_velours_soir =models.BooleanField(blank=True , null = True)
+    specificite_diet_soir = models.CharField(max_length=255, blank=True)
+    specificite_resto_soir = models.TextField( blank=True)
+    convictions_alimentaires = models.CharField(max_length=255, blank=True)
+    allergie_intolerance = models.CharField(max_length=255, blank=True)
+    autres_infos_utiles = models.TextField( blank=True)
+    texture_liquides_boissons = models.CharField(max_length=255, blank=True)
+    nbr_mesurettes = models.CharField(max_length=255, blank=True)
+    temp_liquide_boisson = models.CharField(max_length=255, blank=True) 
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+
+
 
 
 
