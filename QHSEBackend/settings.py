@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-)jh2%5o516bk=dlww130@9px&+koza@ejhb61(g#7y4oaxn=ob
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://api.paiperleckelearning.com','api.paiperleckelearning.com','http://api.paiperleckelearning.com']
+ALLOWED_HOSTS = ['https://api.paiperleckelearning.com','api.paiperleckelearning.com','http://api.paiperleckelearning.com','127.0.0.1', 'localhost']
 MIXED_CONTENT_INSECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CORS_ALLOWED_ORIGINS = ['https://paiperleckelearning.com',
@@ -36,7 +36,9 @@ CORS_ALLOWED_ORIGINS = ['https://paiperleckelearning.com',
 
 SESSION_COOKIE_SECURE = True
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
 #Email Settings 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -135,8 +137,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'qhsedb',
-        'USER': 'ATExperts',
-        'PASSWORD': 'ATExperts2023',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
    

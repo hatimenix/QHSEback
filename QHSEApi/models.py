@@ -229,17 +229,17 @@ class Source(models.Model):
         return str(self.nom)
     
 class Taches(models.Model):
-    source = models.CharField(max_length=100, null=True, blank=True)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE,null=True, default=None)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
     echeance = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     priorite = models.CharField(max_length=100, null=True, blank=True)
-    assigne_a = models.CharField(max_length=100, null=True, blank=True)
+    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     date_realisation = models.DateField(null=True, blank=True)
     etat = models.CharField(max_length=100, null=True, blank=True)
     commentaire = models.TextField(null=True, blank=True)
-    realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
+    realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE,null=True, default=None)
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
                             blank=True,
@@ -671,6 +671,10 @@ class CertificatCalibration(models.Model):
     url_document = models.FileField(upload_to='documents/', blank=True)
     date_modification = models.DateField(blank=True, null=True)
     modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+class AxesStrategiques(models.Model):
+    axe=models.CharField(max_length=255,blank=True, null=True,)
+    sigle=models.CharField(max_length=255,blank=True, null=True,)
     
     
 class PlanAlimentaire(models.Model):

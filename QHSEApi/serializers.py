@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
+from .models import PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique,AxesStrategiques
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -132,6 +132,9 @@ class SourceSerializer(serializers.ModelSerializer):
 
 
 class TacheSerializer(serializers.ModelSerializer):
+    utilisateur_name = serializers.CharField(source='assigne_a.nom', default=None)
+    source_name=serializers.CharField(source='source.nom', default=None)
+
     class Meta:
         model = Taches
         fields = '__all__'
@@ -433,6 +436,10 @@ class CertificatCalibrationSerializer(serializers.ModelSerializer):
         model = CertificatCalibration
         fields = '__all__'
 
+class AxesStrategiquesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AxesStrategiques
+        fields = '__all__'
 
 class PlanAlimentaireSerializer(serializers.ModelSerializer):
     site_ = serializers.ReadOnlyField(source='site.site_nom')
