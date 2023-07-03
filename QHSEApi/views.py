@@ -83,7 +83,8 @@ from .models import (
     Sante,
     Qualite,
     ConstatAudit,
-    AxesStrategiques
+    AxesStrategiques,
+    PlanAlimentaire
 
 )
 from .serializers import (
@@ -135,7 +136,8 @@ from .serializers import (
     SanteSerializer,
     QualiteSerializer,
     ConstatAuditSerializer,
-    AxesStrategiquesSerializer
+    AxesStrategiquesSerializer,
+    PlanAlimentaireSerializer
 )
 #login 
 # Authentication
@@ -492,3 +494,6 @@ class CertificatCalibrationViewSet(viewsets.ModelViewSet):
 class AxesStrategiquesViewSet(viewsets.ModelViewSet):
     queryset = AxesStrategiques.objects.all()
     serializer_class = AxesStrategiquesSerializer
+class PlanAlimentaireViewSet(viewsets.ModelViewSet):
+    queryset = PlanAlimentaire.objects.all()
+    serializer_class = PlanAlimentaireSerializer
