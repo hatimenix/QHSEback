@@ -710,12 +710,52 @@ class PlanAlimentaire(models.Model):
 
 
 
+class ExerciceSecurite(models.Model):
+    intitule = models.CharField(max_length=255, blank=True)
+    theme  =  models.CharField(max_length=255, blank=True)
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    date =models.DateField(blank=True, null=True)
+    scenario = models.TextField( blank=True)
+    animateurs = models.TextField( blank=True)
+    observateurs = models.TextField( blank=True)
+    duree  =models.IntegerField(blank=True , null = True)
+    monde_signal_alarme = models.BooleanField(blank=True , null = True)
+    monde_evacuation = models.BooleanField(blank=True , null = True)
+    ascenseur_inutilise = models.BooleanField(blank=True , null = True)
+    evacuation_immediate = models.BooleanField(blank=True , null = True)
+    evacuation_bon_ordre = models.BooleanField(blank=True , null = True)
+    monde_ressemblement = models.BooleanField(blank=True , null = True)
+    monde_consigne = models.BooleanField(blank=True , null = True)
+    connaissance_incendie = models.BooleanField(blank=True , null = True)
+    degagement_incendie = models.BooleanField(blank=True , null = True)
+    materiel_operationnel = models.BooleanField(blank=True , null = True)
+    materiel_verifie = models.BooleanField(blank=True , null = True)
+    degagement_secours = models.BooleanField(blank=True , null = True)
+    acceuil_secours = models.BooleanField(blank=True , null = True)
+    mise_secours = models.BooleanField(blank=True , null = True)
+    interdiction_prestataire = models.BooleanField(blank=True , null = True)
+    blocage_portail = models.BooleanField(blank=True , null = True)
+    appreciation_urgence = models.BooleanField(blank=True , null = True)
+    commentaire_appreciation = models.TextField( blank=True)
+    centralisation_renseignements = models.BooleanField(blank=True , null = True)
+    commentaire = models.TextField( blank=True)
+    mesure = models.CharField(max_length=255, blank=True)
+    taux_conformite = models.IntegerField(blank=True , null = True)
 
 
 
 
 
 
+class Reunion(models.Model):
+    titre = models.CharField(max_length=255, blank=True)
+    type_reunion  =  models.TextField( blank=True)
+    date_previsionnelle_reunion =models.DateField(blank=True, null=True)
+    date_realisation_reunion =models.DateField(blank=True, null=True)
+    presents =  models.TextField( blank=True)
+    personnes_exterieurs =  models.TextField( blank=True)
+    liste_diffusion =  models.TextField( blank=True)
+    ordre_jour =  models.TextField( blank=True)
 
 
 
