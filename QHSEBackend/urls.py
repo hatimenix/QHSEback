@@ -66,6 +66,8 @@ router.register(r'control', views.ControlViewSet, basename="control")
 router.register(r'pj', views.PJViewSet, basename="pj")
 router.register(r'rapportAudit', views.RapportDauditViewSet, basename="rapportAudit")
 router.register(r'CertificatCalibration', views.CertificatCalibrationViewSet, basename="CertificatCalibration")
+router.register(r'AxesStrategiques', views.AxesStrategiquesViewSet, basename="AxesStrategiques")
+
 
 ###########################
 
