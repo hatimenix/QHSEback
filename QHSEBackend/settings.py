@@ -28,11 +28,10 @@ SECRET_KEY = 'django-insecure-)jh2%5o516bk=dlww130@9px&+koza@ejhb61(g#7y4oaxn=ob
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://api.paiperleckelearning.com','api.paiperleckelearning.com','http://api.paiperleckelearning.com']
+ALLOWED_HOSTS = ['https://qhseapi.paiperleckelearning.com','qhseapi.paiperleckelearning.com','http://qhseapi.paiperleckelearning.com']
 MIXED_CONTENT_INSECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-CORS_ALLOWED_ORIGINS = ['https://paiperleckelearning.com',
-                        'https://dash.paiperleckelearning.com']
+CORS_ALLOWED_ORIGINS = ['https://qhse.paiperleckelearning.com']
 
 SESSION_COOKIE_SECURE = True
 
