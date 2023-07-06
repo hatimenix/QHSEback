@@ -208,7 +208,8 @@ class Actions(models.Model):
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
     ca = models.ManyToManyField('ConstatAudit', null=True, blank=True, db_constraint=False)
 
-    
+    rn = models.ManyToManyField('Reunion', null=True, blank=True, db_constraint=False)
+
     def save(self, *args, **kwargs):
         if self.id:
             old_instance = Actions.objects.get(id=self.id)
@@ -229,17 +230,17 @@ class Source(models.Model):
         return str(self.nom)
     
 class Taches(models.Model):
-    source = models.CharField(max_length=100, null=True, blank=True)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE,null=True, default=None)
     nom_tache = models.CharField(max_length=100)
     date_debut = models.DateField()
     echeance = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     priorite = models.CharField(max_length=100, null=True, blank=True)
-    assigne_a = models.CharField(max_length=100, null=True, blank=True)
+    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     date_realisation = models.DateField(null=True, blank=True)
     etat = models.CharField(max_length=100, null=True, blank=True)
     commentaire = models.TextField(null=True, blank=True)
-    realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE)
+    realisation_associee = models.ForeignKey(Realisation, on_delete=models.CASCADE,null=True, default=None)
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
                             blank=True,
@@ -671,16 +672,95 @@ class CertificatCalibration(models.Model):
     url_document = models.FileField(upload_to='documents/', blank=True)
     date_modification = models.DateField(blank=True, null=True)
     modifie_par = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+
+class AxesStrategiques(models.Model):
+    axe=models.CharField(max_length=255,blank=True, null=True,)
+    sigle=models.CharField(max_length=255,blank=True, null=True,)
     
+    
+class PlanAlimentaire(models.Model):
+    matin = models.BooleanField(blank=True , null = True)
+    client  =  models.CharField(max_length=255, blank=True)
+    regime =  models.CharField(max_length=255, blank=True)
+    midi =models.BooleanField(blank=True , null = True)
+    alcool =models.BooleanField(blank=True , null = True)
+    texture = models.TextField( blank=True)
+    specificite_diet_matin = models.TextField( blank=True)
+    soir  =models.BooleanField(blank=True , null = True)
+    soupe_soir = models.CharField(max_length=255, blank=True)
+    dessert = models.CharField(max_length=255, blank=True)
+    menu_velours_matin = models.BooleanField(blank=True , null = True)
+    soupe_midi =  models.CharField(max_length=255, blank=True)
+    specificites_midi =  models.TextField( blank=True)
+    taille_portion =models.CharField(max_length=255  , blank=True , null = True)
+    statut =  models.CharField(max_length=255, blank=True)
+    specificite_dessert = models.TextField( blank=True)
+    gouter  = models.BooleanField(blank=True , null = True)
+    specifite_gouter =  models.TextField( blank=True)
+    localisation_repas  =   models.CharField(max_length=255, blank=True)
+    specifite_resto_matin = models.TextField( blank=True)
+    menu_velours_soir =models.BooleanField(blank=True , null = True)
+    specificite_diet_soir = models.CharField(max_length=255, blank=True)
+    specificite_resto_soir = models.TextField( blank=True)
+    convictions_alimentaires = models.CharField(max_length=255, blank=True)
+    allergie_intolerance = models.CharField(max_length=255, blank=True)
+    autres_infos_utiles = models.TextField( blank=True)
+    texture_liquides_boissons = models.CharField(max_length=255, blank=True)
+    nbr_mesurettes = models.CharField(max_length=255, blank=True)
+    temp_liquide_boisson = models.CharField(max_length=255, blank=True) 
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
 
 
 
 
 
 
+class ExerciceSecurite(models.Model):
+    intitule = models.CharField(max_length=255, blank=True)
+    theme  =  models.CharField(max_length=255, blank=True)
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    date =models.DateField(blank=True, null=True)
+    scenario = models.TextField( blank=True)
+    animateurs = models.TextField( blank=True)
+    observateurs = models.TextField( blank=True)
+    duree  =models.IntegerField(blank=True , null = True)
+    monde_signal_alarme = models.BooleanField(blank=True , null = True)
+    monde_evacuation = models.BooleanField(blank=True , null = True)
+    ascenseur_inutilise = models.BooleanField(blank=True , null = True)
+    evacuation_immediate = models.BooleanField(blank=True , null = True)
+    evacuation_bon_ordre = models.BooleanField(blank=True , null = True)
+    monde_ressemblement = models.BooleanField(blank=True , null = True)
+    monde_consigne = models.BooleanField(blank=True , null = True)
+    connaissance_incendie = models.BooleanField(blank=True , null = True)
+    degagement_incendie = models.BooleanField(blank=True , null = True)
+    materiel_operationnel = models.BooleanField(blank=True , null = True)
+    materiel_verifie = models.BooleanField(blank=True , null = True)
+    degagement_secours = models.BooleanField(blank=True , null = True)
+    acceuil_secours = models.BooleanField(blank=True , null = True)
+    mise_secours = models.BooleanField(blank=True , null = True)
+    interdiction_prestataire = models.BooleanField(blank=True , null = True)
+    blocage_portail = models.BooleanField(blank=True , null = True)
+    appreciation_urgence = models.BooleanField(blank=True , null = True)
+    commentaire_appreciation = models.TextField( blank=True)
+    centralisation_renseignements = models.BooleanField(blank=True , null = True)
+    commentaire = models.TextField( blank=True)
+    mesure = models.CharField(max_length=255, blank=True)
+    taux_conformite = models.IntegerField(blank=True , null = True)
 
 
 
+
+
+
+class Reunion(models.Model):
+    titre = models.CharField(max_length=255, blank=True)
+    type_reunion  =  models.TextField( blank=True)
+    date_previsionnelle_reunion =models.DateField(blank=True, null=True)
+    date_realisation_reunion =models.DateField(blank=True, null=True)
+    personnes_exterieurs =  models.TextField( blank=True)
+    ordre_jour =  models.TextField( blank=True)
+    liste_diffusion = models.ManyToManyField(Utilisateur, related_name='reunions_liste_diffusion', null=True, blank=True, db_constraint=False)
+    presents = models.ManyToManyField(Utilisateur, related_name='reunions_presents', null=True, blank=True, db_constraint=False)
 
 
 

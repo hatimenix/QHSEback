@@ -35,7 +35,9 @@ CORS_ALLOWED_ORIGINS = ['https://qhse.paiperleckelearning.com']
 
 SESSION_COOKIE_SECURE = True
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
 #Email Settings 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -91,6 +93,14 @@ JWT_AUTH.update({
 })
 
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    "http://127.0.0.1:8000"
+]
+CORS_ALLOWED_HEADERS = [
+    'cache-control',  # Add 'cache-control' to the allowed headers
+    # Other allowed headers
+]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -134,8 +144,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'qhsedb',
-        'USER': 'ATExperts',
-        'PASSWORD': 'ATExperts2023',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
    
@@ -178,7 +188,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
