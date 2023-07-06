@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique,AxesStrategiques
+from .models import Reunion, ExerciceSecurite, PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique,AxesStrategiques
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -454,4 +454,19 @@ class PlanAlimentaireSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = PlanAlimentaire
+        fields = '__all__'
+        
+class ExerciceSecuriteSerializer(serializers.ModelSerializer):
+    site_ = serializers.ReadOnlyField(source='site.site_nom')
+    
+    class Meta:
+        model = ExerciceSecurite
+        fields = '__all__'
+        
+
+class ReunionSerializer(serializers.ModelSerializer):
+    site_ = serializers.ReadOnlyField(source='site.site_nom')
+    
+    class Meta:
+        model = Reunion
         fields = '__all__'

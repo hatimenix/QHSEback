@@ -56,6 +56,8 @@ router.register(r'source', views.SourceViewSet, basename="source")
 router.register(r'constataudit', views.ConstatAuditViewSet, basename="constataudit")
 router.register(r'planalimentaire', views.PlanAlimentaireViewSet, basename="planalimentaire")
 
+router.register(r'exercicesecurite', views.ExerciceSecuriteViewSet, basename="exercicesecurite")
+router.register(r'reunion', views.ReunionViewSet, basename="reunion")
 
 
 #suivie des contrôles réglementaires 
