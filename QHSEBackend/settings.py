@@ -32,12 +32,8 @@ ALLOWED_HOSTS = ['https://qhseapi.paiperleckelearning.com','qhseapi.paiperleckel
 MIXED_CONTENT_INSECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CORS_ALLOWED_ORIGINS = ['https://qhse.paiperleckelearning.com']
-
 SESSION_COOKIE_SECURE = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-]
 #Email Settings 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -93,10 +89,6 @@ JWT_AUTH.update({
 })
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:8000"
-]
 CORS_ALLOWED_HEADERS = [
     'cache-control',  # Add 'cache-control' to the allowed headers
     # Other allowed headers
@@ -144,8 +136,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'qhsedb',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'ATExperts',
+        'PASSWORD': 'ATExperts2023',
         'HOST': 'localhost',
         'PORT': '3306',
    
