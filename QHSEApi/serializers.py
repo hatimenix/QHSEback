@@ -373,10 +373,18 @@ class ExigencesSerializer(serializers.ModelSerializer):
 class AnalyseRisqueSerializer(serializers.ModelSerializer):
 
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
+    processus_name = serializers.SerializerMethodField()
+
 
     class Meta:
         model = AnalyseRisque
         fields = '__all__'
+    def get_processus_name(self, obj):
+        processus = obj.processus.all()
+        if processus:
+                return ', '.join(p.intitule for p in processus)
+        else:
+            return None 
 
 class CotationSerializer(serializers.ModelSerializer):
     class Meta:
