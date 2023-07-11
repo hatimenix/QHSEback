@@ -54,9 +54,11 @@ router.register(r'exigences', views.ExigencesViewSet, basename="exigences")
 router.register(r'analyseRisque', views.AnalyseRisqueViewSet, basename="analyseRisque")
 router.register(r'cotation', views.CotationViewSet, basename="cotation")
 router.register(r'source', views.SourceViewSet, basename="source")
-
-
 router.register(r'constataudit', views.ConstatAuditViewSet, basename="constataudit")
+router.register(r'planalimentaire', views.PlanAlimentaireViewSet, basename="planalimentaire")
+
+router.register(r'exercicesecurite', views.ExerciceSecuriteViewSet, basename="exercicesecurite")
+router.register(r'reunion', views.ReunionViewSet, basename="reunion")
 
 
 #suivie des contrôles réglementaires 
@@ -65,6 +67,8 @@ router.register(r'control', views.ControlViewSet, basename="control")
 router.register(r'pj', views.PJViewSet, basename="pj")
 router.register(r'rapportAudit', views.RapportDauditViewSet, basename="rapportAudit")
 router.register(r'CertificatCalibration', views.CertificatCalibrationViewSet, basename="CertificatCalibration")
+router.register(r'AxesStrategiques', views.AxesStrategiquesViewSet, basename="AxesStrategiques")
+
 
 ###########################
 router.register(r'felicitationRP', views.FelicitationRPViewSet, basename="felicitationRP")

@@ -35,6 +35,8 @@ from django.contrib.auth.tokens import default_token_generator
 
 
 
+from django.db.models import F
+from django.db.models.functions import ExtractYear
 from rest_framework import viewsets
 from rest_framework import viewsets
 import requests
@@ -100,7 +102,11 @@ from .models import (
     Equipement,
     Sante,
     Qualite,
-    ConstatAudit
+    ConstatAudit,
+    AxesStrategiques,
+    PlanAlimentaire,
+     ExerciceSecurite,
+    Reunion
 
 )
 from .serializers import (
@@ -153,7 +159,11 @@ from .serializers import (
     EquipementSerializer,
     SanteSerializer,
     QualiteSerializer,
-    ConstatAuditSerializer
+    ConstatAuditSerializer,
+    AxesStrategiquesSerializer,
+    PlanAlimentaireSerializer,
+     ExerciceSecuriteSerializer,
+    ReunionSerializer
 )
 #login 
 # Authentication
@@ -289,8 +299,9 @@ class ActionsViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def stats_by_type_action(self, request):
-        stats = Actions.objects.values('type_action').annotate(count=Count('id'))
+        stats = Actions.objects.annotate(year=ExtractYear('annee')).values('site__site_nom', 'type_action', 'year').annotate(count=Count('id'))
         return Response(stats)
+
 
 
 class RealisationViewSet(viewsets.ModelViewSet):
@@ -376,11 +387,28 @@ class DocumentutilesViewSet(viewsets.ModelViewSet):
 class NCViewSet(viewsets.ModelViewSet):
     queryset = NC.objects.all()
     serializer_class = NCSerializer
-    
+    @action(detail=False, methods=['GET'])
+    def stats_delai_prevu_vs_date_nc(self, request):
+        stats = NC.objects.annotate(
+            delai_days=F('delai_prevu') - F('date_nc'),
+            year=ExtractYear('date_nc')
+        ).values('year', 'delai_days').annotate(count=Count('id'))
+        stats = [
+            {
+                'year': entry['year'],
+                'delai_days': str(entry['delai_days'].days) +' jours',
+            'count': entry['count']
+            }
+            for entry in stats
+        ]
+        return Response(stats)
+  
+
     @action(detail=False, methods=['GET'])
     def stats_by_nature(self, request):
-        stats = NC.objects.values('nature').annotate(count=Count('id'))
+        stats = NC.objects.annotate(year=ExtractYear('date_nc')).values('year', 'nature').annotate(count=Count('id'))
         return Response(stats)
+
 
     @api_view(['GET'])
     def download_file(request, pk):
@@ -473,6 +501,15 @@ def get_existing_file_url(request, nc_id):
 class ConstatAuditViewSet(viewsets.ModelViewSet):
     queryset = ConstatAudit.objects.all()
     serializer_class = ConstatAuditSerializer
+    @action(detail=False, methods=['GET'])
+    def stats_by_intitule_constat(self, request):
+        stats = (
+            ConstatAudit.objects
+            .values('intitule_constat')
+            .annotate(count=Count('id'))
+        )
+        return Response(stats)
+    
 #suivie des contrôles réglementaires
 
 class ControlViewSet(viewsets.ModelViewSet):
@@ -545,3 +582,17 @@ def reset_password(request, user_id, token):
         return JsonResponse({'error': 'Invalid token'})
     
     return JsonResponse({'error': 'Invalid password'})
+
+class AxesStrategiquesViewSet(viewsets.ModelViewSet):
+    queryset = AxesStrategiques.objects.all()
+    serializer_class = AxesStrategiquesSerializer
+class PlanAlimentaireViewSet(viewsets.ModelViewSet):
+    queryset = PlanAlimentaire.objects.all()
+    serializer_class = PlanAlimentaireSerializer
+    
+class ExerciceSecuriteViewSet(viewsets.ModelViewSet):
+    queryset = ExerciceSecurite.objects.all()
+    serializer_class = ExerciceSecuriteSerializer
+class ReunionViewSet(viewsets.ModelViewSet):
+    queryset = Reunion.objects.all()
+    serializer_class = ReunionSerializer
