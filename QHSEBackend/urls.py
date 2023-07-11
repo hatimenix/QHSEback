@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
+from django.contrib.auth import views as auth_views
 
 
 #jwt login imports
@@ -66,7 +67,7 @@ router.register(r'rapportAudit', views.RapportDauditViewSet, basename="rapportAu
 router.register(r'CertificatCalibration', views.CertificatCalibrationViewSet, basename="CertificatCalibration")
 
 ###########################
-
+router.register(r'felicitationRP', views.FelicitationRPViewSet, basename="felicitationRP")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -77,8 +78,12 @@ urlpatterns = [
     path('groups/<int:group_id>/', views.GroupDetailsAPIView.as_view(), name='group_details'),
     path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
 
+    #reset  & forgot password 
+ # Password reset
+    path('api/send-password-reset-email/', views.send_password_reset_email, name='send_password_reset_email'),
+    path('api/reset-password/<int:user_id>/<str:token>/', views.reset_password, name='reset_password'),
 
 
-
+    
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
+from .models import  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, FelicitationRP, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -369,6 +369,7 @@ class ExigencesSerializer(serializers.ModelSerializer):
 
 class AnalyseRisqueSerializer(serializers.ModelSerializer):
 
+    # Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
 
     class Meta:
@@ -427,4 +428,9 @@ class CertificatCalibrationSerializer(serializers.ModelSerializer):
     user_name = serializers.ReadOnlyField(source='modifie_par.nom')
     class Meta:
         model = CertificatCalibration
+        fields = '__all__'
+
+class FelicitationRPSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = FelicitationRP
         fields = '__all__'
