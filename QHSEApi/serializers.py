@@ -1,5 +1,6 @@
 from django.http import FileResponse
 from rest_framework import serializers
+from .models import  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, FelicitationRP, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
 from .models import Reunion, ExerciceSecurite, PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique,AxesStrategiques
 from QHSEApi import models
 
@@ -372,6 +373,7 @@ class ExigencesSerializer(serializers.ModelSerializer):
 
 class AnalyseRisqueSerializer(serializers.ModelSerializer):
 
+    # Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     #Proccesus_name = serializers.CharField(source='processus.intitule',default=None)
     Site_name = serializers.CharField(source='site.site_nom', read_only=True, default=None)
     processus_name = serializers.SerializerMethodField()
@@ -391,8 +393,6 @@ class CotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cotation
         fields = '__all__'
-        
-        
 
 class ConstatAuditSerializer(serializers.ModelSerializer):
     
@@ -410,8 +410,6 @@ class ConstatAuditSerializer(serializers.ModelSerializer):
             return ', '.join(r.nom for r in responsable_traitement)
         else:
             return None
-
-    
 
 #suivie des contrôles réglementaires 
 
@@ -445,6 +443,10 @@ class CertificatCalibrationSerializer(serializers.ModelSerializer):
         model = CertificatCalibration
         fields = '__all__'
 
+class FelicitationRPSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = FelicitationRP
+        fields = '__all__'
 class AxesStrategiquesSerializer(serializers.ModelSerializer):
     class Meta:
         model = AxesStrategiques

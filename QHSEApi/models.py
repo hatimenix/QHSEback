@@ -508,6 +508,7 @@ class UserApp(AbstractBaseUser):
     nom_complet = models.CharField(max_length=100)
     password = models.CharField(max_length=128)
     email = models.EmailField(unique=True, max_length=255)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     actif = models.BooleanField(blank=True, default=False)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
     send_email = models.BooleanField(default=False)  # New field for checkbox
@@ -530,10 +531,10 @@ class UserApp(AbstractBaseUser):
 
 class GroupeUser(models.Model):
     AUTORISATION_CHOICES = [
-        ('Control_total', 'Control total'),
+        ('Control total', 'Control total'),
         ('Lecture', 'Lecture'),
-        ('collaboration_avec_suppression', 'Collaboration avec suppression'),
-        ('collaboration_sans_suppression', 'Collaboration sans suppression'),
+        ('Collaboration avec suppression', 'Collaboration avec suppression'),
+        ('Collaboration sans suppression', 'Collaboration sans suppression'),
     ]
 
     nom = models.CharField(max_length=100)
@@ -677,6 +678,35 @@ class AxesStrategiques(models.Model):
     axe=models.CharField(max_length=255,blank=True, null=True,)
     sigle=models.CharField(max_length=255,blank=True, null=True,)
     
+
+
+class FelicitationRP(models.Model):
+    EMETTEUR_CHOICES = (
+        ('client', 'Client'),
+        ('famille', 'Famille'),
+        ('personne_de_confiance', 'Personne de confiance'),
+        ('autre', 'Autre'),
+    )
+
+    FORME_RETOUR_CHOICES = (
+        ('don', 'Don'),
+        ('retour_verbal', 'Retour verbal'),
+        ('message_ecrit', 'Message écrit / Carte'),
+        ('cadeaux', 'Cadeaux'),
+    )
+
+    emetteur = models.CharField(max_length=21, choices=EMETTEUR_CHOICES,  blank=True)
+    description_retour = models.TextField()
+    forme_retour = models.CharField(max_length=21, choices=FORME_RETOUR_CHOICES,  blank=True)
+    service_concerne = models.ForeignKey(Services, on_delete=models.CASCADE,  blank=True)
+    chef_service = models.ManyToManyField(ChefServices, blank=True)
+    date = models.DateField( blank=True)
+    piece_jointe = models.FileField(upload_to='documents/',blank=True)
+    
+
+
+# RESET PASSWORD 
+
     
 class PlanAlimentaire(models.Model):
     matin = models.BooleanField(blank=True , null = True)
