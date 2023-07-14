@@ -210,7 +210,8 @@ class Actions(models.Model):
     tache = models.ManyToManyField('Taches', null=True, blank=True, db_constraint=False)
 
 
-    
+    rn = models.ManyToManyField('Reunion', null=True, blank=True, db_constraint=False)
+
     def save(self, *args, **kwargs):
         if self.id:
             old_instance = Actions.objects.get(id=self.id)
@@ -509,6 +510,7 @@ class UserApp(AbstractBaseUser):
     nom_complet = models.CharField(max_length=100)
     password = models.CharField(max_length=128)
     email = models.EmailField(unique=True, max_length=255)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     actif = models.BooleanField(blank=True, default=False)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
     send_email = models.BooleanField(default=False)  # New field for checkbox
@@ -531,10 +533,10 @@ class UserApp(AbstractBaseUser):
 
 class GroupeUser(models.Model):
     AUTORISATION_CHOICES = [
-        ('Control_total', 'Control total'),
+        ('Control total', 'Control total'),
         ('Lecture', 'Lecture'),
-        ('collaboration_avec_suppression', 'Collaboration avec suppression'),
-        ('collaboration_sans_suppression', 'Collaboration sans suppression'),
+        ('Collaboration avec suppression', 'Collaboration avec suppression'),
+        ('Collaboration sans suppression', 'Collaboration sans suppression'),
     ]
 
     nom = models.CharField(max_length=100)
@@ -678,6 +680,35 @@ class AxesStrategiques(models.Model):
     axe=models.CharField(max_length=255,blank=True, null=True,)
     sigle=models.CharField(max_length=255,blank=True, null=True,)
     
+
+
+class FelicitationRP(models.Model):
+    EMETTEUR_CHOICES = (
+        ('client', 'Client'),
+        ('famille', 'Famille'),
+        ('personne_de_confiance', 'Personne de confiance'),
+        ('autre', 'Autre'),
+    )
+
+    FORME_RETOUR_CHOICES = (
+        ('don', 'Don'),
+        ('retour_verbal', 'Retour verbal'),
+        ('message_ecrit', 'Message écrit / Carte'),
+        ('cadeaux', 'Cadeaux'),
+    )
+
+    emetteur = models.CharField(max_length=21, choices=EMETTEUR_CHOICES,  blank=True)
+    description_retour = models.TextField()
+    forme_retour = models.CharField(max_length=21, choices=FORME_RETOUR_CHOICES,  blank=True)
+    service_concerne = models.ForeignKey(Services, on_delete=models.CASCADE,  blank=True)
+    chef_service = models.ManyToManyField(ChefServices, blank=True)
+    date = models.DateField( blank=True)
+    piece_jointe = models.FileField(upload_to='documents/',blank=True)
+    
+
+
+# RESET PASSWORD 
+
     
 class PlanAlimentaire(models.Model):
     matin = models.BooleanField(blank=True , null = True)
@@ -716,11 +747,52 @@ class PlanAlimentaire(models.Model):
 
 
 
+class ExerciceSecurite(models.Model):
+    intitule = models.CharField(max_length=255, blank=True)
+    theme  =  models.CharField(max_length=255, blank=True)
+    site =models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
+    date =models.DateField(blank=True, null=True)
+    scenario = models.TextField( blank=True)
+    animateurs = models.TextField( blank=True)
+    observateurs = models.TextField( blank=True)
+    duree  =models.IntegerField(blank=True , null = True)
+    monde_signal_alarme = models.BooleanField(blank=True , null = True)
+    monde_evacuation = models.BooleanField(blank=True , null = True)
+    ascenseur_inutilise = models.BooleanField(blank=True , null = True)
+    evacuation_immediate = models.BooleanField(blank=True , null = True)
+    evacuation_bon_ordre = models.BooleanField(blank=True , null = True)
+    monde_ressemblement = models.BooleanField(blank=True , null = True)
+    monde_consigne = models.BooleanField(blank=True , null = True)
+    connaissance_incendie = models.BooleanField(blank=True , null = True)
+    degagement_incendie = models.BooleanField(blank=True , null = True)
+    materiel_operationnel = models.BooleanField(blank=True , null = True)
+    materiel_verifie = models.BooleanField(blank=True , null = True)
+    degagement_secours = models.BooleanField(blank=True , null = True)
+    acceuil_secours = models.BooleanField(blank=True , null = True)
+    mise_secours = models.BooleanField(blank=True , null = True)
+    interdiction_prestataire = models.BooleanField(blank=True , null = True)
+    blocage_portail = models.BooleanField(blank=True , null = True)
+    appreciation_urgence = models.BooleanField(blank=True , null = True)
+    commentaire_appreciation = models.TextField( blank=True)
+    centralisation_renseignements = models.BooleanField(blank=True , null = True)
+    commentaire = models.TextField( blank=True)
+    mesure = models.CharField(max_length=255, blank=True)
+    taux_conformite = models.IntegerField(blank=True , null = True)
 
 
 
 
 
+
+class Reunion(models.Model):
+    titre = models.CharField(max_length=255, blank=True)
+    type_reunion  =  models.TextField( blank=True)
+    date_previsionnelle_reunion =models.DateField(blank=True, null=True)
+    date_realisation_reunion =models.DateField(blank=True, null=True)
+    personnes_exterieurs =  models.TextField( blank=True)
+    ordre_jour =  models.TextField( blank=True)
+    liste_diffusion = models.ManyToManyField(Utilisateur, related_name='reunions_liste_diffusion', null=True, blank=True, db_constraint=False)
+    presents = models.ManyToManyField(Utilisateur, related_name='reunions_presents', null=True, blank=True, db_constraint=False)
 
 
 
