@@ -207,6 +207,8 @@ class Actions(models.Model):
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
     ca = models.ManyToManyField('ConstatAudit', null=True, blank=True, db_constraint=False)
+    tache = models.ManyToManyField('Taches', null=True, blank=True, db_constraint=False)
+
 
     rn = models.ManyToManyField('Reunion', null=True, blank=True, db_constraint=False)
 
