@@ -191,6 +191,8 @@ class TraitementSerializer(serializers.ModelSerializer):
     fournisseur_name = serializers.ReadOnlyField(source='fournisseur.nom')
     fournisseur_dpoName = serializers.ReadOnlyField(source='fournisseur_dpo.nom')
     fournisseur_representantName = serializers.ReadOnlyField(source='fournisseur_representant.nom')
+    responsable_name = serializers.ReadOnlyField(source='responsable_traitement.nom')
+
 
     class Meta:
         model = Traitement
@@ -213,6 +215,8 @@ class CustomDateField(serializers.ReadOnlyField):
 class DocumentUtilitiesSerializer(serializers.ModelSerializer):
 
     modified_date = CustomDateField()
+    modified_name = serializers.ReadOnlyField(source='modified_by.nom')
+
 
     class Meta:
         model = DocumentUtilities
