@@ -190,7 +190,7 @@ class UserTokenObtainPairView(APIView):
             
             if not user.check_password(password):
                 return Response(
-                    {"message": "Incorrect password"},
+                    {"message": "Mot de passe incorrecte"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             
@@ -205,7 +205,7 @@ class UserTokenObtainPairView(APIView):
        
         except UserApp.DoesNotExist:
             return Response(
-                {"message": "Incorrect email"},
+                {"message": "Email incorrecte"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except:
@@ -538,50 +538,6 @@ class FelicitationRPViewSet(viewsets.ModelViewSet):
     queryset = FelicitationRP.objects.all()
     serializer_class = FelicitationRPSerializer
 
-#RESET PASSWORD 
-from django.contrib.auth import get_user_model
-from django.template.loader import render_to_string
-UserApp = get_user_model()
-@csrf_exempt
-@require_POST
-def send_password_reset_email(request):
-    email = request.POST.get('email')
-    
-    if email:
-        user = get_object_or_404(UserApp, email=email)
-        token = default_token_generator.make_token(user)
-        reset_link = f"http://localhost:4200/reset-password/{user.pk}/{token}"
-        
-        send_mail(
-            'Password Reset',
-            f'Please click the following link to reset your password: {reset_link}',
-            'from@example.com',
-            [email],
-            fail_silently=False,
-        )
-        
-        return JsonResponse({'message': 'Password reset email sent.'})
-    
-    return JsonResponse({'error': 'Invalid email'})
-
-
-@csrf_exempt
-@require_POST
-def reset_password(request, user_id, token):
-    password = request.POST.get('password')
-    
-    if password:
-        user = get_object_or_404(UserApp, pk=user_id)
-        
-        if default_token_generator.check_token(user, token):
-            user.set_password(password)
-            user.save()
-            
-            return JsonResponse({'message': 'Password reset successful.'})
-        
-        return JsonResponse({'error': 'Invalid token'})
-    
-    return JsonResponse({'error': 'Invalid password'})
 
 class AxesStrategiquesViewSet(viewsets.ModelViewSet):
     queryset = AxesStrategiques.objects.all()
@@ -596,3 +552,36 @@ class ExerciceSecuriteViewSet(viewsets.ModelViewSet):
 class ReunionViewSet(viewsets.ModelViewSet):
     queryset = Reunion.objects.all()
     serializer_class = ReunionSerializer
+
+#RESET PASSWORD 
+
+
+
+@api_view(['POST'])
+def send_password_reset_email(request):
+    email = request.data.get('email')
+    try:
+        user = UserApp.objects.get(email=email)
+        token = default_token_generator.make_token(user)
+        user.password_reset_token = token
+        user.save()
+
+        # Send the password reset email to the user
+        send_password_reset_email_to_user(user.email, token)
+
+        return Response({'message': 'Email sent with password reset instructions.'})
+    except UserApp.DoesNotExist:
+        return Response({'error': 'User not found with this email.'}, status=status.HTTP_404_NOT_FOUND)
+
+# Placeholder function for sending the password reset email
+def send_password_reset_email_to_user(email, token):
+ 
+    reset_link = f"http://localhost:4200/reset-password/{token}/"
+    send_mail(
+        subject='Password Reset Request',
+        message=f'Click the following link to reset your password: {reset_link}',
+        from_email='elhamri.bochra98@gmail.com',
+        recipient_list=[email],
+        fail_silently=False,
+    )
+    
