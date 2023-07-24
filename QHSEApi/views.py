@@ -1,4 +1,6 @@
-from django.shortcuts import get_object_or_404, render
+from base64 import urlsafe_b64encode
+from django.shortcuts import get_object_or_404, redirect, render
+from requests import request
 from rest_framework.decorators import action
 from rest_framework import viewsets
 import requests
@@ -7,7 +9,7 @@ import requests
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from argparse import _ActionsContainer
-from django.http import FileResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
@@ -18,6 +20,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.views.decorators.http import require_GET
 from django.db.models import Count
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+from django.core.mail import send_mail
+
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+from django.contrib.auth.tokens import default_token_generator
+
+
+
+
 from django.db.models import F
 from django.db.models.functions import ExtractYear
 from rest_framework import viewsets
@@ -36,6 +53,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
+from django.views.decorators.http import require_POST
+
 
 from .models import (
     NC,
@@ -52,6 +71,7 @@ from .models import (
     Exigences,
     Famille,
     FavorisDocument,
+    FelicitationRP,
     FicheTechnique,
     Fournisseur,
     GroupeUser,
@@ -105,6 +125,8 @@ from .serializers import (
     ExigencesSerializer,
     FamilleSerializer,
     FavorisDocumentSerializer,
+    FelicitationRPSerializer,
+    
     FicheTechniqueSerializer,
     FournisseurSerializer,
 
@@ -145,32 +167,50 @@ from .serializers import (
 )
 #login 
 # Authentication
-class UserTokenObtainPairView(TokenObtainPairView):
+@require_POST
+def check_email_exists(request):
+    email = request.POST.get('email')
+
+    if email:
+        email_exists = UserApp.objects.filter(email=email).exists()
+        return JsonResponse({'exists': email_exists})
+
+    return JsonResponse({'error': 'Invalid email'})
+
+
+class UserTokenObtainPairView(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
+        
         try:
             user = UserApp.objects.get(email=email)
             
-            
             if not user.check_password(password):
-                    return Response(
-                        {"message": "Email ou mot de passe invalide"},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                return Response(
+                    {"message": "Incorrect password"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
             refresh = RefreshToken.for_user(user)
             
             return Response(
-                    {
-                        "access": str(refresh.access_token),
-                        "refresh": str(refresh),
-                    }
-                )
+                {
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                }
+            )
        
         except UserApp.DoesNotExist:
             return Response(
-                {"message": "Email ou mot de passe invalide"},
+                {"message": "Incorrect email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except:
+            return Response(
+                {"message": "Both email and password are incorrect"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         
@@ -494,6 +534,54 @@ class CertificatCalibrationViewSet(viewsets.ModelViewSet):
     queryset = CertificatCalibration.objects.all()
     serializer_class = CertificatCalibrationSerializer
 
+class FelicitationRPViewSet(viewsets.ModelViewSet):
+    queryset = FelicitationRP.objects.all()
+    serializer_class = FelicitationRPSerializer
+
+#RESET PASSWORD 
+from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
+UserApp = get_user_model()
+@csrf_exempt
+@require_POST
+def send_password_reset_email(request):
+    email = request.POST.get('email')
+    
+    if email:
+        user = get_object_or_404(UserApp, email=email)
+        token = default_token_generator.make_token(user)
+        reset_link = f"http://localhost:4200/reset-password/{user.pk}/{token}"
+        
+        send_mail(
+            'Password Reset',
+            f'Please click the following link to reset your password: {reset_link}',
+            'from@example.com',
+            [email],
+            fail_silently=False,
+        )
+        
+        return JsonResponse({'message': 'Password reset email sent.'})
+    
+    return JsonResponse({'error': 'Invalid email'})
+
+
+@csrf_exempt
+@require_POST
+def reset_password(request, user_id, token):
+    password = request.POST.get('password')
+    
+    if password:
+        user = get_object_or_404(UserApp, pk=user_id)
+        
+        if default_token_generator.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            
+            return JsonResponse({'message': 'Password reset successful.'})
+        
+        return JsonResponse({'error': 'Invalid token'})
+    
+    return JsonResponse({'error': 'Invalid password'})
 
 class AxesStrategiquesViewSet(viewsets.ModelViewSet):
     queryset = AxesStrategiques.objects.all()
