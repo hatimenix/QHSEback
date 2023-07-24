@@ -207,6 +207,8 @@ class Actions(models.Model):
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
     analyserisque= models.ManyToManyField('AnalyseRisque', null=True, blank=True, db_constraint=False)
     ca = models.ManyToManyField('ConstatAudit', null=True, blank=True, db_constraint=False)
+    tache = models.ManyToManyField('Taches', null=True, blank=True, db_constraint=False)
+
 
     rn = models.ManyToManyField('Reunion', null=True, blank=True, db_constraint=False)
 
@@ -323,7 +325,7 @@ class Traitement(models.Model):
     description_generale=models.TextField(blank=True, null=True)
     datedecreation = models.DateTimeField(auto_now_add=True)
     datedemiseajour = models.DateTimeField(auto_now=True)
-    responsable_traitement=models.CharField(max_length=255,blank=True, null=True)
+    responsable_traitement=models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     finaliteprincipale = models.TextField(blank=True, null=True)
     sous_finalite1 = models.TextField(blank=True, null=True)
     sous_finalite2 = models.TextField(blank=True, null=True)
@@ -382,7 +384,7 @@ class Evaluation(models.Model):
 class DocumentUtilities(models.Model):
     id = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=255, blank=True)
-    modified_by = models.CharField(max_length=255, blank=True)
+    modified_by = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     modified_date = models.DateTimeField(auto_now=True)
     typologie = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to='documents/', blank=True, null=True)
