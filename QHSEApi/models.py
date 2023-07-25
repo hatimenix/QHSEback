@@ -49,10 +49,11 @@ class Site(models.Model):
 
 class Services(models.Model):
     service_nom = models.CharField(max_length=255)
+    chef_service = models.ManyToManyField(Utilisateur, null=True, blank=True, db_constraint=False)
+
     
 #*Table relation entre Service et Utilisateur 
-class ChefServices(Utilisateur):
-    services = models.ForeignKey(Services, on_delete=models.CASCADE)
+
 
 class Secteurs(models.Model):
     secteur_nom = models.CharField(max_length=255)
@@ -703,7 +704,7 @@ class FelicitationRP(models.Model):
     description_retour = models.TextField()
     forme_retour = models.CharField(max_length=21, choices=FORME_RETOUR_CHOICES,  blank=True)
     service_concerne = models.ForeignKey(Services, on_delete=models.CASCADE,  blank=True)
-    chef_service = models.ManyToManyField(ChefServices, blank=True)
+    chef_service = models.ManyToManyField(Utilisateur, blank=True)
     date = models.DateField( blank=True)
     piece_jointe = models.FileField(upload_to='documents/',blank=True)
     
@@ -780,9 +781,6 @@ class ExerciceSecurite(models.Model):
     commentaire = models.TextField( blank=True)
     mesure = models.CharField(max_length=255, blank=True)
     taux_conformite = models.IntegerField(blank=True , null = True)
-
-
-
 
 
 
