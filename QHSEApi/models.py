@@ -515,6 +515,8 @@ class UserApp(AbstractBaseUser):
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
     send_email = models.BooleanField(default=False)  # New field for checkbox
     is_staff = models.BooleanField(default=False)
+    password_reset_token = models.CharField(max_length=100, blank=True, null=True)  # New field for password reset token
+
     objects = UserManager()
     USERNAME_FIELD = "email"
     
