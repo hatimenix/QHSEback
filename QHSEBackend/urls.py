@@ -84,8 +84,9 @@ urlpatterns = [
 
     #reset  & forgot password 
  # Password reset
-    path('api/send-password-reset-email/', views.send_password_reset_email, name='send_password_reset_email'),
-    path('api/reset-password/<int:user_id>/<str:token>/', views.reset_password, name='reset_password'),
+   
+     path('api/reset-password/', views.send_password_reset_email, name='send_password_reset_email'),
+
 
 
     

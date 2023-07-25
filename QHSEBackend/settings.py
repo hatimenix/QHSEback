@@ -28,12 +28,17 @@ SECRET_KEY = 'django-insecure-)jh2%5o516bk=dlww130@9px&+koza@ejhb61(g#7y4oaxn=ob
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://qhseapi.paiperleckelearning.com','qhseapi.paiperleckelearning.com','http://qhseapi.paiperleckelearning.com','127.0.0.1']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 MIXED_CONTENT_INSECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-CORS_ALLOWED_ORIGINS = ['https://qhse.paiperleckelearning.com']
+
+
 SESSION_COOKIE_SECURE = True
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    
+]
 #Email Settings 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -89,10 +94,6 @@ JWT_AUTH.update({
 })
 
 
-CORS_ALLOWED_HEADERS = [
-    'cache-control',  # Add 'cache-control' to the allowed headers
-    # Other allowed headers
-]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -180,6 +181,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Default primary key field type
