@@ -15,7 +15,6 @@ from django.contrib.auth import views as auth_views
 router = DefaultRouter()
 router.register(r'site', views.SiteViewSet, basename="site")
 router.register(r'service', views.ServiceViewSet, basename="service")
-router.register(r'chefservice', views.ChefServiceViewSet, basename="chefservice")
 router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur")
 router.register(r'evaluation_danger', views.EvaluationDangerViewSet, basename="evaluation")
 router.register(r'danger', views.DangerViewSet, basename="danger")

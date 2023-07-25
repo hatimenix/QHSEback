@@ -88,7 +88,6 @@ from .models import (
     TypePartie,
     UserApp,
     Utilisateur,
-    ChefServices,
     Evenements,
     AnalyseEvenement,
     ArretTravail,
@@ -145,7 +144,6 @@ from .serializers import (
     TypePartieSerializer,
     UserAppSerializer,
     UtilisateurSerializer,
-    ChefServiceSerializer,
     EvenementSerializer,
     AnalyseEvenementSerializer,
     ArretTravailSerializer,
@@ -273,9 +271,7 @@ class UtilisateurViewSet(viewsets.ModelViewSet):
     serializer_class = UtilisateurSerializer
 
 
-class ChefServiceViewSet(viewsets.ModelViewSet):
-    queryset = ChefServices.objects.all()
-    serializer_class = ChefServiceSerializer
+
 
 
 class EvenementViewSet(viewsets.ModelViewSet):
