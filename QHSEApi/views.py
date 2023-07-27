@@ -54,6 +54,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_POST
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from django.shortcuts import render
 
 
 from .models import (
@@ -256,6 +259,7 @@ class EvaluationDangerViewSet(viewsets.ModelViewSet):
 class SiteViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.all()
     serializer_class = SiteSerializer
+   
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()

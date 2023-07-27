@@ -76,6 +76,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     #login imports 
+    path('userapp/check_email_exists/', views.check_email_exists, name='check_email_exists'),
+
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
     path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
     path('groups/<int:group_id>/', views.GroupDetailsAPIView.as_view(), name='group_details'),
