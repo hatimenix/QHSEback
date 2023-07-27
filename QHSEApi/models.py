@@ -562,11 +562,26 @@ class GroupeUser(models.Model):
         ('Collaboration sans suppression', 'Collaboration sans suppression'),
     ]
 
-    nom = models.CharField(max_length=100)
+    nom = models.CharField(max_length=100,  unique=True)
     description = models.TextField(blank=True, null=True, default=None)
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
     autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
 
+    def save(self, *args, **kwargs):
+        # Remove spaces from nom before saving
+        self.nom = self.nom.replace(" ", "")
+
+        # Check if a group with the modified name already exists in the database
+        existing_groupes = GroupeUser.objects.filter(nom=self.nom)
+
+        # If the current instance is already in the database, exclude it from the existing_sites query
+        if self.pk is not None:
+            existing_groupes = existing_groupes.exclude(pk=self.pk)
+
+        if existing_groupes.exists():
+            raise ValidationError("A groupr with the same name (ignoring spaces) already exists.")
+
+        super(GroupeUser, self).save(*args, **kwargs)
 
 class Sante(models.Model):
     site=models.ForeignKey(Site, on_delete=models.CASCADE,null=True, default=None)
