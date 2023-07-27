@@ -35,20 +35,40 @@ class Utilisateur(models.Model):
 
     
 
+
 class Site(models.Model):
-    site_nom = models.CharField(max_length=255)
+    site_nom = models.CharField(max_length=255, unique=True)
     sigle = models.CharField(max_length=255)
     responsable_site = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     groupe_retso = models.CharField(max_length=255)
-   # documents = models.ManyToManyField(Document)
 
     def __str__(self):
         return str(self.site_nom)
 
+    def save(self, *args, **kwargs):
+        # Remove spaces from site_nom before saving
+        self.site_nom = self.site_nom.replace(" ", "")
+
+        # Check if a site with the modified name already exists in the database
+        existing_sites = Site.objects.filter(site_nom=self.site_nom)
+
+        # If the current instance is already in the database, exclude it from the existing_sites query
+        if self.pk is not None:
+            existing_sites = existing_sites.exclude(pk=self.pk)
+
+        if existing_sites.exists():
+            raise ValidationError("A site with the same name (ignoring spaces) already exists.")
+
+        super(Site, self).save(*args, **kwargs)
+
+
+   
+
+   
 
 
 class Services(models.Model):
-    service_nom = models.CharField(max_length=255)
+    service_nom = models.CharField(max_length=255, unique=True)
     chef_service = models.ManyToManyField(Utilisateur, null=True, blank=True, db_constraint=False)
 
     
