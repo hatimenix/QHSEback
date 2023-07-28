@@ -17,6 +17,8 @@ class SiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         fields = '__all__'
+    
+    
 
 class ServiceSerializer(serializers.ModelSerializer):
     chef_service_name = serializers.SerializerMethodField()
