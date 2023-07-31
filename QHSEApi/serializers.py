@@ -176,6 +176,8 @@ class FicheTechniqueSerializer(serializers.ModelSerializer):
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+
     class Meta:
         model = Commande
         fields = '__all__'

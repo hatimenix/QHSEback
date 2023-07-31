@@ -297,10 +297,12 @@ class Commande(models.Model):
     id_commande = models.AutoField(primary_key=True)
     date_commande = models.CharField(max_length=50)
     type_commande = models.CharField(max_length=50)
-    etat_commande = models.CharField(max_length=50)
+    etat_commande = models.CharField(max_length=50,blank=True)
     quantite = models.IntegerField()
     specificite_regime = models.CharField(max_length=50)
     specificite_texture = models.CharField(max_length=50)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, blank=True)
+
 
   
 
@@ -502,13 +504,13 @@ class FavorisDocument(models.Model):
 
 class Menus(models.Model):
     mois_concerne = models.CharField(max_length=255)
-    menus_generaux = models.FileField(upload_to='documents/',blank=True)
-    menus_dessert = models.FileField(upload_to='documents/',blank=True)
-    menu_s1 = models.FileField(upload_to='documents/',blank=True)
-    menu_s2 = models.FileField(upload_to='documents/',blank=True)
-    menu_s3 = models.FileField(upload_to='documents/',blank=True)
-    menu_s4 = models.FileField(upload_to='documents/',blank=True)
-    menu_s5 = models.FileField(upload_to='documents/',blank=True)
+    menus_generaux = models.FileField(upload_to='documents/',blank=True, validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menus_dessert = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s1 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s2 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s3 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s4 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s5 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
 
 
@@ -533,7 +535,7 @@ class UserManager(BaseUserManager):
 
 class UserApp(Utilisateur, AbstractBaseUser):
     nom_user = models.CharField(max_length=100)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=128, blank=True)
     actif = models.BooleanField(blank=True, default=False)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
     send_email = models.BooleanField(default=False)  # New field for checkbox
@@ -552,6 +554,7 @@ class UserApp(Utilisateur, AbstractBaseUser):
 
     def has_perm(self, perm, obj=None):
         return self.is_staff
+    
 
 
 class GroupeUser(models.Model):
