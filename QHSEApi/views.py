@@ -31,6 +31,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -223,6 +224,29 @@ class UserDetailsAPIView(APIView):
         # Add any additional logic or data processing you need here
         serialized_user = UserAppSerializer(user).data  # Replace UserSerializer with your user serializer
         return Response(serialized_user)
+    
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Validate that new password and confirm password match
+        if new_password != confirm_password:
+            return JsonResponse({'error': 'New password and confirm password do not match.'}, status=400)
+
+        # Get the currently logged-in user
+        user = request.user
+
+        try:
+            # Attempt to change the password using the 'change_password' method from the UserApp model
+            user.change_password(old_password, new_password)
+            return JsonResponse({'message': 'Password changed successfully.'}, status=200)
+        except ValueError as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    # If the request is not POST, return a 405 Method Not Allowed response
+    return JsonResponse({'error': 'Method not allowed.'}, status=405)
 
 #Details Group 
 
@@ -584,4 +608,46 @@ def send_password_reset_email_to_user(email, token):
         recipient_list=[email],
         fail_silently=False,
     )
-    
+
+
+#change password 
+from rest_framework import status
+from rest_framework import generics
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from .serializers import ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated   
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    An endpoint for changing password.
+    """
+    serializer_class = ChangePasswordSerializer
+    model = User
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

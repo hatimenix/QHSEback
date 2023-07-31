@@ -485,3 +485,15 @@ class ReunionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reunion
         fields = '__all__'
+
+
+#change password
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = UserApp
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
