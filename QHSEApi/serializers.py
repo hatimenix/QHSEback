@@ -1,7 +1,7 @@
 from django.http import FileResponse
 from rest_framework import serializers
-from .models import  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, FelicitationRP, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
-from .models import Reunion, ExerciceSecurite, PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, ChefServices, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique,AxesStrategiques
+from .models import  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, FelicitationRP, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique
+from .models import Reunion, ExerciceSecurite, PlanAlimentaire,  AnalyseRisque, CertificatCalibration, ConstatAudit, Control, Cotation, Documents, Exigences, GroupeUser, HistoriqueDocument, Menus, PartiesInteresses, Pj, RapportDaudit, Site, Services, Danger, EvaluationDanger, Source, TypePartie, UserApp, Utilisateur, Evenements, AnalyseEvenement, ArretTravail, Actions, Realisation, MesureEfficacite, Processus, Taches,NC,Secteurs,Equipement,Traitement,Commande, DocumentUtilities, Evaluation, Famille, FicheTechnique, Fournisseur,Sante,Qualite, FicheTechnique,AxesStrategiques
 from QHSEApi import models
 
 from rest_framework import serializers, viewsets
@@ -17,11 +17,21 @@ class SiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         fields = '__all__'
+    
+    
 
 class ServiceSerializer(serializers.ModelSerializer):
+    chef_service_name = serializers.SerializerMethodField()
     class Meta:
         model = Services
         fields = '__all__'
+    def get_chef_service_name(self, obj):
+        chef_service = obj.chef_service.all()
+        if chef_service:
+            return ', '.join(d.nom for d in chef_service)
+        else:
+            return None
+
 
 class SecteursSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,10 +62,6 @@ class UtilisateurSerializer(serializers.ModelSerializer):
         model = Utilisateur
         fields = '__all__'
 
-class ChefServiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ChefServices
-        fields = '__all__'
 
 class EvenementSerializer(serializers.ModelSerializer):
     danger_name = serializers.SerializerMethodField()
@@ -170,6 +176,8 @@ class FicheTechniqueSerializer(serializers.ModelSerializer):
 
 #Serializer pour la commande BOCHRA
 class CommandeSerializer(serializers.ModelSerializer):
+    site_name = serializers.ReadOnlyField(source='site.site_nom',default=None)
+
     class Meta:
         model = Commande
         fields = '__all__'
