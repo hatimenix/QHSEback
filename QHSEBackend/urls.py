@@ -83,7 +83,7 @@ urlpatterns = [
     path('groups/<int:group_id>/', views.GroupDetailsAPIView.as_view(), name='group_details'),
     path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
     path('api/reset-password/', views.send_password_reset_email, name='send_password_reset_email'),
-    path('api/change-password/', views.ChangePasswordView.as_view(), name='change-password'),
 
+    path('api/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
