@@ -603,6 +603,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.password_validation import validate_password
 
 
 
@@ -620,7 +621,15 @@ class ChangePasswordView(APIView):
                 {"message": "Ancien mot de passe incorrect"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            # Password validation failed, return the error message to the client
+            return Response(
+                {"message": e.messages[0]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         user.password = new_password  # Update the password directly without using set_password
         user.save()
         
