@@ -36,6 +36,10 @@ from django.contrib.auth.decorators import login_required
 
 
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.password_validation import validate_password
 
 from django.db.models import F
 from django.db.models.functions import ExtractYear
@@ -565,9 +569,36 @@ class ReunionViewSet(viewsets.ModelViewSet):
     queryset = Reunion.objects.all()
     serializer_class = ReunionSerializer
 
-#RESET PASSWORD 
+########Change password #######
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+        
+        if not user.check_password(old_password):
+            return Response(
+                {"message": "Ancien mot de passe incorrect"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            # Password validation failed, return the error message to the client
+            return Response(
+                {"message": e.messages[0]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+        user.password = new_password  # Update the password directly without using set_password
+        user.save()
+        
+        return Response({"message": "Mot de passe modifié avec succès"})
+    
+
+########Reset password #######
 
 @api_view(['POST'])
 def send_password_reset_email(request):
@@ -597,40 +628,30 @@ def send_password_reset_email_to_user(email, token):
         fail_silently=False,
     )
 
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import status
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.password_validation import validate_password
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-
-
-
-class ChangePasswordView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        old_password = request.data.get("old_password")
-        new_password = request.data.get("new_password")
+@api_view(['POST'])
+def reset_password(request, reset_token):
+    if request.method == 'POST':
+        new_password = request.data.get('new_password')
         
-        if not user.check_password(old_password):
-            return Response(
-                {"message": "Ancien mot de passe incorrect"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        try:
-            validate_password(new_password, user=user)
-        except ValidationError as e:
-            # Password validation failed, return the error message to the client
-            return Response(
-                {"message": e.messages[0]},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user.password = new_password  # Update the password directly without using set_password
-        user.save()
+        user = get_object_or_404(UserApp, password_reset_token=reset_token)
         
-        return Response({"message": "Mot de passe modifié avec succès"})
+        # Check if the token is still valid (you may have an expiration check here)
+        if default_token_generator.check_token(user, reset_token):
+            
+            user.password = new_password  # Update the password directly without using set_password
+            user.password_reset_token = None
+            user.save()
+            
+            return JsonResponse({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    return JsonResponse({"error": "Invalid request method."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
