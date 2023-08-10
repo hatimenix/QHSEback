@@ -99,9 +99,9 @@ class Danger(models.Model):
     
 class EvaluationDanger(models.Model):
     date = models.DateField(auto_now=True)
-    probabilite = models.IntegerField()
+    probabilite = models.FloatField()
     severite = models.IntegerField()
-    frequences_exposition = models.IntegerField()
+    frequences_exposition = models.FloatField()
     mesure_prevention = models.TextField(null=True, blank=True)
     ipr = models.FloatField()
     indice_risque = models.IntegerField()
@@ -207,13 +207,13 @@ class Processus(models.Model):
 class Actions(models.Model):
     intitule = models.CharField(max_length=100)
     type_action = models.CharField(max_length=100)
-    origine_action = models.CharField(max_length=50)
+    origine_action = models.CharField(max_length=50, null=True, blank=True)
     reference = models.CharField(max_length=100, blank=True)
-    domaine = models.CharField(max_length=100)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    domaine = models.CharField(max_length=100, null=True, blank=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, blank=True)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE, blank=True)
-    analyse_cause = models.CharField(max_length=255)
-    plan_action = models.TextField()
+    analyse_cause = models.CharField(max_length=255, null=True, blank=True)
+    plan_action = models.TextField(null=True, blank=True)
     delai_mise_en_oeuvre = models.DateField()
     assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     priorite = models.IntegerField()
@@ -227,7 +227,7 @@ class Actions(models.Model):
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
                             blank=True,
-                            default=None,                            
+                            default=None,
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
@@ -531,6 +531,11 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.save(using=self._db)
         return user
+    def get_user_by_reset_token(self, reset_token):
+        try:
+            return self.get(password_reset_token=reset_token)
+        except UserApp.DoesNotExist:
+            return None
     
 
 class UserApp(Utilisateur, AbstractBaseUser):
@@ -830,6 +835,10 @@ class Reunion(models.Model):
     liste_diffusion = models.ManyToManyField(Utilisateur, related_name='reunions_liste_diffusion', null=True, blank=True, db_constraint=False)
     presents = models.ManyToManyField(Utilisateur, related_name='reunions_presents', null=True, blank=True, db_constraint=False)
 
+
+
+
+# Reset Password
 
 
 
