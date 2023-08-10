@@ -5,7 +5,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from QHSEApi import views
 from django.contrib.auth import views as auth_views
-
+from django.views.generic.base import RedirectView
 
 #jwt login imports
 
@@ -73,6 +73,7 @@ router.register(r'AxesStrategiques', views.AxesStrategiquesViewSet, basename="Ax
 router.register(r'felicitationRP', views.FelicitationRPViewSet, basename="felicitationRP")
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/admin/login/?next=/'), name='root_redirect'),  
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     #login imports 
