@@ -628,29 +628,35 @@ def send_password_reset_email_to_user(email, token):
         fail_silently=False,
     )
 
+
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    def form_valid(self, form):
+        user = form.save()
+        user.password_reset_token = None
+        user.save()
+        return JsonResponse({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+    def form_invalid(self, form):
+        return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def reset_password(request, reset_token):
     if request.method == 'POST':
         new_password = request.data.get('new_password')
         
-        user = get_object_or_404(UserApp, password_reset_token=reset_token)
+        user = UserApp.objects.get_user_by_reset_token(reset_token)
         
-        # Check if the token is still valid (you may have an expiration check here)
-        if default_token_generator.check_token(user, reset_token):
-            
-            user.password = new_password  # Update the password directly without using set_password
-            user.password_reset_token = None
-            user.save()
-            
-            return JsonResponse({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+        if user is not None and default_token_generator.check_token(user, reset_token):
+            response = CustomPasswordResetConfirmView.as_view()(request, uidb64=user.pk, token=reset_token, new_password=new_password)
+            if response.status_code == 200:
+                return JsonResponse({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
 
