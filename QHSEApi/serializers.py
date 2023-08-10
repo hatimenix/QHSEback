@@ -485,3 +485,6 @@ class ReunionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reunion
         fields = '__all__'
+
+
+

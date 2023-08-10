@@ -531,6 +531,11 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.save(using=self._db)
         return user
+    def get_user_by_reset_token(self, reset_token):
+        try:
+            return self.get(password_reset_token=reset_token)
+        except UserApp.DoesNotExist:
+            return None
     
 
 class UserApp(Utilisateur, AbstractBaseUser):
@@ -830,6 +835,10 @@ class Reunion(models.Model):
     liste_diffusion = models.ManyToManyField(Utilisateur, related_name='reunions_liste_diffusion', null=True, blank=True, db_constraint=False)
     presents = models.ManyToManyField(Utilisateur, related_name='reunions_presents', null=True, blank=True, db_constraint=False)
 
+
+
+
+# Reset Password
 
 
 
