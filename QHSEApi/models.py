@@ -215,7 +215,7 @@ class Actions(models.Model):
     analyse_cause = models.CharField(max_length=255)
     plan_action = models.TextField()
     delai_mise_en_oeuvre = models.DateField()
-    assigne_a = models.CharField(max_length=100)
+    assigne_a = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,null=True, default=None)
     priorite = models.IntegerField()
     delai_mesure_eff = models.DateField()
     type_critere_eff = models.CharField(max_length=100)
@@ -652,7 +652,7 @@ class AnalyseRisque(models.Model):
     probabilite=models.CharField(max_length=255,blank=True, null=True,)
     maitrise=models.CharField(max_length=255,blank=True, null=True,)
     mesure=models.CharField(max_length=255,blank=True, null=True,)
-    type_action=models.CharField(max_length=255,blank=True, null=True,)
+    type_action=models.TextField(blank=True, null=True)
     partieinteresses= models.ManyToManyField(PartiesInteresses, null=True, blank=True, db_constraint=False)
     processus= models.ManyToManyField(Processus, null=True, blank=True, db_constraint=False) 
  
