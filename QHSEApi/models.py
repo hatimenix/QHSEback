@@ -83,9 +83,9 @@ class Danger(models.Model):
     
 class EvaluationDanger(models.Model):
     date = models.DateField(auto_now=True)
-    probabilite = models.IntegerField()
+    probabilite = models.FloatField()
     severite = models.IntegerField()
-    frequences_exposition = models.IntegerField()
+    frequences_exposition = models.FloatField()
     mesure_prevention = models.TextField(null=True, blank=True)
     ipr = models.FloatField()
     indice_risque = models.IntegerField()
@@ -181,27 +181,27 @@ class Processus(models.Model):
 class Actions(models.Model):
     intitule = models.CharField(max_length=100)
     type_action = models.CharField(max_length=100)
-    origine_action = models.CharField(max_length=50)
+    origine_action = models.CharField(max_length=50, null=True, blank=True)
     reference = models.CharField(max_length=100, blank=True)
-    domaine = models.CharField(max_length=100)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    domaine = models.CharField(max_length=100, null=True, blank=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, blank=True)
     processus = models.ForeignKey(Processus, on_delete=models.CASCADE, blank=True)
-    analyse_cause = models.CharField(max_length=255)
-    plan_action = models.TextField()
+    analyse_cause = models.CharField(max_length=255, null=True, blank=True)
+    plan_action = models.TextField(null=True, blank=True)
     delai_mise_en_oeuvre = models.DateField()
-    assigne_a = models.CharField(max_length=100)
-    priorite = models.IntegerField()
-    delai_mesure_eff = models.DateField()
-    type_critere_eff = models.CharField(max_length=100)
-    detail_critere_eff = models.TextField()
-    etat = models.CharField(max_length=150, default='Non commencé')
+    assigne_a = models.CharField(max_length=100, null=True, blank=True)
+    priorite = models.IntegerField(null=True, blank=True)
+    delai_mesure_eff = models.DateField(null=True, blank=True)
+    type_critere_eff = models.CharField(max_length=100, null=True, blank=True)
+    detail_critere_eff = models.TextField(null=True, blank=True)
+    etat = models.CharField(max_length=150, default='Non commencé', blank=True)
     annee = models.DateField(auto_now=True)
     danger = models.ManyToManyField(Danger, null=True, blank=True, db_constraint=False)
     evenement = models.ManyToManyField(Evenements, null=True, blank=True, db_constraint=False)
     piece_jointe = models.FileField(upload_to='uploads/docs',
                             null=True,
                             blank=True,
-                            default=None,                            
+                            default=None,
                             validators=[FileExtensionValidator(allowed_extensions=['pdf','ppt','pptx'])])
     qualite = models.ManyToManyField('Qualite', null=True, blank=True, db_constraint=False)
     nc= models.ManyToManyField('NC', null=True, blank=True, db_constraint=False)
