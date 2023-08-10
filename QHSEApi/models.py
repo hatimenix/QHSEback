@@ -21,9 +21,9 @@ from django.contrib.auth import get_user_model
 
 #*Table commun :
 class Utilisateur(models.Model):
-    compte = models.CharField(max_length=255)
+    compte = models.CharField(max_length=255, blank=True)
+    email = models.EmailField(unique=True, max_length=255)
     nom = models.CharField(max_length=255)
-    courrier = models.EmailField()
     numero_tel = models.CharField(max_length=255, null=True, blank=True)
     presente_vous = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
@@ -33,26 +33,42 @@ class Utilisateur(models.Model):
     def __str__(self):
         return str(self.nom)
 
-    
 
 class Site(models.Model):
-    site_nom = models.CharField(max_length=255)
+    site_nom = models.CharField(max_length=255, unique=True)
     sigle = models.CharField(max_length=255)
     responsable_site = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     groupe_retso = models.CharField(max_length=255)
-   # documents = models.ManyToManyField(Document)
 
     def __str__(self):
         return str(self.site_nom)
 
+#verify the unicity of a name
+    def save(self, *args, **kwargs):
+        original_site_nom = self.site_nom 
+        self.site_nom = self.site_nom.replace(" ", "") 
+        existing_sites = Site.objects.filter(site_nom__iexact=self.site_nom)
+        if self.pk is not None:
+            existing_sites = existing_sites.exclude(pk=self.pk)
+
+        if existing_sites.exists():
+            raise ValidationError("A site with the same name (ignoring spaces) already exists.")
+        super(Site, self).save(*args, **kwargs)
+        self.site_nom = original_site_nom
+
+
+   
+
+   
 
 
 class Services(models.Model):
-    service_nom = models.CharField(max_length=255)
+    service_nom = models.CharField(max_length=255, unique=True)
+    chef_service = models.ManyToManyField(Utilisateur, null=True, blank=True, db_constraint=False)
+
     
 #*Table relation entre Service et Utilisateur 
-class ChefServices(Utilisateur):
-    services = models.ForeignKey(Services, on_delete=models.CASCADE)
+
 
 class Secteurs(models.Model):
     secteur_nom = models.CharField(max_length=255)
@@ -155,7 +171,7 @@ class ArretTravail(models.Model):
     
 #*Table Processus :
 class Processus(models.Model):
-    intitule = models.CharField(max_length=255)
+    intitule = models.CharField(max_length=255, unique=True)
     typologie = models.CharField(max_length=255)
     sigle = models.CharField(max_length=50)
     finalite = models.TextField()
@@ -168,12 +184,22 @@ class Processus(models.Model):
     objectifs_ind = models.TextField()
     outils_surveil = models.TextField()
 
-    
-
-
 
     def __str__(self):
         return self.intitule
+    
+   #verify the unicity of a name
+    def save(self, *args, **kwargs):
+        originalintitule = self.intitule 
+        self.intitule = self.intitule.replace(" ", "") 
+        existing_processuss = Processus.objects.filter(intitule__iexact=self.intitule)
+        if self.pk is not None:
+            existing_processuss = existing_processuss.exclude(pk=self.pk)
+
+        if existing_processuss.exists():
+            raise ValidationError("A processus with the same name (ignoring spaces) already exists.")
+        super(Processus, self).save(*args, **kwargs)
+        self.intitule = originalintitule
     
 
     
@@ -271,10 +297,12 @@ class Commande(models.Model):
     id_commande = models.AutoField(primary_key=True)
     date_commande = models.CharField(max_length=50)
     type_commande = models.CharField(max_length=50)
-    etat_commande = models.CharField(max_length=50)
+    etat_commande = models.CharField(max_length=50,blank=True)
     quantite = models.IntegerField()
     specificite_regime = models.CharField(max_length=50)
     specificite_texture = models.CharField(max_length=50)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, blank=True)
+
 
   
 
@@ -476,13 +504,13 @@ class FavorisDocument(models.Model):
 
 class Menus(models.Model):
     mois_concerne = models.CharField(max_length=255)
-    menus_generaux = models.FileField(upload_to='documents/',blank=True)
-    menus_dessert = models.FileField(upload_to='documents/',blank=True)
-    menu_s1 = models.FileField(upload_to='documents/',blank=True)
-    menu_s2 = models.FileField(upload_to='documents/',blank=True)
-    menu_s3 = models.FileField(upload_to='documents/',blank=True)
-    menu_s4 = models.FileField(upload_to='documents/',blank=True)
-    menu_s5 = models.FileField(upload_to='documents/',blank=True)
+    menus_generaux = models.FileField(upload_to='documents/',blank=True, validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menus_dessert = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s1 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s2 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s3 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s4 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
+    menu_s5 = models.FileField(upload_to='documents/',blank=True,validators=[FileExtensionValidator(['pdf', 'docx','odt'])])
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
 
 
@@ -503,14 +531,16 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.save(using=self._db)
         return user
+    def get_user_by_reset_token(self, reset_token):
+        try:
+            return self.get(password_reset_token=reset_token)
+        except UserApp.DoesNotExist:
+            return None
     
 
-class UserApp(AbstractBaseUser):
+class UserApp(Utilisateur, AbstractBaseUser):
     nom_user = models.CharField(max_length=100)
-    nom_complet = models.CharField(max_length=100)
-    password = models.CharField(max_length=128)
-    email = models.EmailField(unique=True, max_length=255)
-    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    password = models.CharField(max_length=128, blank=True)
     actif = models.BooleanField(blank=True, default=False)
     groupes_roles = models.ManyToManyField('GroupeUser', null=True, blank=True, db_constraint=False)
     send_email = models.BooleanField(default=False)  # New field for checkbox
@@ -519,18 +549,17 @@ class UserApp(AbstractBaseUser):
 
     objects = UserManager()
     USERNAME_FIELD = "email"
-    
+
     def save(self, *args, **kwargs):
         self.password = make_password(self.password)
         super().save(*args, **kwargs)
-    
-    def has_module_perms(self, app_label):
-        
-        return self.is_staff
-    
-    def has_perm(self, perm, obj=None):
 
+    def has_module_perms(self, app_label):
         return self.is_staff
+
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+    
 
 
 class GroupeUser(models.Model):
@@ -541,10 +570,23 @@ class GroupeUser(models.Model):
         ('Collaboration sans suppression', 'Collaboration sans suppression'),
     ]
 
-    nom = models.CharField(max_length=100)
+    nom = models.CharField(max_length=100,  unique=True)
     description = models.TextField(blank=True, null=True, default=None)
     proprietaire_groupe = models.ManyToManyField(UserApp, related_name='groupes_proprietaire', blank=True)
     autorisation = models.CharField(max_length=30, choices=AUTORISATION_CHOICES, blank=True)
+
+   #verify the unicity of a name
+    def save(self, *args, **kwargs):
+        originalnom = self.nom 
+        self.nom = self.nom.replace(" ", "") 
+        existing_groupes = GroupeUser.objects.filter(nom__iexact=self.nom)
+        if self.pk is not None:
+            existing_groupes = existing_groupes.exclude(pk=self.pk)
+
+        if existing_groupes.exists():
+            raise ValidationError("A groupe with the same name (ignoring spaces) already exists.")
+        super(GroupeUser, self).save(*args, **kwargs)
+        self.nom = originalnom
 
 
 class Sante(models.Model):
@@ -703,7 +745,7 @@ class FelicitationRP(models.Model):
     description_retour = models.TextField()
     forme_retour = models.CharField(max_length=21, choices=FORME_RETOUR_CHOICES,  blank=True)
     service_concerne = models.ForeignKey(Services, on_delete=models.CASCADE,  blank=True)
-    chef_service = models.ManyToManyField(ChefServices, blank=True)
+    chef_service = models.ManyToManyField(Utilisateur, blank=True)
     date = models.DateField( blank=True)
     piece_jointe = models.FileField(upload_to='documents/',blank=True)
     
@@ -783,9 +825,6 @@ class ExerciceSecurite(models.Model):
 
 
 
-
-
-
 class Reunion(models.Model):
     titre = models.CharField(max_length=255, blank=True)
     type_reunion  =  models.TextField( blank=True)
@@ -796,6 +835,10 @@ class Reunion(models.Model):
     liste_diffusion = models.ManyToManyField(Utilisateur, related_name='reunions_liste_diffusion', null=True, blank=True, db_constraint=False)
     presents = models.ManyToManyField(Utilisateur, related_name='reunions_presents', null=True, blank=True, db_constraint=False)
 
+
+
+
+# Reset Password
 
 
 

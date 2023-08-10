@@ -15,7 +15,6 @@ from django.contrib.auth import views as auth_views
 router = DefaultRouter()
 router.register(r'site', views.SiteViewSet, basename="site")
 router.register(r'service', views.ServiceViewSet, basename="service")
-router.register(r'chefservice', views.ChefServiceViewSet, basename="chefservice")
 router.register(r'utilisateur', views.UtilisateurViewSet, basename="utilisateur")
 router.register(r'evaluation_danger', views.EvaluationDangerViewSet, basename="evaluation")
 router.register(r'danger', views.DangerViewSet, basename="danger")
@@ -77,16 +76,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     #login imports 
+    path('userapp/check_email_exists/', views.check_email_exists, name='check_email_exists'),
+
     path('api/login/', views.UserTokenObtainPairView.as_view(), name='login'),
     path('user/', views.UserDetailsAPIView.as_view(), name='get_authenticated_user'),
     path('groups/<int:group_id>/', views.GroupDetailsAPIView.as_view(), name='group_details'),
     path('nc/<int:nc_id>/file-url/', views.get_existing_file_url, name='get_existing_file_url'),
-
-    #reset  & forgot password 
- # Password reset
-   
-     path('api/reset-password/', views.send_password_reset_email, name='send_password_reset_email'),
-
+    #change password
+    path('api/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
+    #reset password 
+    path('api/send-password-reset-email/', views.send_password_reset_email, name='send_password_reset_email'),
+    path('api/reset-password/<str:reset_token>/', views.reset_password, name='reset_password'),
 
 
     

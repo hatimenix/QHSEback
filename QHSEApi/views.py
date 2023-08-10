@@ -1,4 +1,5 @@
 from base64 import urlsafe_b64encode
+from telnetlib import LOGOUT
 from django.shortcuts import get_object_or_404, redirect, render
 from requests import request
 from rest_framework.decorators import action
@@ -31,9 +32,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required
 
 
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.password_validation import validate_password
 
 from django.db.models import F
 from django.db.models.functions import ExtractYear
@@ -54,6 +60,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_POST
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from django.shortcuts import render
+#change password 
+from rest_framework import status
+from rest_framework import generics
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated  
+from django.contrib.auth import logout
+
 
 
 from .models import (
@@ -88,7 +105,6 @@ from .models import (
     TypePartie,
     UserApp,
     Utilisateur,
-    ChefServices,
     Evenements,
     AnalyseEvenement,
     ArretTravail,
@@ -145,7 +161,6 @@ from .serializers import (
     TypePartieSerializer,
     UserAppSerializer,
     UtilisateurSerializer,
-    ChefServiceSerializer,
     EvenementSerializer,
     AnalyseEvenementSerializer,
     ArretTravailSerializer,
@@ -222,6 +237,8 @@ class UserDetailsAPIView(APIView):
         # Add any additional logic or data processing you need here
         serialized_user = UserAppSerializer(user).data  # Replace UserSerializer with your user serializer
         return Response(serialized_user)
+    
+
 
 #Details Group 
 
@@ -258,6 +275,7 @@ class EvaluationDangerViewSet(viewsets.ModelViewSet):
 class SiteViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.all()
     serializer_class = SiteSerializer
+   
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Services.objects.all()
@@ -273,9 +291,7 @@ class UtilisateurViewSet(viewsets.ModelViewSet):
     serializer_class = UtilisateurSerializer
 
 
-class ChefServiceViewSet(viewsets.ModelViewSet):
-    queryset = ChefServices.objects.all()
-    serializer_class = ChefServiceSerializer
+
 
 
 class EvenementViewSet(viewsets.ModelViewSet):
@@ -553,9 +569,36 @@ class ReunionViewSet(viewsets.ModelViewSet):
     queryset = Reunion.objects.all()
     serializer_class = ReunionSerializer
 
-#RESET PASSWORD 
+########Change password #######
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+        
+        if not user.check_password(old_password):
+            return Response(
+                {"message": "Ancien mot de passe incorrect"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            # Password validation failed, return the error message to the client
+            return Response(
+                {"message": e.messages[0]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+        user.password = new_password  # Update the password directly without using set_password
+        user.save()
+        
+        return Response({"message": "Mot de passe modifié avec succès"})
+    
+
+########Reset password #######
 
 @api_view(['POST'])
 def send_password_reset_email(request):
@@ -584,4 +627,37 @@ def send_password_reset_email_to_user(email, token):
         recipient_list=[email],
         fail_silently=False,
     )
-    
+
+
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.http import JsonResponse
+from rest_framework import status
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    def form_valid(self, form):
+        user = form.save()
+        user.password_reset_token = None
+        user.save()
+        return JsonResponse({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+    def form_invalid(self, form):
+        return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def reset_password(request, reset_token):
+    if request.method == 'POST':
+        new_password = request.data.get('new_password')
+        
+        user = UserApp.objects.get_user_by_reset_token(reset_token)
+        
+        if user is not None and default_token_generator.check_token(user, reset_token):
+            response = CustomPasswordResetConfirmView.as_view()(request, uidb64=user.pk, token=reset_token, new_password=new_password)
+            if response.status_code == 200:
+                return JsonResponse({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return JsonResponse({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    return JsonResponse({"error": "Invalid request method."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
